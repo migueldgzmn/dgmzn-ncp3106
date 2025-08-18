@@ -106,6 +106,16 @@
   // Ensure clicking a dot sets it active immediately (in addition to IO)
   dots.forEach((dot) => {
     dot.addEventListener("click", () => {
+      const targetSection = dot.dataset.section
+      const targetElement = document.getElementById(targetSection)
+
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        })
+      }
+
       setActiveDot(dot.dataset.section || "")
     })
   })
@@ -271,6 +281,7 @@
   const toggle = header.querySelector(".nav-toggle")
   const menu = header.querySelector("#primary-nav")
   const navLinks = header.querySelectorAll(".header-links a")
+  const dotNav = document.querySelector(".dot-nav")
 
   if (!toggle || !menu) return
 
@@ -296,26 +307,44 @@
     else openMenu()
   }
 
-  // Auto-hide navbar on scroll down, show on scroll up
   function handleScroll() {
     const currentScrollY = window.scrollY
     isScrollingDown = currentScrollY > lastScrollY && currentScrollY > 100
 
-    if (isScrollingDown && !header.classList.contains("open")) {
-      header.classList.add("navbar-hidden")
-    } else {
-      header.classList.remove("navbar-hidden")
+    // Check if we're in the first section (hero)
+    const heroSection = document.getElementById("hero")
+    const aboutSection = document.getElementById("about")
+
+    let isInFirstSection = true
+
+    if (heroSection && aboutSection) {
+      const heroRect = heroSection.getBoundingClientRect()
+      const aboutRect = aboutSection.getBoundingClientRect()
+
+      // If about section is visible or hero is mostly scrolled past
+      if (aboutRect.top <= window.innerHeight * 0.5 || heroRect.bottom <= 0) {
+        isInFirstSection = false
+      }
     }
 
-    // Expand navbar when near sections
-    const sections = document.querySelectorAll("section[id]")
-    let nearSection = false
+    // Hide header when not in first section, show dot nav
+    if (!isInFirstSection && !header.classList.contains("open")) {
+      header.classList.add("navbar-hidden")
+      if (dotNav) {
+        dotNav.classList.add("visible")
+      }
+    } else {
+      header.classList.remove("navbar-hidden")
+      if (dotNav) {
+        dotNav.classList.remove("visible")
+      }
+    }
 
+    // Update active nav link
+    const sections = document.querySelectorAll("section[id]")
     sections.forEach((section) => {
       const rect = section.getBoundingClientRect()
       if (rect.top <= 100 && rect.bottom >= 0) {
-        nearSection = true
-        // Update active nav link
         const sectionId = section.getAttribute("id")
         navLinks.forEach((link) => {
           const href = link.getAttribute("href")
@@ -327,12 +356,6 @@
         })
       }
     })
-
-    if (nearSection && !header.classList.contains("open")) {
-      header.classList.add("navbar-expanded")
-    } else if (!header.classList.contains("open")) {
-      header.classList.remove("navbar-expanded")
-    }
 
     lastScrollY = currentScrollY
   }
