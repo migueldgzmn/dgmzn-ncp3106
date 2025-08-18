@@ -627,6 +627,7 @@
     if (header.classList.contains("open")) closeMenu()
     else openMenu()
   }
+  navLinks.forEach(l=> l.addEventListener('click', ()=>{ if(window.innerWidth < 821) closeMenu() }))
 
   function handleScroll() {
     const currentScrollY = window.scrollY
