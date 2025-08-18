@@ -7,6 +7,8 @@
       <meta name="description" content="Apple-inspired creative agency portfolio" />
       <link rel="stylesheet" href="./assets/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+      <!-- Devicon (technology & tool logos) -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
     </head>
@@ -70,8 +72,15 @@
                     <p>Proficient in various programming languages and frameworks.</p>
                   </div>
                   <div class="feature-card-back">
-                    <h3>Python, Java, Kotlin, C, C++</h3>
-                    <p>Minimal Design puts your content first. Learn more about our approach!</p>
+                    <h3>Python, Java, Kotlin, C++, SQL</h3>
+                    <div class="skill-logos" aria-label="Software & Mobile Development technologies">
+                      <i class="devicon-python-plain colored" data-brand="Python" aria-label="Python"></i>
+                      <i class="devicon-java-plain colored" data-brand="Java" aria-label="Java"></i>
+                      <i class="devicon-kotlin-plain colored" data-brand="Kotlin" aria-label="Kotlin"></i>
+                      <i class="devicon-cplusplus-plain colored" data-brand="C++" aria-label="C Plus Plus"></i>
+                      <i class="devicon-mysql-plain colored" data-brand="MySQL" aria-label="My SQL"></i>
+                    </div>
+                    <div class="skill-hover-label" aria-live="polite"></div>
                   </div>
                 </div>
               </div>
@@ -82,21 +91,31 @@
                     <p>Skilled in building responsive and accessible websites.</p>
                   </div>
                   <div class="feature-card-back">
-                    <h3>Details</h3>
-                    <p>Flawless experiences across all devices and screen sizes.</p>
+                    <h3>HTML5, CSS3, JavaScript, Bootstrap</h3>
+                    <div class="skill-logos" aria-label="Web Development technologies">
+                      <i class="devicon-html5-plain colored" data-brand="HTML5" aria-label="HTML5"></i>
+                      <i class="devicon-css3-plain colored" data-brand="CSS3" aria-label="CSS3"></i>
+                      <i class="devicon-javascript-plain colored" data-brand="JavaScript" aria-label="JavaScript"></i>
+                      <i class="devicon-bootstrap-plain colored" data-brand="Bootstrap" aria-label="Bootstrap"></i>
+                    </div>
+                    <div class="skill-hover-label" aria-live="polite"></div>
                   </div>
                 </div>
               </div>
               <div class="feature-card" tabindex="0">
                 <div class="feature-card-inner">
                   <div class="feature-card-front">
-                    <div class="feature-emoji" aria-hidden="true">⚡</div>
                     <h3>Graphic Designing Tools</h3>
-                    <p>Lightning-quick load times for smooth user interactions.</p>
+                    <p>Proficient in using industry-standard design software.</p>
                   </div>
                   <div class="feature-card-back">
-                    <h3>Details</h3>
-                    <p>Experience blazing fast performance that keeps users engaged. Learn about our optimization techniques!</p>
+                    <h3>Photoshop, Canva, Figma</h3>
+                    <div class="skill-logos" aria-label="Design tools">
+                      <span class="ps-custom" data-brand="Photoshop" aria-label="Adobe Photoshop"><span class="ps-letter">P</span></span>
+                      <span class="skill-badge canva" data-brand="Canva" aria-label="Canva">Canva</span>
+                      <i class="devicon-figma-plain colored" data-brand="Figma" aria-label="Figma"></i>
+                    </div>
+                    <div class="skill-hover-label" aria-live="polite"></div>
                   </div>
                 </div>
               </div>
@@ -106,7 +125,6 @@
 
   <section id="timeline" class="section timeline" aria-label="Our Journey">
           <div class="container pop-in">
-            <!-- Particles background (OGL) -->
             <div class="timeline-particles" aria-hidden="true"></div>
             <div class="text-center">
               <h2>Educational Background</h2>
@@ -220,12 +238,14 @@
               <p class="sublead">A Showcase of My Projects.</p>
             </div>
             <div class="grid">
-              <!-- Project 1: Edit data attributes directly on this article -->
-              <article class="card" tabindex="0" 
-                      data-modal-title="10 Seconds Game &amp; Guessing Game"
-                      data-modal-tags="Python,Game,10 Seconds Game,Guessing Game" 
-                      data-modal-images="./assets/10sec.jpg;./assets/10soc.jpg;./assets/10game.jpg;./assets/10guess.jpg"
-                      data-modal-code="A collection of fun mini-games. Test your reflexes in the 10 Seconds Game by stopping the timer as close to 10 as possible, or challenge your logic in the Guessing Game by finding the hidden number within limited tries.">
+
+              <!-- GUESSING GAME -->
+        <article class="card" tabindex="0" 
+          data-modal-title="10 Seconds Game &amp; Guessing Game"
+          data-modal-tags="Python Tk, Canva, Collaborator: Joezer Cornita" 
+          data-modal-images="./assets/10sec.jpg;./assets/10soc.jpg;./assets/10game.jpg;./assets/10guess.jpg"
+          data-modal-github="https://github.com/migueldgzmn/10-Seconds-Game-Guessing-Game.git"
+          data-modal-code="A collection of fun mini-games. Test your reflexes in the 10 Seconds Game by stopping the timer as close to 10 as possible, or challenge your logic in the Guessing Game by finding the hidden number within limited tries.">
                 <div class="card-media">
                   <img src="./assets/10sec.jpg" alt="Minimalist Brand Identity project preview" />
                 </div>
@@ -235,13 +255,16 @@
                   <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
                 </div>
               </article>
-        <!-- Project 2 -->
-        <article class="card" tabindex="0" 
-                      data-modal-title="BIONOTE" 
-                      data-modal-desc="Html webpage that introduces a person" 
-                      data-modal-tags="Web,Design,JAVASCRIPT,HTML,CSS" 
-                      data-modal-images="./assets/bionote1.png;./assets/bionote2.png" 
-                      data-modal-code="A bionote in HTML is a short section of a webpage that introduces a person by highlighting their background, skills, and interests. It is often styled with HTML and CSS to make it visually appealing and serves as a quick personal introduction for portfolios, resumes, or academic pages.">
+
+              <!-- BIONOTE -->
+              
+  <article class="card" tabindex="0" 
+          data-modal-title="BIONOTE" 
+          data-modal-desc="Html webpage that introduces a person" 
+          data-modal-tags="Web,Design,JAVASCRIPT,HTML,CSS" 
+          data-modal-images="./assets/bionote1.png;./assets/bionote2.png" 
+          data-modal-github="https://github.com/migueldgzmn/bionote"
+          data-modal-code="A bionote in HTML is a short section of a webpage that introduces a person by highlighting their background, skills, and interests. It is often styled with HTML and CSS to make it visually appealing and serves as a quick personal introduction for portfolios, resumes, or academic pages.">
                 <div class="card-media">
                   <img src="./assets/bionote1.png" alt="Sleek Web Experience project preview" />
                 </div>
@@ -251,12 +274,15 @@
                   <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
                 </div>
               </article>
-        <!-- Project 3: add your own attributes -->
+
+              <!-- Hi-Low -->
+
   <article class="card" tabindex="0" data-img-pos="top" 
                       data-img-stretch data-modal-title="Hi-Low Game App" 
                       data-modal-desc="A number guessing game where players guess if the hidden number is higher or lower." 
-                      data-modal-tags="Mobile, Game, UI, Hi-Low" 
-                      data-modal-images="https://placehold.co/800x400/005/EEE?text=Onboarding|Onboarding;https://placehold.co/800x400/115/EEE?text=Feed|Feed Screen;https://placehold.co/800x400/225/EEE?text=Profile|Profile" 
+                      data-modal-tags="Kotlin, Android Studio, Hi-Low" 
+                      data-modal-images="./assets/hilow3.png;./assets/hilow2.png;./assets/hilow4.png;./assets/hilow5.png;./assets/hilow6.png" 
+                      data-modal-github="https://github.com/migueldgzmn/hi-low-game-app"
                       data-modal-code="// Pseudo navigation flow\\nconst stack = [];\\nfunction push(screen){ stack.push(screen) }">
                 <div class="card-media">
                   <img src="./assets/hilow1.png" alt="Intuitive Mobile App project preview" />
@@ -267,17 +293,26 @@
                   <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
                 </div>
               </article>
-        <article class="card" tabindex="0" data-modal-title="Elegant Digital Campaign" data-modal-desc="Targeted social campaign with A/B creative testing." data-modal-tags="Marketing,A/B Testing,Analytics" data-modal-images="https://placehold.co/800x400/550/EEE?text=Ad+Set+A|Ad Set A;https://placehold.co/800x400/770/EEE?text=Ad+Set+B|Ad Set B" data-modal-code="// CTR comparison\\nconst variantA=0.042;\\nconst variantB=0.057;\\nconsole.log('Lift', ((variantB-variantA)/variantA*100).toFixed(1)+'%')">
+
+              <!-- My Profile -->
+
+  <article class="card" tabindex="0" 
+                      data-modal-title="Get to Know Me App" 
+                      data-modal-desc="Targeted social campaign with A/B creative testing." 
+                      data-modal-tags="Marketing,A/B Testing,Analytics" 
+                      data-modal-images="./assets/aboutme1.png;./assets/aboutme2.png;./assets/aboutme3.png;./assets/aboutme4.png;./assets/aboutme5.png" 
+                      data-modal-github="https://github.com/migueldgzmn/elegant-digital-campaign" 
+                      data-modal-code="// CTR comparison\\nconst variantA=0.042;\\nconst variantB=0.057;\\nconsole.log('Lift', ((variantB-variantA)/variantA*100).toFixed(1)+'%')">
                 <div class="card-media">
-                  <img src="https://placehold.co/800x600?text=Elegant+Digital+Campaign" alt="Elegant Digital Campaign project preview" />
+                  <img src="./assets/aboutme6.png" alt="Elegant Digital Campaign project preview" />
                 </div>
                 <div class="card-body">
-                  <div class="tag">Digital Marketing</div>
-                  <h2>Elegant Digital Campaign</h2>
+                  <div class="tag">Mobile App</div>
+                  <h2>Get to Know Me App</h2>
                   <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
                 </div>
               </article>
-        <article class="card" tabindex="0" data-modal-title="Refined UI/UX Design" data-modal-desc="Systematic component library and design tokens for scalability." data-modal-tags="UI,UX,System,Components" data-modal-images="https://placehold.co/800x400/118/EEE?text=Components|Components;https://placehold.co/800x400/229/EEE?text=Tokens|Design Tokens" data-modal-code=":root\\n  --brand:#111;\\n  --radius:12px;">
+  <article class="card" tabindex="0" data-modal-title="Refined UI/UX Design" data-modal-desc="Systematic component library and design tokens for scalability." data-modal-tags="UI,UX,System,Components" data-modal-images="https://placehold.co/800x400/118/EEE?text=Components|Components;https://placehold.co/800x400/229/EEE?text=Tokens|Design Tokens" data-modal-github="https://github.com/migueldgzmn/refined-ui-ux-design" data-modal-code=":root\\n  --brand:#111;\\n  --radius:12px;">
                 <div class="card-media">
                   <img src="https://placehold.co/800x600?text=Refined+UI%2FUX+Design" alt="Refined UI/UX Design project preview" />
                 </div>
@@ -288,7 +323,7 @@
                 </div>
               </article>
         <!-- Project 6 -->
-        <article class="card" tabindex="0" data-modal-title="Minimalist Product Design" data-modal-desc="Physical product prototype emphasizing sustainable materials." data-modal-tags="Product,Industrial,Sustainability" data-modal-images="https://placehold.co/800x400/333/EEE?text=Render|3D Render;https://placehold.co/800x400/444/EEE?text=Exploded|Exploded View" data-modal-code="// Bill of materials (excerpt)\\nconst materials=['Recycled ABS','Bamboo'];">
+  <article class="card" tabindex="0" data-modal-title="Minimalist Product Design" data-modal-desc="Physical product prototype emphasizing sustainable materials." data-modal-tags="Product,Industrial,Sustainability" data-modal-images="https://placehold.co/800x400/333/EEE?text=Render|3D Render;https://placehold.co/800x400/444/EEE?text=Exploded|Exploded View" data-modal-github="https://github.com/migueldgzmn/minimalist-product-design" data-modal-code="// Bill of materials (excerpt)\\nconst materials=['Recycled ABS','Bamboo'];">
                 <div class="card-media">
                   <img src="https://placehold.co/800x600?text=Minimalist+Product+Design" alt="Minimalist Product Design project preview" />
                 </div>
@@ -431,7 +466,8 @@
   <!-- ScrambleText Plugin (if unavailable this will fail silently and fallback logic runs) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrambleTextPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- OGL (lightweight WebGL library) via CDN since npm unavailable -->
-  <script src="https://cdn.jsdelivr.net/npm/ogl@1.0.5/dist/ogl.min.js" integrity="sha256-qu3YPqOzumZn5d+akUd5ahKfns4SUU2vdo2fXOXxjWM=" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- OGL (removed integrity to avoid SRI mismatch blocking) -->
+  <script src="https://cdn.jsdelivr.net/npm/ogl@1.0.5/dist/ogl.min.js"></script>
   <script src="./assets/script.js" defer></script>
     </body>
   </html>

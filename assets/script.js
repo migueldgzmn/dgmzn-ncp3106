@@ -180,100 +180,128 @@
     })
   })
 
-  // OGL Particles in Timeline (vanilla adaptation) ---------------------------------------------
+  // OGL Particles (robust loader + single fallback) ---------------------------------------------
   ;(()=>{
     const holder = document.querySelector('#timeline .timeline-particles')
-  // OGL UMD global can be window.OGL (common) or window.ogl depending on bundle
-  if (!holder) return
-  const O = window.OGL || window.ogl
-  if (!O) { console.warn('OGL library not found (expected window.OGL).'); return }
-    try {
-  const { Renderer, Camera, Geometry, Program, Mesh } = O
-      const renderer = new Renderer({ dpr: Math.min(2, window.devicePixelRatio||1), antialias:false, alpha:true })
-      const gl = renderer.gl
-      holder.appendChild(gl.canvas)
-      gl.clearColor(0,0,0,0)
-      const camera = new Camera(gl, { fov: 18 })
-      camera.position.set(0,0,20)
-      function resize(){
-        const w = holder.clientWidth
-        const h = holder.clientHeight
-        renderer.setSize(w,h)
-        camera.perspective({ aspect: w / h })
+    if(!holder) return
+    // Prevent duplicate init
+    if(holder._oglInitAttempted) return
+    holder._oglInitAttempted = true
+
+    function webglSupported(){
+      try {
+        const c=document.createElement('canvas')
+        return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')))
+      } catch(_) { return false }
+    }
+
+    if(!webglSupported()) {
+      applyParticleFallback(holder, 'WebGL not supported')
+      return
+    }
+
+    let retries = 0
+    function tryInit(){
+      const O = window.OGL || window.ogl
+      if(!O){
+        if(retries < 10){
+          retries++
+          return setTimeout(tryInit, 120) // wait for CDN script populate
+        }
+        applyParticleFallback(holder, 'OGL global missing after retries')
+        return
       }
-      window.addEventListener('resize', resize)
-      resize()
-      const particleCount = 260
-  const positions = new Float32Array(particleCount*3)
-  const randoms = new Float32Array(particleCount*4)
-  const colors = new Float32Array(particleCount*3)
-  // Palette FIX: previous edit introduced an undefined variable 'black'. Using vivid test colors so you can SEE them.
-  const palette = ['#ff3366','#00c8ff','#ffd000','#111111']
-  console.log('[Particles] Using palette', palette)
-      function hexToRgbF(hex){hex=hex.replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); const int=parseInt(hex,16); return [((int>>16)&255)/255,((int>>8)&255)/255,(int&255)/255] }
-      for(let i=0;i<particleCount;i++){
-        let x,y,z,len
-        do{ x=Math.random()*2-1; y=Math.random()*2-1; z=Math.random()*2-1; len=x*x+y*y+z*z }while(len>1||len===0)
-        const r = Math.cbrt(Math.random())
-        positions.set([x*r, y*r, z*r], i*3)
-        randoms.set([Math.random(),Math.random(),Math.random(),Math.random()], i*4)
-        const col = hexToRgbF(palette[Math.floor(Math.random()*palette.length)])
-        colors.set(col, i*3)
-      }
-  const vertex = `attribute vec3 position;attribute vec4 random;attribute vec3 color;uniform mat4 modelMatrix;uniform mat4 viewMatrix;uniform mat4 projectionMatrix;uniform float uTime;uniform float uSpread;uniform float uBaseSize;uniform float uSizeRandomness;varying vec4 vRandom;varying vec3 vColor;void main(){vRandom=random;vColor=color;vec3 pos=position*uSpread; // keep in shallow z so it's visible
-vec4 mPos=modelMatrix*vec4(pos,1.0);float t=uTime;float wig=sin(t*0.6+random.x*6.28318)*0.6; mPos.x+=sin(t*random.z+6.28318*random.w)*mix(0.05,0.9,random.x);mPos.y+=sin(t*random.y+6.28318*random.x)*mix(0.05,0.9,random.w)+wig*0.08;mPos.z+=sin(t*random.w+6.28318*random.y)*mix(0.05,0.9,random.z)*0.2;vec4 mvPos=viewMatrix*mPos;float dist=length(mvPos.xyz);gl_PointSize=(uBaseSize*(1.0+uSizeRandomness*(random.x-0.5)))/dist;gl_Position=projectionMatrix*mvPos;}`
-  const fragment = `precision highp float;uniform float uTime;uniform float uAlphaParticles;uniform float uAlphaScale;varying vec4 vRandom;varying vec3 vColor;void main(){vec2 uv=gl_PointCoord.xy;float d=length(uv-vec2(0.5));if(uAlphaParticles<0.5){if(d>0.5){discard;}gl_FragColor=vec4(vColor + 0.15*sin(vec3(uv.yx,uv.y)+uTime+vRandom.y*6.28318), uAlphaScale);}else{float circle=smoothstep(0.5,0.4,d)*0.85;gl_FragColor=vec4(vColor + 0.15*sin(vec3(uv.yx,uv.y)+uTime+vRandom.y*6.28318), circle * uAlphaScale);}}`
-      const geometry = new Geometry(gl,{ position:{ size:3, data:positions }, random:{ size:4, data:randoms }, color:{ size:3, data:colors } })
-  const program = new Program(gl,{ vertex, fragment, uniforms:{ uTime:{ value:0 }, uSpread:{ value:6 }, uBaseSize:{ value:600 }, uSizeRandomness:{ value:1.1 }, uAlphaParticles:{ value:1 }, uAlphaScale:{ value:0.95 } }, transparent:true, depthTest:false })
-  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-      const particles = new Mesh(gl,{ mode: gl.POINTS, geometry, program })
-      let last=performance.now(), elapsed=0
-      function loop(t){
+      try {
+        const { Renderer, Camera, Geometry, Program, Mesh } = O
+        const renderer = new Renderer({ dpr: Math.min(2, window.devicePixelRatio||1), antialias:false, alpha:true })
+        const gl = renderer.gl
+        holder.appendChild(gl.canvas)
+        gl.clearColor(0,0,0,0)
+        const camera = new Camera(gl, { fov: 18 })
+        camera.position.set(0,0,20)
+        function resize(){
+          const w = holder.clientWidth || holder.offsetWidth || 600
+          const h = holder.clientHeight || holder.offsetHeight || 400
+          if(h === 0){ // hidden? retry later
+            return setTimeout(resize, 200)
+          }
+            renderer.setSize(w,h)
+            camera.perspective({ aspect: w / h })
+        }
+        window.addEventListener('resize', resize)
+        resize()
+  const particleCount = 1500 // much higher density for fuller field
+        const positions = new Float32Array(particleCount*3)
+        const randoms = new Float32Array(particleCount*4)
+        const colors = new Float32Array(particleCount*3)
+  const palette = ['#040608','#080c10','#0c1116','#11181f','#162028'] // deeper darker gradient
+        function hexToRgbF(hex){hex=hex.replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); const int=parseInt(hex,16); return [((int>>16)&255)/255,((int>>8)&255)/255,(int&255)/255] }
+        for(let i=0;i<particleCount;i++){
+          let x,y,z,len
+          do{ x=Math.random()*2-1; y=Math.random()*2-1; z=Math.random()*2-1; len=x*x+y*y+z*z }while(len>1||len===0)
+          const r = Math.cbrt(Math.random())
+          positions.set([x*r, y*r, z*r], i*3)
+          randoms.set([Math.random(),Math.random(),Math.random(),Math.random()], i*4)
+          const col = hexToRgbF(palette[Math.floor(Math.random()*palette.length)])
+          colors.set(col, i*3)
+        }
+        const vertex = `attribute vec3 position;attribute vec4 random;attribute vec3 color;uniform mat4 modelMatrix;uniform mat4 viewMatrix;uniform mat4 projectionMatrix;uniform float uTime;uniform float uSpread;uniform float uBaseSize;uniform float uSizeRandomness;varying vec4 vRandom;varying vec3 vColor;void main(){vRandom=random;vColor=color;vec3 pos=position*uSpread;vec4 mPos=modelMatrix*vec4(pos,1.0);float t=uTime; mPos.x+=sin(t*random.z+random.w*6.28318)*0.4; mPos.y+=sin(t*random.y+random.x*6.28318)*0.4; mPos.z+=sin(t*random.w+random.y*6.28318)*0.25; vec4 mvPos=viewMatrix*mPos;float dist=max(0.1,length(mvPos.xyz)); gl_PointSize=(uBaseSize*(1.0+uSizeRandomness*(random.x-0.5)))/dist; gl_Position=projectionMatrix*mvPos;}`
+  const fragment = `precision highp float; uniform float uTime; uniform float uAlphaScale; varying vec4 vRandom; varying vec3 vColor; void main(){ vec2 uv=gl_PointCoord.xy; float d=length(uv-0.5); float core=smoothstep(0.32,0.0,d); float rim=smoothstep(0.9,0.38,d); float alpha=core*rim; float flicker = 0.01*sin(uTime*1.05 + dot(vRandom.xyz, vec3(7.3))); vec3 base = (vColor*0.45 + 0.04); gl_FragColor = vec4(base + flicker, alpha * (uAlphaScale*0.70)); }`
+        const geometry = new Geometry(gl,{ position:{ size:3, data:positions }, random:{ size:4, data:randoms }, color:{ size:3, data:colors } })
+  const program = new Program(gl,{ vertex, fragment, uniforms:{ uTime:{ value:0 }, uSpread:{ value:5.4 }, uBaseSize:{ value:1000 }, uSizeRandomness:{ value:1.4 }, uAlphaScale:{ value:1.15 } }, transparent:true, depthTest:false })
+        gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+        const particles = new Mesh(gl,{ mode: gl.POINTS, geometry, program })
+        let last=performance.now(), elapsed=0
+        function loop(t){
+          requestAnimationFrame(loop)
+          const dt = t-last; last=t; elapsed += dt*0.1
+          program.uniforms.uTime.value = (elapsed*0.001)
+          particles.rotation.y += 0.00035*dt
+          renderer.render({ scene: particles, camera })
+        }
         requestAnimationFrame(loop)
-        const dt = t-last; last=t; elapsed += dt*0.1
-        program.uniforms.uTime.value = elapsed*0.001
-        particles.rotation.x = 0.0
-        particles.rotation.y += 0.0004*dt
-        particles.rotation.z = 0.0
-        renderer.render({ scene: particles, camera })
+        console.info('[Particles] WebGL initialized')
+      } catch(err){
+        console.warn('[Particles] init error -> fallback', err)
+        applyParticleFallback(holder, 'Init threw')
       }
-  requestAnimationFrame(loop)
-  console.log('[Particles] Initialized', { count: particleCount })
-    } catch(e){ console.warn('OGL particles failed', e) }
+    }
+
+    function applyParticleFallback(holder, reason){
+      if(holder._fallbackApplied) return
+      holder._fallbackApplied = true
+      for(let i=0;i<50;i++){
+        const dot=document.createElement('div')
+        dot.style.position='absolute'
+        const s = Math.random()*3+2
+        dot.style.width=dot.style.height=s+'px'
+        dot.style.left=(Math.random()*100)+'%'
+        dot.style.top=(Math.random()*100)+'%'
+        dot.style.background='#222'
+        dot.style.borderRadius='50%'
+        dot.style.opacity='0.65'
+        const dur=(Math.random()*8+6).toFixed(2)
+        const delay=(Math.random()*-dur).toFixed(2)
+        dot.style.animation=`pfade ${dur}s linear ${delay}s infinite`
+        holder.appendChild(dot)
+      }
+      if(!document.getElementById('particle-fallback-style')){
+        const style=document.createElement('style')
+        style.id='particle-fallback-style'
+        style.textContent='@keyframes pfade{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-18px) scale(.6);opacity:.35}}'
+        document.head.appendChild(style)
+      }
+      console.warn('[Particles] Fallback applied ('+reason+')')
+    }
+
+    // Kick off
+    tryInit()
+    // Safety: if still no canvas after 3s -> fallback
+    setTimeout(()=>{
+      if(!holder.querySelector('canvas')) applyParticleFallback(holder,'Timeout waiting for canvas')
+    },3000)
   })()
 
-  // Simple fallback if WebGL particles not visible after 1s (adds CSS dots)
-  setTimeout(()=>{
-    const holder = document.querySelector('#timeline .timeline-particles')
-    if (!holder) return
-    const hasCanvas = holder.querySelector('canvas')
-    if (hasCanvas && hasCanvas.width>0 && hasCanvas.height>0) return
-    if (holder._fallbackApplied) return
-    holder._fallbackApplied = true
-    holder.style.position='absolute'
-    for(let i=0;i<60;i++){
-      const dot=document.createElement('div')
-      dot.style.position='absolute'
-      dot.style.width=dot.style.height=Math.round(Math.random()*4+3)+'px'
-      dot.style.left=(Math.random()*100)+'%'
-      dot.style.top=(Math.random()*100)+'%'
-      dot.style.background=['#000000ff','#000000ff','#000000ff','#111'][i%4]
-      dot.style.borderRadius='50%'
-      dot.style.opacity='0.85'
-      dot.style.filter='blur(0.5px)'
-      const dur = (Math.random()*6+6).toFixed(2)
-      const delay = (Math.random()*-dur).toFixed(2)
-      dot.style.animation=`pfade ${dur}s linear ${delay}s infinite`
-      holder.appendChild(dot)
-    }
-    if(!document.getElementById('particle-fallback-style')){
-      const style=document.createElement('style')
-      style.id='particle-fallback-style'
-      style.textContent='@keyframes pfade{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(0.6);opacity:.4}}'
-      document.head.appendChild(style)
-    }
-    console.warn('Fallback particles applied (WebGL not detected).')
-  },1000)
   // ----------------------------------------------------------------------------------------------
 
   // Contact form validation and status
@@ -537,6 +565,36 @@ vec4 mPos=modelMatrix*vec4(pos,1.0);float t=uTime;float wig=sin(t*0.6+random.x*6
     gatedMeasure()
   }
 })()
+
+// ===== Feature card skill hover label (bottom text) =====
+;(function(){
+  const cards = document.querySelectorAll('.feature-card .feature-card-back')
+  if(!cards.length) return
+  cards.forEach(back=>{
+    const label = back.querySelector('.skill-hover-label')
+    if(!label) return
+    const skills = back.querySelectorAll('.skill-badge, .skill-logos > i, .skill-logos > span')
+    skills.forEach(el=>{
+      el.addEventListener('mouseenter',()=>{
+        const name = el.getAttribute('data-brand') || el.getAttribute('title') || el.getAttribute('aria-label') || ''
+        if(!name) return
+        label.textContent = name
+        label.classList.add('visible')
+      })
+      el.addEventListener('focus',()=>{
+        const name = el.getAttribute('data-brand') || el.getAttribute('title') || el.getAttribute('aria-label') || ''
+        if(!name) return
+        label.textContent = name
+        label.classList.add('visible')
+      })
+      el.addEventListener('mouseleave',()=>{
+        // Only hide if leaving to outside the skill group (not moving between icons fast)
+        label.classList.remove('visible')
+      })
+      el.addEventListener('blur',()=>{ label.classList.remove('visible') })
+    })
+  })
+})()
 ;(() => {
   const header = document.querySelector(".site-header")
   if (!header) return
@@ -718,9 +776,10 @@ function showModal(linkEl) {
     const tags = tagsAttr.split(',').map(t=>t.trim()).filter(Boolean).slice(0,12)
     // Images (and optional captions) defined as: src|Caption;src2|Caption2
     const imagesAttr = getAttr('data-modal-images') || ''
-    const slides = imagesAttr.split(';').map(s=>s.trim()).filter(Boolean).map((s,i)=>{
+    const slides = imagesAttr.split(';').map(s=>s.trim()).filter(Boolean).map((s)=>{
       const [srcPart, capPart] = s.split('|')
-      return { src: (srcPart||'').trim(), cap: (capPart||`Slide ${i+1}`).trim() }
+      // Remove automatic numbering: if no caption provided leave blank
+      return { src: (srcPart||'').trim(), cap: (capPart||'').trim() }
     })
     // Code sample: allow inline attribute with \n for newlines
     const codeAttr = getAttr('data-modal-code') || ''
@@ -733,15 +792,15 @@ function showModal(linkEl) {
       let slidesHtml = ''
       if (slides.length) {
         slidesHtml = slides.map((sl,i)=> {
-          const imgTag = sl.src ? `<img src="${esc(sl.src)}" class="d-block w-100" alt="${esc(sl.cap)}"/>` : `<div class='d-block w-100' style='height:320px;background:#333;display:flex;align-items:center;justify-content:center;color:#999;font-size:28px;'>${esc(sl.cap)}</div>`
+          const altText = sl.cap || customTitle || 'Slide'
+          const imgTag = sl.src ? `<img src="${esc(sl.src)}" class="d-block w-100" alt="${esc(altText)}"/>` : `<div class='d-block w-100' style='height:320px;background:#333;display:flex;align-items:center;justify-content:center;color:#999;font-size:28px;'></div>`
           const captionHtml = sl.cap ? `<div class="carousel-caption d-none d-md-block"><p>${esc(sl.cap)}</p></div>` : ''
           return `<div class="carousel-item ${i===0?'active':''}">${imgTag}${captionHtml}</div>`
         }).join('')
       } else {
-        // Fallback placeholder slides if none provided
-        slidesHtml = ['#666|Slide A','#777|Slide B','#555|Slide C'].map((c,i)=>{
-          const [clr,cap]=c.split('|')
-          return `<div class="carousel-item ${i===0?'active':''}"><div class='d-block w-100' style='height:320px;background:${esc(clr)};display:flex;align-items:center;justify-content:center;color:#222;font-size:32px;'>${esc(cap)}</div></div>`
+        // Fallback placeholder slides (no numbering/captions)
+        slidesHtml = ['#666666','#777777','#ffffff'].map((clr,i)=>{
+          return `<div class="carousel-item ${i===0?'active':''}"><div class='d-block w-100' style='height:320px;background:${esc(clr)};display:flex;align-items:center;justify-content:center;color:#222;font-size:32px;'></div></div>`
         }).join('')
       }
       const carouselHtml = `<div id="${carouselId}" class="carousel slide" data-bs-theme="dark"><div class="carousel-inner">${slidesHtml}</div><button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button><button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span></button></div>`
@@ -754,21 +813,47 @@ function showModal(linkEl) {
         codeHtml = `<div class="modal-mac-code"><pre><code>${esc(defaultCode)}</code></pre></div>`
       }
       const githubLink = getAttr('data-modal-github') || 'https://github.com/migueldgzmn'
-      container.innerHTML = `
-        <div class="modal-mac-header">
-          <span class="red" role="button" aria-label="Close modal"></span><span class="yellow"></span><span class="green"></span>
-        </div>
-        <h2 class="modal-mac-title">${esc(customTitle)}</h2>
-        <p class="modal-mac-desc">${esc(customDesc)}</p>
-        <div class="modal-mac-tags">${tagsHtml}</div>
-        <div class="modal-mac-body">${carouselHtml}</div>
-        ${codeHtml}
-        <div class="modal-mac-footer">
-          <a class="modal-mac-github" href="${esc(githubLink)}" target="_blank" rel="noopener" aria-label="GitHub Link">
-            <i class="fa-brands fa-github" aria-hidden="true"></i>
-            <span>GitHub</span>
-          </a>
-        </div>`
+      const isSplitLayout = /(get to know|hi-low game app)/i.test(customTitle)
+      if(isSplitLayout){
+        container.innerHTML = `
+          <div class="modal-mac-header">
+            <span class="red" role="button" aria-label="Close modal"></span><span class="yellow"></span><span class="green"></span>
+          </div>
+          <div class="gtkm-split">
+            <div class="gtkm-left">${carouselHtml}</div>
+            <div class="gtkm-right">
+              <h2 class="modal-mac-title" style="margin-top:0;">${esc(customTitle)}</h2>
+              <p class="modal-mac-desc" style="max-width:520px;">${esc(customDesc)}</p>
+              <div class="modal-mac-tags" style="margin-top:12px;">${tagsHtml}</div>
+              ${codeHtml}
+              <div class="modal-mac-footer" style="justify-content:flex-end; gap:12px; margin-top:18px;">
+                <a class="modal-mac-github" href="${esc(githubLink)}" target="_blank" rel="noopener" aria-label="GitHub Link">
+                  <i class="fa-brands fa-github" aria-hidden="true"></i>
+                  <span>GitHub</span>
+                </a>
+              </div>
+            </div>
+          </div>`
+        if(!document.getElementById('gtkm-style')){
+          const st=document.createElement('style'); st.id='gtkm-style'; st.textContent=`.link-modal-content .gtkm-split{display:flex;align-items:center;gap:54px;min-height:460px;} .link-modal-content .gtkm-left{flex:0 0 300px;} .link-modal-content .gtkm-left .carousel{width:300px;} .link-modal-content .gtkm-right{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0;} .link-modal-content .gtkm-right .modal-mac-title{margin-top:0;} @media (max-width:900px){ .link-modal-content .gtkm-split{flex-direction:column;align-items:flex-start;gap:28px;} .link-modal-content .gtkm-right{justify-content:flex-start;} .link-modal-content .gtkm-left{flex:none;} .link-modal-content .gtkm-left .carousel{width:100%;} }`; document.head.appendChild(st)
+        }
+      } else {
+        container.innerHTML = `
+          <div class="modal-mac-header">
+            <span class="red" role="button" aria-label="Close modal"></span><span class="yellow"></span><span class="green"></span>
+          </div>
+          <h2 class="modal-mac-title">${esc(customTitle)}</h2>
+          <p class="modal-mac-desc">${esc(customDesc)}</p>
+          <div class="modal-mac-tags">${tagsHtml}</div>
+          <div class="modal-mac-body">${carouselHtml}</div>
+          ${codeHtml}
+          <div class="modal-mac-footer">
+            <a class="modal-mac-github" href="${esc(githubLink)}" target="_blank" rel="noopener" aria-label="GitHub Link">
+              <i class="fa-brands fa-github" aria-hidden="true"></i>
+              <span>GitHub</span>
+            </a>
+          </div>`
+      }
       const redDot = container.querySelector('.modal-mac-header .red')
       if (redDot) {
         redDot.addEventListener('click', closeMainModal)
@@ -1262,3 +1347,62 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 // (Custom cursor removed – reverted per user request)
+
+// ===== Inertia Smooth Scrolling (wheel smoothing) =====
+;(()=>{
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const finePointer = window.matchMedia('(pointer:fine)').matches
+  if(prefersReduced || !finePointer) return // respect user settings / touch devices
+  let target = window.scrollY
+  let current = window.scrollY
+  let raf = 0
+  const ease = 0.12
+  const maxStep = 140 // clamp single wheel step
+  function clamp(v,min,max){ return v<min?min:(v>max?max:v) }
+  function getMaxScroll(){ return document.documentElement.scrollHeight - window.innerHeight }
+  function loop(){
+    const diff = target - current
+    if (Math.abs(diff) < 0.3){ current = target; raf = 0; return }
+    current += diff * ease
+    window.scrollTo(0, current)
+    raf = requestAnimationFrame(loop)
+  }
+  function requestLoop(){ if(!raf) raf = requestAnimationFrame(loop) }
+  window.addEventListener('wheel', (e)=>{
+    if(e.ctrlKey) return // let zoom gestures pass
+    e.preventDefault()
+    const maxScroll = getMaxScroll()
+    // Normalize delta (some devices give large values)
+    let delta = e.deltaY
+    delta = clamp(delta, -maxStep, maxStep)
+    target = clamp(target + delta, 0, maxScroll)
+    requestLoop()
+  }, { passive:false })
+  // Sync if user scrolls via scrollbar / programmatic
+  window.addEventListener('scroll', ()=>{
+    if(!raf){ current = target = window.scrollY }
+  }, { passive:true })
+  // Keyboard navigation support (PageUp/Down, Space, Arrows, Home/End)
+  window.addEventListener('keydown', (e)=>{
+    const maxScroll = getMaxScroll()
+    const vh = window.innerHeight
+    let used = true
+    switch(e.key){
+      case 'ArrowDown': target += 60; break
+      case 'ArrowUp': target -= 60; break
+      case 'PageDown': target += vh * 0.85; break
+      case 'PageUp': target -= vh * 0.85; break
+      case 'Home': target = 0; break
+      case 'End': target = maxScroll; break
+      case ' ': // space scrolls down (shift+space up)
+        target += (e.shiftKey ? -1 : 1) * vh * 0.9; break
+      default: used = false
+    }
+    if(used){
+      e.preventDefault()
+      target = clamp(target, 0, maxScroll)
+      requestLoop()
+    }
+  })
+  console.info('[SmoothScroll] inertia scrolling enabled')
+})()
