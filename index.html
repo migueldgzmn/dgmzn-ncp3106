@@ -6,26 +6,26 @@
       <title>Portfolio</title>
       <meta name="description" content="Apple-inspired creative agency portfolio" />
       <link rel="stylesheet" href="./assets/styles.css" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <body>
       <!-- Added collapsible navbar header -->
       <header class="site-header" role="banner">
         <div class="container">
-          <nav class="header-nav" role="navigation" aria-label="Main Navigation">
-            <a href="#hero" class="site-logo highlight">Miguel De Guzman</a>
+          <nav class="header-nav no-logo" role="navigation" aria-label="Main Navigation">
             <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation">
               <span class="nav-toggle-bar"></span>
               <span class="nav-toggle-bar"></span>
               <span class="nav-toggle-bar"></span>
             </button>
-            <div class="header-links" id="primary-nav">
+            <div class="header-links centered" id="primary-nav">
               <a href="#hero" class="highlight">Home</a>
               <a href="#about" class="highlight">About</a>
               <a href="#features" class="highlight">Expertise</a>
-              <a href="#work" class="highlight">Work</a>
-              <a href="#timeline" class="highlight">Background</a>
+              <a href="#timeline" class="highlight">Education</a>
+              <a href="#work" class="highlight">Project</a>
               <a href="#contact" class="highlight">Contact</a>
             </div>
           </nav>
@@ -55,23 +55,22 @@
                 I’m Miguel De Guzman, a third-year Computer Engineering student at the University of the East. With a strong passion for technology, coding, and innovation, I’m continuously building my skills and exploring projects that challenge me to grow as an engineer.
               </p>
             </div>
-            <!-- Add your about content here -->
+
           </div>
         </section>
 
         <section id="features" class="section features" aria-label="Why Choose Us">
-          <div class="container pop-in"><h1 class="text-center" style="margin-bottom: 32px;">My Expertise</h1></div>
+          <div class="container pop-in"><h1 class="text-center" style="margin-bottom: 32px; text-decoration: bold;">My Expertise</h1></div>
           <div class="container pop-in">
             <div class="feature-track" role="list">
               <div class="feature-card" tabindex="0">
                 <div class="feature-card-inner">
                   <div class="feature-card-front">
-                    <div class="feature-emoji" aria-hidden="true">✨</div>
-                    <h3>Minimal Design</h3>
-                    <p>Clean aesthetics that put your content in the spotlight.</p>
+                    <h3>Software &amp; Mobile Development </h3>
+                    <p>Proficient in various programming languages and frameworks.</p>
                   </div>
                   <div class="feature-card-back">
-                    <h3>Details</h3>
+                    <h3>Python, Java, Kotlin, C, C++</h3>
                     <p>Minimal Design puts your content first. Learn more about our approach!</p>
                   </div>
                 </div>
@@ -79,9 +78,8 @@
               <div class="feature-card" tabindex="0">
                 <div class="feature-card-inner">
                   <div class="feature-card-front">
-                    <div class="feature-emoji" aria-hidden="true">📱</div>
-                    <h3>Flawless experiences across all devices and screen sizes.</h3>
-                    <p>Our responsive designs ensure a seamless experience on any device. Discover the benefits of mobile-first design!</p>
+                    <h3>Web Development</h3>
+                    <p>Skilled in building responsive and accessible websites.</p>
                   </div>
                   <div class="feature-card-back">
                     <h3>Details</h3>
@@ -93,7 +91,7 @@
                 <div class="feature-card-inner">
                   <div class="feature-card-front">
                     <div class="feature-emoji" aria-hidden="true">⚡</div>
-                    <h3>Fast Performance</h3>
+                    <h3>Graphic Designing Tools</h3>
                     <p>Lightning-quick load times for smooth user interactions.</p>
                   </div>
                   <div class="feature-card-back">
@@ -106,79 +104,10 @@
           </div>
         </section>
 
-        <section id="work" class="section work" aria-label="Our Work">
+  <section id="timeline" class="section timeline" aria-label="Our Journey">
           <div class="container pop-in">
-            <div class="text-center">
-              <h2>Our Work</h2>
-              <p class="sublead">A showcase of our minimalist designs and creative solutions.</p>
-            </div>
-            <div class="grid">
-              <article class="card">
-                <div class="card-media">
-                  <img src="./assets/10sec.jpg" alt="Minimalist Brand Identity project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">Python Game</div>
-                  <h3>10 Seconds Game</h3>
-                  <a class="learn highlight" href="https://www.flowersandsaints.com.au" target="_blank" rel="noopener noreferrer">View Project →</a>
-                </div>
-              </article>
-              <article class="card">
-                <div class="card-media">
-                  <img src="https://placehold.co/800x600?text=Sleek+Web+Experience" alt="Sleek Web Experience project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">Web Design</div>
-                  <h3>Sleek Web Experience</h3>
-                  <a class="learn highlight" href="https://www.flowersandsaints.com.au" target="_blank" rel="noopener noreferrer">View Project →</a>
-                </div>
-              </article>
-              <article class="card">
-                <div class="card-media">
-                  <img src="https://placehold.co/800x600?text=Intuitive+Mobile+App" alt="Intuitive Mobile App project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">Mobile App</div>
-                  <h3>Intuitive Mobile App</h3>
-                  <a class="learn highlight" href="https://www.flowersandsaints.com.au" target="_blank" rel="noopener noreferrer">View Project →</a>
-                </div>
-              </article>
-              <article class="card">
-                <div class="card-media">
-                  <img src="https://placehold.co/800x600?text=Elegant+Digital+Campaign" alt="Elegant Digital Campaign project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">Digital Marketing</div>
-                  <h3>Elegant Digital Campaign</h3>
-                  <a class="learn highlight" href="https://www.flowersandsaints.com.au" target="_blank" rel="noopener noreferrer">View Project →</a>
-                </div>
-              </article>
-              <article class="card">
-                <div class="card-media">
-                  <img src="https://placehold.co/800x600?text=Refined+UI%2FUX+Design" alt="Refined UI/UX Design project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">UI/UX</div>
-                  <h3>Refined UI/UX Design</h3>
-                  <a class="learn highlight" href="https://www.flowersandsaints.com.au" target="_blank" rel="noopener noreferrer">View Project →</a>
-                </div>
-              </article>
-              <article class="card">
-                <div class="card-media">
-                  <img src="https://placehold.co/800x600?text=Minimalist+Product+Design" alt="Minimalist Product Design project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">Product Design</div>
-                  <h3>Minimalist Product Design</h3>
-                  <a class="learn highlight" href="https://www.flowersandsaints.com.au" target="_blank" rel="noopener noreferrer">View Project →</a>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section id="timeline" class="section timeline" aria-label="Our Journey">
-          <div class="container pop-in">
+            <!-- Particles background (OGL) -->
+            <div class="timeline-particles" aria-hidden="true"></div>
             <div class="text-center">
               <h2>Educational Background</h2>
               <p class="sublead">The evolution of Miguel De Guzman through the years</p>
@@ -284,6 +213,95 @@
           </div>
         </section>
 
+        <section id="work" class="section work" aria-label="My Work">
+          <div class="container pop-in">
+            <div class="text-center">
+              <h1 class="projects-title text-block" id="projects-title">My Projects</h1>
+              <p class="sublead">A Showcase of My Projects.</p>
+            </div>
+            <div class="grid">
+              <!-- Project 1: Edit data attributes directly on this article -->
+              <article class="card" tabindex="0" 
+                      data-modal-title="10 Seconds Game &amp; Guessing Game"
+                      data-modal-tags="Python,Game,10 Seconds Game,Guessing Game" 
+                      data-modal-images="./assets/10sec.jpg;./assets/10soc.jpg;./assets/10game.jpg;./assets/10guess.jpg"
+                      data-modal-code="A collection of fun mini-games. Test your reflexes in the 10 Seconds Game by stopping the timer as close to 10 as possible, or challenge your logic in the Guessing Game by finding the hidden number within limited tries.">
+                <div class="card-media">
+                  <img src="./assets/10sec.jpg" alt="Minimalist Brand Identity project preview" />
+                </div>
+                <div class="card-body">
+                  <div class="tag">Python Game</div>
+                  <h2>10 Seconds Game &amp; Guessing Game</h2>
+                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
+                </div>
+              </article>
+        <!-- Project 2 -->
+        <article class="card" tabindex="0" 
+                      data-modal-title="BIONOTE" 
+                      data-modal-desc="Html webpage that introduces a person" 
+                      data-modal-tags="Web,Design,JAVASCRIPT,HTML,CSS" 
+                      data-modal-images="./assets/bionote1.png;./assets/bionote2.png" 
+                      data-modal-code="A bionote in HTML is a short section of a webpage that introduces a person by highlighting their background, skills, and interests. It is often styled with HTML and CSS to make it visually appealing and serves as a quick personal introduction for portfolios, resumes, or academic pages.">
+                <div class="card-media">
+                  <img src="./assets/bionote1.png" alt="Sleek Web Experience project preview" />
+                </div>
+                <div class="card-body">
+                  <div class="tag">Html</div>
+                  <h2>Bionote</h2>
+                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
+                </div>
+              </article>
+        <!-- Project 3: add your own attributes -->
+  <article class="card" tabindex="0" data-img-pos="top" 
+                      data-img-stretch data-modal-title="Hi-Low Game App" 
+                      data-modal-desc="A number guessing game where players guess if the hidden number is higher or lower." 
+                      data-modal-tags="Mobile, Game, UI, Hi-Low" 
+                      data-modal-images="https://placehold.co/800x400/005/EEE?text=Onboarding|Onboarding;https://placehold.co/800x400/115/EEE?text=Feed|Feed Screen;https://placehold.co/800x400/225/EEE?text=Profile|Profile" 
+                      data-modal-code="// Pseudo navigation flow\\nconst stack = [];\\nfunction push(screen){ stack.push(screen) }">
+                <div class="card-media">
+                  <img src="./assets/hilow1.png" alt="Intuitive Mobile App project preview" />
+                </div>
+                <div class="card-body">
+                  <div class="tag">Mobile App</div>
+                  <h2>Hi-Low Game App</h2>
+                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
+                </div>
+              </article>
+        <article class="card" tabindex="0" data-modal-title="Elegant Digital Campaign" data-modal-desc="Targeted social campaign with A/B creative testing." data-modal-tags="Marketing,A/B Testing,Analytics" data-modal-images="https://placehold.co/800x400/550/EEE?text=Ad+Set+A|Ad Set A;https://placehold.co/800x400/770/EEE?text=Ad+Set+B|Ad Set B" data-modal-code="// CTR comparison\\nconst variantA=0.042;\\nconst variantB=0.057;\\nconsole.log('Lift', ((variantB-variantA)/variantA*100).toFixed(1)+'%')">
+                <div class="card-media">
+                  <img src="https://placehold.co/800x600?text=Elegant+Digital+Campaign" alt="Elegant Digital Campaign project preview" />
+                </div>
+                <div class="card-body">
+                  <div class="tag">Digital Marketing</div>
+                  <h2>Elegant Digital Campaign</h2>
+                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
+                </div>
+              </article>
+        <article class="card" tabindex="0" data-modal-title="Refined UI/UX Design" data-modal-desc="Systematic component library and design tokens for scalability." data-modal-tags="UI,UX,System,Components" data-modal-images="https://placehold.co/800x400/118/EEE?text=Components|Components;https://placehold.co/800x400/229/EEE?text=Tokens|Design Tokens" data-modal-code=":root\\n  --brand:#111;\\n  --radius:12px;">
+                <div class="card-media">
+                  <img src="https://placehold.co/800x600?text=Refined+UI%2FUX+Design" alt="Refined UI/UX Design project preview" />
+                </div>
+                <div class="card-body">
+                  <div class="tag">UI/UX</div>
+                  <h2>Refined UI/UX Design</h2>
+                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
+                </div>
+              </article>
+        <!-- Project 6 -->
+        <article class="card" tabindex="0" data-modal-title="Minimalist Product Design" data-modal-desc="Physical product prototype emphasizing sustainable materials." data-modal-tags="Product,Industrial,Sustainability" data-modal-images="https://placehold.co/800x400/333/EEE?text=Render|3D Render;https://placehold.co/800x400/444/EEE?text=Exploded|Exploded View" data-modal-code="// Bill of materials (excerpt)\\nconst materials=['Recycled ABS','Bamboo'];">
+                <div class="card-media">
+                  <img src="https://placehold.co/800x600?text=Minimalist+Product+Design" alt="Minimalist Product Design project preview" />
+                </div>
+                <div class="card-body">
+                  <div class="tag">Product Design</div>
+                  <h2>Minimalist Product Design</h2>
+                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
         <section id="marquee" class="section marquee" aria-label="Brand Marquee">
           <div class="marquee-mask pop-in">
             <div class="marquee-track">
@@ -351,12 +369,18 @@
         <div class="container footer-content">
           <nav class="footer-links" aria-label="Footer">
             <a href="#about" class="highlight">About</a>
-            <a href="#work" class="highlight">Work</a>
+            <a href="#work" class="highlight">Projects</a>
             <a href="#features" class="highlight">Services</a>
             <a href="#contact" class="highlight">Contact</a>
             <a href="#" class="highlight" aria-disabled="true">Privacy</a>
             <a href="#" class="highlight" aria-disabled="true">Terms</a>
           </nav>
+          <div class="footer-links" style="margin-top:4px;">
+            <a href="https://github.com/migueldgzmn" target="_blank" rel="noopener" aria-label="GitHub Profile" class="highlight" style="display:inline-flex;align-items:center;gap:8px;">
+              <i class="fa-brands fa-github" aria-hidden="true" style="font-size:18px;"></i>
+              <span>GitHub</span>
+            </a>
+          </div>
           <p class="copyright">
             Designed &amp; Developed by Miguel De Guzman.
           </p>
@@ -364,26 +388,33 @@
       </footer>
       
       <aside class="dot-nav" aria-label="Section Navigation">
-        <a href="#hero" class="dot highlight" data-label="Hero" aria-label="Go to Hero" data-section="hero">
+        <a href="#hero" class="dot highlight" data-label="Home" aria-label="Go to Home" data-section="hero">
+          <i class="fa-solid fa-house" aria-hidden="true"></i>
           <span class="dot-label">Home</span>
         </a>
-        <a href="#about" class="dot" data-label="Wear Your Story" aria-label="Go to Wear Your Story" data-section="about">
+        <a href="#about" class="dot" data-label="About" aria-label="Go to About" data-section="about">
+          <i class="fa-solid fa-user" aria-hidden="true"></i>
           <span class="dot-label">About</span>
         </a>
-        <a href="#features" class="dot" data-label="Why Choose Us" aria-label="Go to Why Choose Us" data-section="features">
+        <a href="#features" class="dot" data-label="Expertise" aria-label="Go to Expertise" data-section="features">
+          <i class="fa-solid fa-code" aria-hidden="true"></i>
           <span class="dot-label">Expertise</span>
         </a>
-        <a href="#work" class="dot" data-label="Our Work" aria-label="Go to Our Work" data-section="work">
-          <span class="dot-label">Our Work</span>
+        <a href="#timeline" class="dot" data-label="Journey" aria-label="Go to Journey" data-section="timeline">
+          <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+          <span class="dot-label">Education</span>
         </a>
-        <a href="#timeline" class="dot" data-label="Our Journey" aria-label="Go to Our Journey" data-section="timeline">
-          <span class="dot-label">My Journey</span>
+        <a href="#work" class="dot" data-label="Work" aria-label="Go to Work" data-section="work">
+          <i class="fa-solid fa-briefcase" aria-hidden="true"></i>
+          <span class="dot-label">Project</span>
         </a>
         <a href="#contact" class="dot highlight" data-label="Contact" aria-label="Go to Contact" data-section="contact">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
           <span class="dot-label">Contact</span>
         </a>
         <a href="#newsletter" class="dot" data-label="Newsletter" aria-label="Go to Newsletter" data-section="newsletter">
-          <span class="dot-label">Newsletter</span>
+          <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+          <span class="dot-label">News</span>
         </a>
       </aside>
 
@@ -395,6 +426,12 @@
         </div>
       </div>
 
-      <script src="./assets/script.js" defer></script>
+  <!-- GSAP (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-3vJgkVQ0C9ZrFpsioH6Cqi9kXAF8q7x9PH3tAFmEwP2wI1xAXcdgFpcA2PWMTIGpaG4iEk1ureALrahrcufTkg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- ScrambleText Plugin (if unavailable this will fail silently and fallback logic runs) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrambleTextPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- OGL (lightweight WebGL library) via CDN since npm unavailable -->
+  <script src="https://cdn.jsdelivr.net/npm/ogl@1.0.5/dist/ogl.min.js" integrity="sha256-qu3YPqOzumZn5d+akUd5ahKfns4SUU2vdo2fXOXxjWM=" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="./assets/script.js" defer></script>
     </body>
   </html>

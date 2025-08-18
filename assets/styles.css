@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap');
 /* Base */
 :root {
   --bg: #ffffff;
@@ -6,12 +8,60 @@
   --border: #e5e7eb;
   --primary: black; /* indigo-like */
   --primary-contrast: #ffffff;
+  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
   --card: #ffffff;
   border-color: black;
   --shadow: 0 10px 20px rgba(0, 0, 0, 0.06), 0 6px 6px rgba(0, 0, 0, 0.06);
   --radius: 16px;
+
+  /* Dot nav timing variables (easy to tweak) */
+  --dot-transform-duration: 360ms;
+  --dot-opacity-duration: 220ms;
+  --dot-label-transform-duration: 260ms;
+  --dot-label-opacity-duration: 180ms;
+  --dot-container-hide-delay: 0.36s;
+  --dot-ease: cubic-bezier(.2,.9,.2,1);
+  /* Timeline vertical nudge (adjust to move line & dots up/down) */
+  --timeline-line-nudge: -6px; /* negative = move upward, positive = downward */
+  --timeline-line-x-nudge: 0px; /* horizontal nudge: positive moves right, negative moves left */
+  --timeline-card-gap: 20px; /* horizontal space between center line and each card */
 }
 
+/* --- Modal Mac-style card (container becomes the card) --- */
+#link-modal .link-modal-content { width:860px; max-width:96vw; padding:22px 26px 30px; border:1px solid #0d1117; border-radius:14px; background:linear-gradient(145deg,#020305,#0b0f15 55%,#111a23); box-shadow:0 10px 40px -8px rgba(0,0,0,.6),0 4px 10px -2px rgba(0,0,0,.4); cursor:default; position:relative; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif; color:#dcdcdc; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); overflow:hidden; animation:modalMacIn .6s cubic-bezier(.33,1,.68,1);} 
+#link-modal .link-modal-content::before {content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at 30% 20%,rgba(255,255,255,0.08),transparent 60%); mix-blend-mode:screen;}
+@keyframes modalMacIn {0%{transform:translateY(24px) scale(.94); opacity:0; filter:blur(6px);}60%{transform:translateY(-4px) scale(1.015); opacity:1; filter:blur(0);}100%{transform:translateY(0) scale(1); opacity:1;}}
+#link-modal .modal-mac-header {display:flex; align-items:center; gap:8px; margin:0 0 14px;}
+#link-modal .modal-mac-header span {width:13px; height:13px; border-radius:50%; display:inline-block; box-shadow:0 0 0 1px rgba(0,0,0,.35) inset,0 1px 2px rgba(255,255,255,.15) inset; transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;}
+#link-modal .modal-mac-header .red {background:#ff5f57; cursor:pointer;}
+#link-modal .modal-mac-header .red:hover {filter:brightness(1.1); box-shadow:0 0 0 1px rgba(0,0,0,.6) inset,0 0 0 4px rgba(255,95,87,0.35);}
+#link-modal .modal-mac-header .red:active {transform:scale(.85);}
+#link-modal .modal-mac-header .yellow {background:#ffbd2e;}
+#link-modal .modal-mac-header .green {background:#28c941;}
+#link-modal .modal-mac-title {font-size:20px; font-weight:600; margin:0 0 10px; color:#f2f5f8; letter-spacing:.35px;}
+#link-modal .modal-mac-desc {font-size:14px; line-height:1.5; margin:0 0 16px; color:#9aa4af; display:block;}
+#link-modal .modal-mac-tags {display:flex; flex-wrap:wrap; gap:6px; margin:0 0 18px;}
+#link-modal .modal-mac-tag {font-size:11px; padding:5px 10px; border-radius:6px; background:#0d1117; color:#dcdcdc; border:1px solid #1d2730; letter-spacing:.55px;}
+#link-modal .modal-mac-code {background:#0d1117; border:1px solid #28313b; border-radius:8px; padding:16px 18px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace; font-size:13px; line-height:1.5; max-height:260px; overflow:auto; position:relative;}
+#link-modal .modal-mac-code::-webkit-scrollbar {width:8px;}
+#link-modal .modal-mac-code::-webkit-scrollbar-thumb {background:#555; border-radius:4px;}
+#link-modal .modal-mac-code code {white-space:pre-wrap; display:block; color:#c9d1d9;}
+#link-modal .modal-mac-body {margin:10px 0 18px;}
+#link-modal .modal-mac-body .carousel {width:100%; border:1px solid #28313b; border-radius:10px; overflow:hidden; box-shadow:0 4px 18px -6px rgba(0,0,0,.55);} 
+#link-modal .modal-mac-body .carousel-item svg {font-family:system-ui, sans-serif;}
+#link-modal .modal-mac-body .carousel-control-prev-icon, 
+#link-modal .modal-mac-body .carousel-control-next-icon { filter:invert(1) grayscale(1); }
+#link-modal .modal-mac-footer {margin-top:16px; display:flex; justify-content:flex-end; gap:10px;}
+#link-modal .modal-mac-btn {background:#111a23; border:1px solid #22313d; color:#d7dee3; font-size:13px; padding:8px 14px; border-radius:6px; cursor:pointer; letter-spacing:.4px; transition:background .25s, transform .25s, box-shadow .25s;}
+#link-modal .modal-mac-btn:hover {background:#182530; box-shadow:0 4px 14px -4px rgba(0,0,0,.6);}
+#link-modal .modal-mac-btn:active {transform:translateY(1px);}
+/* GitHub footer link */
+#link-modal .modal-mac-github {display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:#dcdcdc; text-decoration:none; background:#111a23; border:1px solid #22313d; padding:8px 14px; border-radius:8px; line-height:1.1; transition:background .25s, color .25s, box-shadow .25s, transform .25s;}
+#link-modal .modal-mac-github i {font-size:18px;}
+#link-modal .modal-mac-github:hover {background:#182530; color:#ffffff; box-shadow:0 6px 18px -6px rgba(0,0,0,.6);}
+#link-modal .modal-mac-github:active {transform:translateY(1px);}
+@media (max-width:600px){#link-modal .link-modal-content {width:94vw; padding:18px 18px 22px;} #link-modal .modal-mac-code {max-height:200px;}}
+#link-modal .modal-mac-body {margin:10px 0 20px; display:block;}
 *,
 *::before,
 *::after {
@@ -22,10 +72,24 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Ensure scroll snapping is disabled globally and smooth scrolling enforced
+   This prevents browsers or nested containers from snapping to sections/pages. */
+html, body, main, section, .container, .features, .feature-track, .marquee-mask, .marquee-track {
+  scroll-behavior: smooth !important;
+  scroll-snap-type: none !important;
+  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Reset any snap alignment that might be set on children */
+* {
+  scroll-snap-align: none !important;
+  scroll-snap-stop: normal !important;
+}
+
 body {
   margin: 0;
-  font-family:
-    ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  /* Use Poppins first, fall back to system sans-serif stack */
+  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
   color: var(--fg);
   background-color: #1f1f1f;
   line-height: 1.6;
@@ -35,10 +99,14 @@ body {
 /* Remove ALL default margin/padding from html and body */
 html,
 body {
+  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
   margin: 0 !important;
   padding: 0 !important;
   width: 100vw;
   overflow-x: hidden;
+}
+body.scroll-locked {
+  overflow-y: hidden !important; /* Defensive; main prevention handled via fixed positioning */
 }
 
 /* Remove padding from .section and .container in hero */
@@ -80,8 +148,34 @@ body {
   max-width: 720px;
 }
 
-h1,
-h2,
+/* Specific styling for the "My Projects" heading */
+.projects-title {
+  font-family: 'Montserrat', 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 800;
+  letter-spacing: .5px;
+  line-height: 1.1;
+  margin-bottom: 0.65rem;
+  background: linear-gradient(90deg, #000000, #000000);
+  background-clip: text; /* standard */
+  -webkit-background-clip: text; /* Safari */
+  color: #000000; /* fallback */
+  animation: projTitleIn .9s cubic-bezier(.33,1,.68,1);
+}
+@keyframes projTitleIn {0%{opacity:0; transform:translateY(18px) scale(.96);}60%{opacity:1; transform:translateY(-4px) scale(1.015);}100%{opacity:1; transform:translateY(0) scale(1);} }
+
+/* Flatten feature cards: remove elevation & shadow */
+.feature-card {
+  box-shadow: none !important;
+  cursor: default;
+  transform: none !important;
+}
+.feature-card:hover,
+.feature-card:focus-within,
+.feature-card:active {
+  box-shadow: none !important;
+  transform: none !important;
+  border-color: black;
+}
 h3 {
   line-height: 1.2;
   margin: 0 0 12px;
@@ -106,126 +200,140 @@ h3 {
   margin: 8px 0 24px;
 }
 
-/* Header */
-/* Header */
+/* Header (Bootstrap-like visual style applied to existing header elements)
+   This block intentionally only changes visual rules and targets the
+   site's existing header classes (`.site-header`, `.header-nav`, etc.) so
+   your HTML and JS remain untouched. */
 .site-header {
   position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 15px 50px;
+  top: 1vw; /* match vertical offset from your example */
+  left: 0;
+  right: 0;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center; /* center the inner nav like Bootstrap's container */
+  pointer-events: auto;
   z-index: 1000;
-
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+  transition: top 0.3s ease, opacity 0.3s ease;
 }
 
-/* Hidden state */
-.site-header.hidden {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.site-header.navbar-hidden {
-  transform: translateY(-100%);
-}
-
-.site-header.navbar-expanded {
-  background: rgba(31, 31, 31, 0.98);
-  backdrop-filter: blur(16px);
-}
-
-.header-nav {
-  position: relative;
+/* Visual container that looks like the pasted Bootstrap navbar */
+.site-header .header-nav {
+  background-color: white; /* semi-transparent navy */
+  border-radius: 12px;
+  border: 1px solid black; /* visible black border */
+  max-width: 60vw;
+  margin: 0 auto;
+  padding: 10px 18px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 1vw;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px 0;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-left: 24px;
-  padding-right: 24px;
+  justify-content: center;
+  gap: 1rem;
+  transition: all 0.3s ease-out;
+}
+.site-header .header-nav.no-logo .header-links.centered { justify-content: center; width: 100%; }
+
+/* Expanded state (when your JS toggles a class like .navbar-expanded or .open)
+   make the navbar stretch to edges and flip to the light theme like in the example */
+.site-header.navbar-expanded .header-nav,
+.site-header.expand .header-nav {
+  max-width: 100vw;
+  top: 0;
+  padding: 12px 20px;
+  border-radius: 0;
+  background-color: black; /* light creme used in the example */
 }
 
-.site-logo {
-  color: #fff !important;
+.site-header .site-logo {
+  color: black;
   text-decoration: none;
   font-weight: 700;
   font-size: 1.1rem;
   letter-spacing: 0.02em;
 }
 
-.header-links {
+/* Links styling to match the example */
+.site-header .header-links {
   display: flex;
-  gap: 32px;
+  gap: 28px;
   align-items: center;
 }
 
-.header-links a {
-  color: rgba(255, 255, 255, 0.8) !important;
+.site-header .header-links a {
+  color: black;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.95rem;
-  padding: 8px 0;
+  padding: 5px 14px;
   position: relative;
   transition: color 0.2s ease;
 }
 
-.header-links a:hover,
-.header-links a:focus {
-  color: #fff !important;
+.site-header .header-links a:hover,
+.site-header .header-links a:focus {
+  color: black; /* revert: no gray on hover */
 }
 
-.header-links a.active {
-  color: #fff !important;
+/* Reverted hover style: animated underline instead of color change */
+.site-header .header-links a {
+  position: relative;
+  overflow: hidden;
 }
-
-.header-links a.active::after {
+.site-header .header-links a::after {
   content: "";
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  left: 14px;
+  right: 14px;
+  bottom: 4px;
   height: 2px;
-  background: white;
-  border-radius: 1px;
+  background: black;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s cubic-bezier(.33,1,.68,1);
+}
+.site-header .header-links a:hover::after,
+.site-header .header-links a:focus::after,
+.site-header .header-links a.active::after {
+  transform: scaleX(1);
+}
+.site-header .header-links a.active {
+  color: black;
+  font-weight: 700;
 }
 
-/* Toggle (hamburger) */
-.nav-toggle {
-  appearance: none;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  gap: 4px;
-  transition: background 0.2s ease, border-color 0.2s ease;
+/* When navbar becomes the light expanded style, swap link colors to dark */
+.site-header.navbar-expanded .header-links a,
+.site-header.expand .header-links a {
+  color: #112335;
 }
 
-.nav-toggle:hover,
-.nav-toggle:focus {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  outline: none;
+.site-header.navbar-expanded .site-logo,
+.site-header.expand .site-logo {
+  color: #112335;
+  font-size: 1.2vw;
 }
 
-.nav-toggle-bar {
-  display: block;
-  width: 20px;
-  height: 2px;
-  background: #fff;
-  border-radius: 1px;
-  transition: transform 0.25s ease, opacity 0.2s ease;
+/* Keep existing mobile toggle behavior but inherit the color theme */
+.site-header .nav-toggle {
+  background: transparent;
+  border: none;
+}
+
+.site-header.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.site-header.navbar-hidden {
+  /* Move header fully out of view and make it non-interactive */
+  transform: translateY(-120%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  /* transition timing chosen to match show/hide feel */
+  transition: transform 0.28s ease, opacity 0.28s ease, visibility 0s linear 0.28s;
 }
 /* Hero */
 .hero-grid {
@@ -433,8 +541,8 @@ a.learn {
   overflow-x: auto;
   overflow-y: hidden;
   padding: 24px 0 24px 16px;
-  scroll-snap-type: none; /* no snapping */
-  scroll-behavior: auto; /* avoid JS conflicts */
+    scroll-snap-type: none; /* no snapping */
+    scroll-behavior: smooth; /* enable smooth scrolling */
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x; /* immediate horizontal pan */
   overscroll-behavior-x: contain;
@@ -461,7 +569,6 @@ a.learn {
   border-radius: var(--radius);
   padding: 20px;
   border-color: black;
-  box-shadow: black 0 2px 4px rgba(0, 0, 0, 0.1), black 0 1px 2px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -525,21 +632,56 @@ a.learn {
   }
 }
 
+/* Unified card border for work and other card-like components */
+/* Use a slightly translucent black so hover can darken visibly */
+.card,
+.work .card,
+.work article.card,
+.timeline-card,
+.newsletter-card,
+.feature-card {
+  border: 2px solid rgba(0,0,0,0.85);
+  box-shadow: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+/* Hover / focus: darker border, subtle lift */
+.card:hover,
+.work .card:hover,
+.work article.card:hover,
+.timeline-card:hover,
+.newsletter-card:hover,
+.feature-card:hover,
+.card:focus-within,
+.timeline-card:focus-within,
+.feature-card:focus-within {
+  border-color: rgba(0,0,0,1);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-4px);
+}
+
+/* Active / pressed state: keep border dark but reduce lift */
+.card:active,
+.timeline-card:active,
+.feature-card:active {
+  border-color: rgba(0,0,0,1);
+  transform: translateY(-2px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .timeline-row {
     transition: none !important;
   }
   .timeline-wrap::after {
     transition: none !important;
-  }
+    transition: opacity 0.55s cubic-bezier(.33,1,.68,1), transform 0.55s cubic-bezier(.33,1,.68,1), visibility 0s;
 }
 .card {
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid black;
-  border-color: black;
   background: white;
-  box-shadow: var(--shadow);
+    transition: opacity 0.55s cubic-bezier(.33,1,.68,1), transform 0.55s cubic-bezier(.33,1,.68,1), visibility 0s;
   transition: transform .2s ease, box-shadow .2s ease;
   border-color: black;
   border-radius: 1px;
@@ -548,6 +690,22 @@ a.learn {
   transform: translateY(-3px);
   border-color: black;
   box-shadow: 5px 10px 0 black;
+}
+/* Ensure work project cards keep the original shadow and get a stronger hover */
+.work .card,
+.work article.card {
+  box-shadow: var(--shadow);
+}
+.work .card:hover,
+.work article.card:hover {
+  box-shadow: 5px 10px 0 rgba(0,0,0,1);
+  transform: translateY(-6px);
+}
+/* Persist hover shadow for the card whose link opened the modal */
+.work .card.modal-active-card {
+  box-shadow: 5px 10px 0 rgba(0,0,0,1) !important;
+  transform: translateY(-6px) !important;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 .card-media {
   aspect-ratio: 4 / 3;
@@ -559,8 +717,19 @@ a.learn {
   object-fit: cover;
   display: block;
 }
+/* Per-card image vertical focus utilities (adjust cropping without new images) */
+.card[data-img-pos] .card-media img { object-position: 50% 50%; transition: object-position .4s ease; }
+.card[data-img-pos="top"] .card-media img { object-position: 50% 12%; }
+.card[data-img-pos="center"] .card-media img { object-position: 50% 50%; }
+.card[data-img-pos="bottom"] .card-media img { object-position: 50% 88%; }
+/* Stretched thumbnail variant for selected cards */
+.card[data-img-stretch] .card-media { aspect-ratio: auto; height: 340px; }
+@media (max-width: 800px){ .card[data-img-stretch] .card-media { height: 280px; } }
+@media (max-width: 560px){ .card[data-img-stretch] .card-media { height: 220px; } }
 .card-body {
   padding: 16px;
+  display: flex; /* only for pushing link */
+  flex-direction: column;
 }
 .card-body .tag {
   color: black;
@@ -574,11 +743,16 @@ a.learn {
   color: black;
   text-decoration: none;
   font-weight: 700;
+  margin-top: auto; /* push to bottom */
+  align-self: flex-start;
 }
 .card-body .learn:hover {
   text-decoration: underline;
 }
-
+/* Keep legacy underline for other learn links but exclude animated view-project */
+a.learn:not(.view-project):hover {
+  text-decoration: underline;
+}
 .timeline-wrap {
   position: relative;
   --progress: 0; /* 0..1, updated via JS */
@@ -586,9 +760,9 @@ a.learn {
 .timeline-wrap::before {
   content: "";
   position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
+  left: calc(50% + var(--timeline-line-x-nudge, 0px));
+  top: var(--timeline-line-nudge, 0);
+  bottom: calc(var(--timeline-line-nudge, 0) * -1);
   width: 2px;
   background: #e2e8f0;
   transform: translateX(-50%);
@@ -597,8 +771,8 @@ a.learn {
 .timeline-wrap::after {
   content: "";
   position: absolute;
-  left: 50%;
-  top: 0;
+  left: calc(50% + var(--timeline-line-x-nudge, 0px));
+  top: var(--timeline-line-nudge, 0);
   transform: translateX(-50%);
   width: 2px;
   height: calc(var(--progress) * 100%);
@@ -614,6 +788,27 @@ a.learn {
   align-items: flex-start;
   margin: 24px 0;
   position: relative;
+}
+/* Provide breathing room between cards and the center vertical line */
+.timeline-row .timeline-card { margin-right: var(--timeline-card-gap); }
+.timeline-row:nth-child(even) .timeline-card { margin-right: 0; margin-left: var(--timeline-card-gap); }
+
+/* Slightly reduce gap on medium screens */
+@media (max-width: 1100px) {
+  :root { --timeline-card-gap: 2px; }
+}
+@media (max-width: 900px) {
+  :root { --timeline-card-gap: 2px; }
+}
+/* On narrow mobile, remove extra gap so layout stays balanced */
+@media (max-width: 640px) {
+  :root { --timeline-card-gap: 18px; }
+  .timeline-row { grid-template-columns: 1fr; }
+  .timeline-row .timeline-card, .timeline-row:nth-child(even) .timeline-card { margin: 0; }
+  .timeline-dot { left: 30px; transform: translate(-50%,0); }
+  /* shift cards right a bit so dot sits left */
+  .timeline-row .timeline-card { padding-left: 12px; }
+  .timeline-wrap::before, .timeline-wrap::after { left: 30px; }
 }
 
 /* Place the card left by default, right on even rows */
@@ -631,12 +826,7 @@ a.learn {
   grid-column: 2;
 }
 
-.timeline-card:hover {
-  transform: scale(1.04);
-  transform: translateX(-4px);
-  box-shadow: 5px 10px 0 black;
-  border-color: black;
-}
+/* Remove base hover (will re-add gated version below) */
 
 /* Smooth hover effect for timeline cards */
 .timeline-card {
@@ -648,38 +838,98 @@ a.learn {
     opacity 0.22s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-.timeline-card:hover,
-.timeline-card:focus-within {
-  transform: scale(1.04) translateY(-4px);
+.timeline-row.in-view .timeline-card:hover,
+.timeline-row.in-view .timeline-card:focus-within {
+  transform: translateY(-4px);
   box-shadow: 5px 10px 0 black;
   border-color: black;
   background: #f8f8f8;
   opacity: 1;
 }
 
+/* Ensure timeline cards match work cards: keep base shadow and use a stronger hover */
+.timeline-card {
+  box-shadow: var(--shadow);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+.timeline-row.in-view .timeline-card:hover,
+.timeline-row.in-view .timeline-card:focus-within {
+  box-shadow: 5px 10px 0 rgba(0,0,0,1);
+  transform: translateY(-6px);
+  border-color: black;
+}
+
+/* Keep the hover shadow when a timeline card is expanded/clicked */
+.timeline-card.expanded,
+.timeline-card.expanded:hover,
+.timeline-card.expanded:focus-within,
+.timeline-card:active {
+  box-shadow: 5px 10px 0 rgba(0,0,0,1) !important;
+  transform: translateY(-6px) !important;
+  border-color: black !important;
+  z-index: 5;
+}
+
 /* Dot stays centered */
 .timeline-dot {
   position: absolute;
-  left: 50%;
-  top: 18px;
+  left: calc(50% + var(--timeline-line-x-nudge, 0px));
+  top: calc(15px + var(--timeline-line-nudge, 0));
   transform: translate(-50%, 0);
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border-color: black;
-  background: black;
+  border: 2px solid black;
+  background: transparent;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 rgba(0,0,0,0);
+  transition: box-shadow .4s ease;
 }
+.timeline-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: black;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform .45s cubic-bezier(.33,1,.68,1);
+}
+.timeline-row.in-view .timeline-dot::after {
+  transform: scaleY(1);
+}
+.timeline-row.in-view .timeline-dot { box-shadow:0 0 0 4px rgba(0,0,0,0.12); }
 
 /* Animate the CARD (not the row) when its row is in view */
+/* Hidden until progress line reaches row */
 .timeline-card {
   opacity: 0;
+  visibility: hidden;
   transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0s linear 0.6s;
 }
 .timeline-row.in-view .timeline-card {
   opacity: 1;
+  visibility: visible;
   transform: none;
+  pointer-events: auto;
+  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0s;
 }
+/* Smooth fade-out when scrolling back (row gets .leaving temporarily) */
+.timeline-row.leaving .timeline-card {
+  opacity: 0;
+  visibility: visible; /* keep visible until transition ends */
+  transform: translateY(24px);
+  pointer-events: none;
+  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0s linear 0.6s;
+}
+/* Optional slight stagger purely via CSS (index-based) */
+.timeline-row:nth-child(1) .timeline-card { transition-delay: 0ms; }
+.timeline-row:nth-child(2) .timeline-card { transition-delay: 40ms; }
+.timeline-row:nth-child(3) .timeline-card { transition-delay: 80ms; }
+.timeline-row:nth-child(4) .timeline-card { transition-delay: 120ms; }
+.timeline-row:nth-child(5) .timeline-card { transition-delay: 160ms; }
+.timeline-row:nth-child(6) .timeline-card { transition-delay: 200ms; }
 
 /* Headings and details remain the same */
 .timeline-head {
@@ -839,6 +1089,9 @@ textarea {
 .footer-links a:hover {
   color: var(--fg);
 }
+/* Footer GitHub link refinement */
+.footer-links a .fa-github { transition: transform .25s ease; }
+.footer-links a:hover .fa-github { transform: scale(1.15) rotate(-5deg); }
 copyright,
 .copyright {
   color: var(--muted);
@@ -857,80 +1110,112 @@ copyright,
   gap: 12px;
   z-index: 999;
 
+  /* keep container out of flow until visible */
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+  /* when hiding, delay container fade until children finish their exit animations */
+  transition: opacity var(--dot-opacity-duration) ease var(--dot-container-hide-delay), visibility 0s linear var(--dot-container-hide-delay);
 }
 
-/* When dot nav is visible */
+/* When dot nav is visible we reveal the container and animate children via transitions */
 .dot-nav.visible {
   opacity: 1;
   visibility: visible;
 }
 
+/* Dots: start slightly offset and scaled down; use transitions so both enter and exit are smooth */
 .dot-nav .dot {
   position: relative;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
+  width: 48px; /* increased from 42px for larger target */
+  height: 48px; /* increased from 42px */
+  border-radius: 16px;
   background: #1f1f1f !important;
   border: 2px solid #fff !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   cursor: pointer;
   outline: none;
-  opacity: 0;
-  transform: translateX(100px);
-}
+  text-decoration: none;
 
-.dot-nav .dot-label {
-  position: absolute;
-  right: 160%;
-  top: 50%;
-  transform: translateY(-50%) scale(0.95);
-  color: #fff !important;
-  padding: 6px 16px;
-  background: #1f1f1f;
-  border: 2px solid #fff !important;
-  border-radius: 20px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s, transform 0.2s;
-  letter-spacing: 0.02em;
-}
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .3px;
 
+  /* base (hidden) state */
+  opacity: 0;
+  transform: translateX(28px) scale(0.9);
+
+  /* Only animate entrance/exit (no background fade) */
+  transition: transform var(--dot-transform-duration) var(--dot-ease), opacity var(--dot-opacity-duration) ease;
+}
+/* Active dot: no transition so change is instant */
+.dot-nav .dot.active { transition: none !important; }
+.dot-nav .dot i { color:#fff; font-size:18px; line-height:1; transition: none; }
+/* Reverted: no icon scale/rotation on hover */
+.dot-nav .dot:hover i, .dot-nav .dot:focus i { transform: none; }
+.dot-nav.visible .dot { transform: translateX(0) scale(1); }
+.dot-nav .dot.active { background:#ffffff !important; border-color:#000000 !important; box-shadow:0 0 6px 2px rgba(0, 0, 0, 0.35); }
+.dot-nav .dot.active { animation: dotPulse 1.8s ease-in-out infinite; }
+@keyframes dotPulse {
+  0%,100% { box-shadow:0 0 6px 2px rgba(0, 0, 0, 0.35); }
+  50% { box-shadow:0 0 10px 4px rgba(0, 0, 0, 0.2); }
+}
+.dot-nav .dot.active i { color:black; text-shadow:none; }
+.dot-nav .dot.active .dot-label { display:none; }
+/* Show labels by default; hide only for active section */
+.dot-nav .dot-label { position:absolute; right:160%; top:50%; transform:translateY(-50%) scale(.92); color:#fff !important; padding:8px 18px; background:#1f1f1f; border:2px solid #fff !important; border-radius:22px; font-size:13px; font-weight:600; white-space:nowrap; opacity:0; pointer-events:none; transition:none; letter-spacing:.02em; }
+.dot-nav .dot:hover .dot-label, .dot-nav .dot:focus .dot-label { opacity:1; transform:translateY(-50%) scale(1); }
+.dot-nav .dot.active .dot-label { opacity:0 !important; visibility:hidden; }
+
+/* Removed textual label bubble styles (icon-only nav) */
+
+/* Reverted simpler hover: no grow, just slightly stronger border/shadow */
 .dot-nav .dot:hover,
 .dot-nav .dot:focus {
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
-  transform: scale(1.2);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+  transform: translateX(0) scale(1);
+  border-color:#fff !important;
 }
 
-.dot-nav .dot:hover .dot-label,
-.dot-nav .dot:focus .dot-label {
-  opacity: 1;
-  transform: translateY(-50%) scale(1);
-}
+/* No label hover reveal needed */
 
 @media (max-width: 900px) {
   .dot-nav {
     right: 12px;
     gap: 16px;
   }
-  .dot-nav .dot-label {
-    font-size: 0.85rem;
-    padding: 4px 10px;
-  }
+  /* No label adjustments needed on mobile */
 }
 
 /* Utility */
 .text-center .btn {
   margin-top: 6px;
+}
+
+/* Per-character animated title effect */
+.text-block {
+  margin: 0; /* override default margin */
+  font-family: monospace;
+  font-size: clamp(28px, 5vw, 54px);
+  line-height: 1.05;
+  letter-spacing: .5px;
+  display: inline-block;
+}
+.text-block .char {
+  will-change: transform, opacity;
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(26px) scale(.92) rotate(4deg);
+  animation: charIn .85s cubic-bezier(.33,1,.68,1) forwards;
+}
+@keyframes charIn {
+  0% { opacity:0; transform:translateY(26px) scale(.92) rotate(6deg); }
+  55% { opacity:1; transform:translateY(-6px) scale(1.04) rotate(0deg); }
+  100% { opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
 }
 
 /* Link Modal */
@@ -1076,46 +1361,44 @@ body.no-scroll {
   overflow: hidden;
 }
 
-/* Slide-in animation for dot navigation */
-.dot-nav.visible a {
-  animation: slideInFromRight 0.5s ease forwards;
+/* Use staggered transition delays for dots so enter/exit are smooth (no fade-only hiding) */
+.dot-nav.visible .dot:nth-child(1) { transition-delay: 0.06s; }
+.dot-nav.visible .dot:nth-child(2) { transition-delay: 0.10s; }
+.dot-nav.visible .dot:nth-child(3) { transition-delay: 0.14s; }
+.dot-nav.visible .dot:nth-child(4) { transition-delay: 0.18s; }
+.dot-nav.visible .dot:nth-child(5) { transition-delay: 0.22s; }
+.dot-nav.visible .dot:nth-child(6) { transition-delay: 0.26s; }
+.dot-nav.visible .dot:nth-child(7) { transition-delay: 0.30s; }
+.dot-nav.visible .dot:nth-child(8) { transition-delay: 0.34s; }
+
+/* When visible, move each dot to its revealed state */
+.dot-nav.visible .dot {
+  transform: translateX(0) scale(1);
+  opacity: 1;
 }
 
-.dot-nav.visible a:nth-child(1) {
-  animation-delay: 0.1s;
-}
-.dot-nav.visible a:nth-child(2) {
-  animation-delay: 0.2s;
-}
-.dot-nav.visible a:nth-child(3) {
-  animation-delay: 0.3s;
-}
-.dot-nav.visible a:nth-child(4) {
-  animation-delay: 0.4s;
-}
-.dot-nav.visible a:nth-child(5) {
-  animation-delay: 0.5s;
-}
-.dot-nav.visible a:nth-child(6) {
-  animation-delay: 0.6s;
-}
-.dot-nav.visible a:nth-child(7) {
-  animation-delay: 0.7s;
-}
-.dot-nav.visible a:nth-child(8) {
-  animation-delay: 0.8s;
-}
+/* Base (hidden) stagger delays so exit happens in reverse order when .visible is removed */
+.dot-nav .dot:nth-child(1) { transition-delay: 0.34s; }
+.dot-nav .dot:nth-child(2) { transition-delay: 0.30s; }
+.dot-nav .dot:nth-child(3) { transition-delay: 0.26s; }
+.dot-nav .dot:nth-child(4) { transition-delay: 0.22s; }
+.dot-nav .dot:nth-child(5) { transition-delay: 0.18s; }
+.dot-nav .dot:nth-child(6) { transition-delay: 0.14s; }
+.dot-nav .dot:nth-child(7) { transition-delay: 0.10s; }
+.dot-nav .dot:nth-child(8) { transition-delay: 0.06s; }
 
-@keyframes slideInFromRight {
-  from {
-    opacity: 0;
-    transform: translateX(100px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
+/* Ensure container appears immediately when showing (no entrance delay) */
+.dot-nav.visible { transition-delay: 0s; }
+
+/* Stagger label transitions slightly after the dot appears */
+.dot-nav.visible .dot:nth-child(1) .dot-label { transition-delay: 0.10s; }
+.dot-nav.visible .dot:nth-child(2) .dot-label { transition-delay: 0.14s; }
+.dot-nav.visible .dot:nth-child(3) .dot-label { transition-delay: 0.18s; }
+.dot-nav.visible .dot:nth-child(4) .dot-label { transition-delay: 0.22s; }
+.dot-nav.visible .dot:nth-child(5) .dot-label { transition-delay: 0.26s; }
+.dot-nav.visible .dot:nth-child(6) .dot-label { transition-delay: 0.30s; }
+.dot-nav.visible .dot:nth-child(7) .dot-label { transition-delay: 0.34s; }
+.dot-nav.visible .dot:nth-child(8) .dot-label { transition-delay: 0.38s; }
 
 /* Pop-in animation for sections */
 .pop-in {
@@ -1158,7 +1441,25 @@ body.no-scroll {
   background: #fff;
 }
 #timeline {
-  background: #fff;
+  background: linear-gradient(180deg,#ffffff 0%, #f4f4f6 100%);
+  position: relative;
+}
+
+/* Center timeline line perfectly: remove side padding so 50% aligns with viewport center */
+#timeline > .container {
+  padding-left: 0;
+  padding-right: 0;
+}
+/* Ensure internal wrap spans full container width */
+#timeline .timeline-wrap {
+  margin: 0 auto;
+}
+/* Re-center the vertical rail & progress precisely (container now has no horizontal padding) */
+#timeline .timeline-wrap::before,
+#timeline .timeline-wrap::after,
+#timeline .timeline-dot,
+#timeline .timeline-row .timeline-dot { /* redundancy for safety */
+  left: 50%;
 }
 #marquee {
   background: #f5f5f5;
@@ -1277,8 +1578,7 @@ body.no-scroll {
   background: none !important;
 }
 
-/* Highlighted text style */
-.highlight {
+.learn.highlight {
   cursor: pointer;
   position: relative;
 }
@@ -1301,7 +1601,7 @@ body.no-scroll {
   z-index: 9999;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
-.highlight.active .highlight-label-follow {
+.work .learn.highlight.active .highlight-label-follow {
   opacity: 1;
   transform: scale(1);
 }
@@ -1388,6 +1688,36 @@ a {
 a.learn:hover {
   text-decoration: underline;
 }
+.card-body .learn:not(.view-project):hover {
+  text-decoration: underline;
+}
+/* Animated underline for View Project buttons */
+a.view-project {
+  position: relative;
+  display: inline-block;
+  text-decoration: none !important;
+  font-weight: 700;
+  overflow: hidden;
+  border-bottom: none !important; /* remove inherited underline */
+}
+a.view-project::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: currentColor;
+  transform: translateX(-105%);
+  transition: transform .45s cubic-bezier(.33,1,.68,1);
+}
+a.view-project:hover::after,
+a.view-project:focus::after {
+  transform: translateX(0);
+}
+/* Subtle color fade on hover */
+a.view-project { transition: color .35s ease; }
+a.view-project:hover, a.view-project:focus { color: #444; }
 
 /* Hero pop-in animation (background and content, only once) */
 @keyframes heroPopInBg {
@@ -1492,13 +1822,35 @@ a.learn:hover {
   max-width: 420px;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
+  will-change: transform;
 }
 
-.feature-card:hover .feature-card-inner,
-.feature-card:focus-within .feature-card-inner {
-  transform: rotateY(180deg);
+/* Reactive flip + subtle tilt (pointer based) */
+.feature-card-inner { transition: transform .7s cubic-bezier(.33,1,.68,1); }
+.feature-card.flip-active .feature-card-inner { transform: rotateY(180deg); }
+/* While tracking pointer we inline style transform with extra rotateX/rotateZ */
+/* Shadow only when flipped */
+.feature-card.flip-active .feature-card-back { box-shadow: 0 24px 38px -14px rgba(0,0,0,.42); }
+
+/* Soft ground shadow under card during hover */
+.feature-card {
+  position: relative;
 }
+.feature-card::after {
+  content: '';
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -22px;
+  height: 34px;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.08) 55%, rgba(0,0,0,0) 70%);
+  opacity: 0;
+  transform: scale(0.6) translateY(6px);
+  transition: opacity .55s ease, transform .55s ease;
+  pointer-events: none;
+  filter: blur(2px);
+}
+.feature-card.flip-active::after { opacity: 1; transform: scale(1) translateY(0); }
 
 .feature-card-front,
 .feature-card-back {
@@ -1528,7 +1880,6 @@ a.learn:hover {
 .feature-card-back {
   background-color: black;
   color: #fff;
-  border: 2px solid white;
   transform: rotateY(180deg);
 }
 
@@ -1562,18 +1913,7 @@ a.learn:hover {
   padding: 0;
 }
 
-.feature-card-inner {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.feature-card:hover .feature-card-inner,
-.feature-card:focus-within .feature-card-inner {
-  transform: rotateY(180deg);
-}
+/* (Override earlier duplicate block with animation version above) */
 
 .feature-card-front,
 .feature-card-back {
@@ -1636,4 +1976,23 @@ a.learn:hover {
     gap: 18px;
     padding: 18px 0;
   }
+}
+}
+
+
+/* --- Timeline Particles Background --- */
+.timeline-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 3; /* raised above content for visibility */
+  pointer-events: none;
+  overflow: hidden;
+}
+#timeline .text-center, #timeline .timeline-wrap { position: relative; z-index: 4; }
+
+/* Generic particles container (from provided snippet) */
+.particles-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }

@@ -1,11 +1,12 @@
 // --- Dot nav active state, timeline animation, forms, etc ---
 ;(() => {
+  // Order MUST match actual DOM order for deterministic highlighting
   const sections = [
     { id: "hero" },
     { id: "about" },
     { id: "features" },
+    { id: "timeline" }, // (Journey / Background)
     { id: "work" },
-    { id: "timeline" },
     { id: "marquee" },
     { id: "contact" },
     { id: "newsletter" },
@@ -13,30 +14,164 @@
 
   const dots = Array.from(document.querySelectorAll(".dot-nav .dot"))
 
+  // Smooth-scroll for header nav links and logo
+  const headerLinks = Array.from(document.querySelectorAll(".header-links a, .site-logo"))
+  headerLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      const href = link.getAttribute("href")
+      if (!href || !href.startsWith("#")) return
+      e.preventDefault()
+      const id = href.slice(1)
+      const el = document.getElementById(id)
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" })
+        try {
+          history.pushState(null, "", `#${id}`)
+        } catch (err) {}
+      }
+    })
+  })
+
+  // Global delegated handler: smooth-scroll any same-page anchor links (href="#id")
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest && e.target.closest('a[href^="#"]')
+    if (!a) return
+
+    // Ignore links without a fragment, external targets, or intentionally disabled links
+    const href = a.getAttribute("href")
+    if (!href || href === "#" || a.target === "_blank" || a.getAttribute("aria-disabled") === "true") return
+
+    const id = href.slice(1)
+    const target = document.getElementById(id)
+    if (!target) return
+
+    e.preventDefault()
+    target.scrollIntoView({ behavior: "smooth", block: "start" })
+    try {
+      history.pushState(null, "", `#${id}`)
+    } catch (err) {}
+  })
+
   function setActiveDot(id) {
     dots.forEach((d) => d.classList.toggle("active", d.dataset.section === id))
   }
 
-  // Intersection Observer to highlight current section
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveDot(entry.target.id)
-        }
-      })
-    },
-    {
-      root: null,
-      rootMargin: "0px 0px -60% 0px",
-      threshold: 0.2,
-    },
-  )
+  // Scroll-based deterministic section highlighting (replaces IO to avoid jumpy activation)
+  const sectionEls = sections
+    .map(s=>({ id:s.id, el: document.getElementById(s.id) }))
+    .filter(s=>s.el)
+    // Safety: sort by actual vertical position in case array order ever drifts
+    .sort((a,b)=> a.el.offsetTop - b.el.offsetTop)
+  let secRAF = 0
+  function chooseActiveSection(){
+    secRAF = 0
+    const vh = window.innerHeight || document.documentElement.clientHeight
+    const pivotY = vh * 0.28 // reference line
+    const activationLead = 140 // px lead before pivot actually enters a section
+    let active = null
+    for (const s of sectionEls) {
+      const rect = s.el.getBoundingClientRect()
+      // If pivot has crossed (top - lead) this becomes candidate
+      if (rect.top - activationLead <= pivotY) {
+        active = s
+      } else {
+        break
+      }
+    }
+    // Bottom fallback (allow slight tolerance ~16px)
+    const nearBottom = (window.scrollY + vh) >= (document.documentElement.scrollHeight - 16)
+    if (nearBottom) active = sectionEls[sectionEls.length - 1]
+    if (active) setActiveDot(active.id)
+  }
+  function onScrollSections(){ if(!secRAF) secRAF = requestAnimationFrame(chooseActiveSection) }
+  window.addEventListener('scroll', onScrollSections, { passive:true })
+  window.addEventListener('resize', chooseActiveSection)
+  chooseActiveSection()
 
-  sections.forEach(({ id }) => {
-    const el = document.getElementById(id)
-    if (el) io.observe(el)
-  })
+  // Per-character animation for "My Projects" title
+  ;(() => {
+    const title = document.getElementById('projects-title')
+    if (!title) return
+    if (title._charsApplied) return
+    title._charsApplied = true
+    const text = title.textContent.trim()
+    const frag = document.createDocumentFragment()
+    const baseDelay = 40 // ms between chars
+    Array.from(text).forEach((ch, i) => {
+      const span = document.createElement('span')
+      span.className = 'char'
+      if (ch === ' ') {
+        span.style.width = '0.45em'
+        span.innerHTML = '&nbsp;'
+      } else {
+        span.textContent = ch
+      }
+      span.style.animationDelay = (i * baseDelay) + 'ms'
+      frag.appendChild(span)
+    })
+    title.textContent = ''
+    title.appendChild(frag)
+
+    // Interactive scramble effect (adapted from React component) ---------------------------------
+    // Attempts to use GSAP ScrambleTextPlugin if loaded; otherwise falls back to a custom scrambling.
+    const chars = Array.from(title.querySelectorAll('.char'))
+    const original = chars.map(c => c.textContent)
+    const pluginAvailable = typeof gsap !== 'undefined' && gsap.plugins && gsap.plugins.ScrambleTextPlugin
+    const radius = 100
+    const duration = 0.5
+    const scrambleChars = '.:'
+    let lastPointer = { x: 0, y: 0 }
+    let ticking = false
+    function dist(a, b){ const dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy) }
+
+    function handleMove(evt){
+      const rect = title.getBoundingClientRect()
+      lastPointer = { x: evt.clientX, y: evt.clientY }
+      if (!ticking){
+        requestAnimationFrame(()=>{
+          ticking = false
+          const centerY = rect.top + rect.height/2
+          const centerX = rect.left + rect.width/2
+          const pointer = lastPointer
+          chars.forEach((span, i)=>{
+            const crect = span.getBoundingClientRect()
+            const ccenter = { x: crect.left + crect.width/2, y: crect.top + crect.height/2 }
+            const d = dist(pointer, ccenter)
+            if (d < radius){
+              const strength = 1 - (d / radius)
+              if (pluginAvailable){
+                if (span._scrambling) return
+                span._scrambling = true
+                gsap.to(span, { duration: duration * (0.35 + 0.65*strength), scrambleText: { text: original[i], chars: scrambleChars, revealDelay: 0, tweenLength: false }, onComplete(){ span._scrambling = false } })
+              } else {
+                // Fallback: manual randomization then restore
+                if (span._scrambling) return
+                span._scrambling = true
+                const target = original[i]
+                const cycles = Math.max(5, Math.floor(15 * strength))
+                let c = 0
+                const interval = setInterval(()=>{
+                  if (c >= cycles){
+                    clearInterval(interval)
+                    span.textContent = target
+                    span._scrambling = false
+                  } else {
+                    const randChar = scrambleChars[Math.floor(Math.random()*scrambleChars.length)] || ':'
+                    span.textContent = randChar
+                  }
+                  c++
+                }, 30)
+              }
+            }
+          })
+        })
+        ticking = true
+      }
+    }
+    title.addEventListener('pointermove', handleMove)
+    title.addEventListener('touchmove', e=>{ if (e.touches && e.touches[0]) handleMove(e.touches[0]) }, { passive:true })
+  // ----------------------------------------------------------------------------------------------
+  })()
 
   // Expandable timeline cards
   document.querySelectorAll(".timeline-card[data-expand]").forEach((card) => {
@@ -44,6 +179,102 @@
       card.classList.toggle("expanded")
     })
   })
+
+  // OGL Particles in Timeline (vanilla adaptation) ---------------------------------------------
+  ;(()=>{
+    const holder = document.querySelector('#timeline .timeline-particles')
+  // OGL UMD global can be window.OGL (common) or window.ogl depending on bundle
+  if (!holder) return
+  const O = window.OGL || window.ogl
+  if (!O) { console.warn('OGL library not found (expected window.OGL).'); return }
+    try {
+  const { Renderer, Camera, Geometry, Program, Mesh } = O
+      const renderer = new Renderer({ dpr: Math.min(2, window.devicePixelRatio||1), antialias:false, alpha:true })
+      const gl = renderer.gl
+      holder.appendChild(gl.canvas)
+      gl.clearColor(0,0,0,0)
+      const camera = new Camera(gl, { fov: 18 })
+      camera.position.set(0,0,20)
+      function resize(){
+        const w = holder.clientWidth
+        const h = holder.clientHeight
+        renderer.setSize(w,h)
+        camera.perspective({ aspect: w / h })
+      }
+      window.addEventListener('resize', resize)
+      resize()
+      const particleCount = 260
+  const positions = new Float32Array(particleCount*3)
+  const randoms = new Float32Array(particleCount*4)
+  const colors = new Float32Array(particleCount*3)
+  // Palette FIX: previous edit introduced an undefined variable 'black'. Using vivid test colors so you can SEE them.
+  const palette = ['#ff3366','#00c8ff','#ffd000','#111111']
+  console.log('[Particles] Using palette', palette)
+      function hexToRgbF(hex){hex=hex.replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); const int=parseInt(hex,16); return [((int>>16)&255)/255,((int>>8)&255)/255,(int&255)/255] }
+      for(let i=0;i<particleCount;i++){
+        let x,y,z,len
+        do{ x=Math.random()*2-1; y=Math.random()*2-1; z=Math.random()*2-1; len=x*x+y*y+z*z }while(len>1||len===0)
+        const r = Math.cbrt(Math.random())
+        positions.set([x*r, y*r, z*r], i*3)
+        randoms.set([Math.random(),Math.random(),Math.random(),Math.random()], i*4)
+        const col = hexToRgbF(palette[Math.floor(Math.random()*palette.length)])
+        colors.set(col, i*3)
+      }
+  const vertex = `attribute vec3 position;attribute vec4 random;attribute vec3 color;uniform mat4 modelMatrix;uniform mat4 viewMatrix;uniform mat4 projectionMatrix;uniform float uTime;uniform float uSpread;uniform float uBaseSize;uniform float uSizeRandomness;varying vec4 vRandom;varying vec3 vColor;void main(){vRandom=random;vColor=color;vec3 pos=position*uSpread; // keep in shallow z so it's visible
+vec4 mPos=modelMatrix*vec4(pos,1.0);float t=uTime;float wig=sin(t*0.6+random.x*6.28318)*0.6; mPos.x+=sin(t*random.z+6.28318*random.w)*mix(0.05,0.9,random.x);mPos.y+=sin(t*random.y+6.28318*random.x)*mix(0.05,0.9,random.w)+wig*0.08;mPos.z+=sin(t*random.w+6.28318*random.y)*mix(0.05,0.9,random.z)*0.2;vec4 mvPos=viewMatrix*mPos;float dist=length(mvPos.xyz);gl_PointSize=(uBaseSize*(1.0+uSizeRandomness*(random.x-0.5)))/dist;gl_Position=projectionMatrix*mvPos;}`
+  const fragment = `precision highp float;uniform float uTime;uniform float uAlphaParticles;uniform float uAlphaScale;varying vec4 vRandom;varying vec3 vColor;void main(){vec2 uv=gl_PointCoord.xy;float d=length(uv-vec2(0.5));if(uAlphaParticles<0.5){if(d>0.5){discard;}gl_FragColor=vec4(vColor + 0.15*sin(vec3(uv.yx,uv.y)+uTime+vRandom.y*6.28318), uAlphaScale);}else{float circle=smoothstep(0.5,0.4,d)*0.85;gl_FragColor=vec4(vColor + 0.15*sin(vec3(uv.yx,uv.y)+uTime+vRandom.y*6.28318), circle * uAlphaScale);}}`
+      const geometry = new Geometry(gl,{ position:{ size:3, data:positions }, random:{ size:4, data:randoms }, color:{ size:3, data:colors } })
+  const program = new Program(gl,{ vertex, fragment, uniforms:{ uTime:{ value:0 }, uSpread:{ value:6 }, uBaseSize:{ value:600 }, uSizeRandomness:{ value:1.1 }, uAlphaParticles:{ value:1 }, uAlphaScale:{ value:0.95 } }, transparent:true, depthTest:false })
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+      const particles = new Mesh(gl,{ mode: gl.POINTS, geometry, program })
+      let last=performance.now(), elapsed=0
+      function loop(t){
+        requestAnimationFrame(loop)
+        const dt = t-last; last=t; elapsed += dt*0.1
+        program.uniforms.uTime.value = elapsed*0.001
+        particles.rotation.x = 0.0
+        particles.rotation.y += 0.0004*dt
+        particles.rotation.z = 0.0
+        renderer.render({ scene: particles, camera })
+      }
+  requestAnimationFrame(loop)
+  console.log('[Particles] Initialized', { count: particleCount })
+    } catch(e){ console.warn('OGL particles failed', e) }
+  })()
+
+  // Simple fallback if WebGL particles not visible after 1s (adds CSS dots)
+  setTimeout(()=>{
+    const holder = document.querySelector('#timeline .timeline-particles')
+    if (!holder) return
+    const hasCanvas = holder.querySelector('canvas')
+    if (hasCanvas && hasCanvas.width>0 && hasCanvas.height>0) return
+    if (holder._fallbackApplied) return
+    holder._fallbackApplied = true
+    holder.style.position='absolute'
+    for(let i=0;i<60;i++){
+      const dot=document.createElement('div')
+      dot.style.position='absolute'
+      dot.style.width=dot.style.height=Math.round(Math.random()*4+3)+'px'
+      dot.style.left=(Math.random()*100)+'%'
+      dot.style.top=(Math.random()*100)+'%'
+      dot.style.background=['#000000ff','#000000ff','#000000ff','#111'][i%4]
+      dot.style.borderRadius='50%'
+      dot.style.opacity='0.85'
+      dot.style.filter='blur(0.5px)'
+      const dur = (Math.random()*6+6).toFixed(2)
+      const delay = (Math.random()*-dur).toFixed(2)
+      dot.style.animation=`pfade ${dur}s linear ${delay}s infinite`
+      holder.appendChild(dot)
+    }
+    if(!document.getElementById('particle-fallback-style')){
+      const style=document.createElement('style')
+      style.id='particle-fallback-style'
+      style.textContent='@keyframes pfade{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(0.6);opacity:.4}}'
+      document.head.appendChild(style)
+    }
+    console.warn('Fallback particles applied (WebGL not detected).')
+  },1000)
+  // ----------------------------------------------------------------------------------------------
 
   // Contact form validation and status
   const contactForm = document.getElementById("contact-form")
@@ -105,7 +336,10 @@
 
   // Ensure clicking a dot sets it active immediately (in addition to IO)
   dots.forEach((dot) => {
-    dot.addEventListener("click", () => {
+    dot.addEventListener("click", (e) => {
+      // Prevent browser's default instant jump so we can perform smooth scrolling
+      e.preventDefault()
+
       const targetSection = dot.dataset.section
       const targetElement = document.getElementById(targetSection)
 
@@ -114,9 +348,14 @@
           behavior: "smooth",
           block: "start",
         })
+
+        // Update the URL hash without causing another jump
+        try {
+          history.pushState(null, "", `#${targetSection}`)
+        } catch (err) {}
       }
 
-      setActiveDot(dot.dataset.section || "")
+      setActiveDot(targetSection || "")
     })
   })
 
@@ -210,6 +449,41 @@
         progressIcon.style.transform = `translate(-50%, -50%) translateY(${offset}px) scale(${scale})`
       }
 
+      // Reveal / hide timeline rows based strictly on progress line reaching/leaving their dot centers
+      if (timelineRows.length && timelineHeight > 0) {
+        // Raw fill in px
+        let filledPx = displayedProgress * timelineHeight
+        // Adjust for vertical nudge so visible line alignment is accurate
+        let verticalNudge = 0
+        try { verticalNudge = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--timeline-line-nudge')) || 0 } catch (_) {}
+        // Visible fill compensates for nudge (negative nudge means line visually starts higher)
+        let visibleFill = filledPx - (verticalNudge < 0 ? Math.abs(verticalNudge) : verticalNudge)
+        if (visibleFill < 0) visibleFill = 0
+
+        const revealBuffer = 0   // appear exactly when line reaches dot center
+        const hideBuffer = 0     // disappear exactly when line retracts past dot center
+
+        timelineRows.forEach(row => {
+          const dot = row.querySelector('.timeline-dot')
+            // Compute dot center relative to timeline top
+          let dotCenter = row.offsetTop + (dot ? (dot.offsetTop + dot.offsetHeight / 2) : (row.offsetHeight / 2))
+
+          if (!row.classList.contains('in-view')) {
+            if (dotCenter <= visibleFill + revealBuffer) {
+              row.classList.add('in-view')
+              row.classList.remove('leaving')
+            }
+          } else {
+            if (dotCenter > visibleFill + hideBuffer) {
+              if (!row.classList.contains('leaving')) {
+                row.classList.add('leaving')
+                setTimeout(() => { row.classList.remove('in-view'); row.classList.remove('leaving') }, 620)
+              }
+            }
+          }
+        })
+      }
+
       // Stop when close to target
       if (Math.abs(targetProgress - displayedProgress) < 0.001) {
         displayedProgress = targetProgress
@@ -222,56 +496,45 @@
     rafId = requestAnimationFrame(step)
   }
 
-  // Sequential "one by one" reveal of timeline rows
+  // Progress-based reveal (cards appear when progress line passes them)
+  let timelineRows = []
+  let timelineHeight = 0
   if (timelineWrap) {
-    const rows = Array.from(timelineWrap.querySelectorAll(".timeline-row"))
-    const revealed = new Set()
-    const candidates = new Set()
-    let running = false
+    timelineRows = Array.from(timelineWrap.querySelectorAll('.timeline-row'))
+  }
 
-    // Wait long enough so each animation completes before the next starts
-    const STAGGER_MS = 650 // adjust for faster/slower sequencing (matches ~0.6s CSS transition)
+  function measureProgress() {
+    if (!timelineWrap) return
+    const rect = timelineWrap.getBoundingClientRect()
+    const vh = window.innerHeight || document.documentElement.clientHeight
+    timelineHeight = rect.height
+    const viewportCenter = vh / 2
+    // Progress: how far the viewport center has traveled from the top of the timeline
+    const raw = (viewportCenter - rect.top) / rect.height
+    const p = clamp(raw, 0, 1)
+    targetProgress = p
+    startRAF()
+  }
 
-    function revealNext() {
-      if (running) return
-      // Pick the next candidate in DOM order
-      const next = rows.find((r) => candidates.has(r) && !revealed.has(r))
-      if (!next) return
-
-      running = true
-      next.classList.add("in-view")
-      revealed.add(next)
-      rowObserver.unobserve(next)
-      candidates.delete(next)
-
-      setTimeout(() => {
-        running = false
-        // Immediately attempt to reveal the next in queue
-        revealNext()
-      }, STAGGER_MS)
+  if (timelineWrap) {
+    function gatedMeasure(){
+      const sectionRect = timelineSection.getBoundingClientRect()
+      const vh = window.innerHeight || document.documentElement.clientHeight
+      const partiallyVisible = sectionRect.bottom > 0 && sectionRect.top < vh
+      if (partiallyVisible) {
+        // Allow natural reveal/hide inside section
+        measureProgress()
+      } else {
+        // Fully out of view: hard reset for a clean re-entry
+        timelineRows.forEach(r=>{ r.classList.remove('in-view','leaving') })
+        timelineWrap.style.setProperty('--progress','0')
+        targetProgress = 0
+        displayedProgress = 0
+      }
     }
-
-    const rowObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const el = entry.target
-          if (entry.isIntersecting && !revealed.has(el)) {
-            candidates.add(el)
-            revealNext()
-          } else if (!entry.isIntersecting && !revealed.has(el)) {
-            // If it leaves before being revealed, remove from queue
-            candidates.delete(el)
-          }
-        })
-      },
-      { threshold: 0.25 },
-    )
-
-    rows.forEach((row) => rowObserver.observe(row))
-
-    window.addEventListener("scroll", measureProgress, { passive: true })
-    window.addEventListener("resize", measureProgress)
-    measureProgress()
+    window.addEventListener('scroll', gatedMeasure, { passive: true })
+    window.addEventListener('resize', gatedMeasure)
+    gatedMeasure()
   }
 })()
 ;(() => {
@@ -310,52 +573,25 @@
   function handleScroll() {
     const currentScrollY = window.scrollY
     isScrollingDown = currentScrollY > lastScrollY && currentScrollY > 100
-
-    // Check if we're in the first section (hero)
-    const heroSection = document.getElementById("hero")
-    const aboutSection = document.getElementById("about")
-
-    let isInFirstSection = true
-
-    if (heroSection && aboutSection) {
-      const heroRect = heroSection.getBoundingClientRect()
-      const aboutRect = aboutSection.getBoundingClientRect()
-
-      // If about section is visible or hero is mostly scrolled past
-      if (aboutRect.top <= window.innerHeight * 0.5 || heroRect.bottom <= 0) {
-        isInFirstSection = false
-      }
+    const heroSection = document.getElementById('hero')
+    let heroMostlyVisible = true
+    if (heroSection) {
+      const rect = heroSection.getBoundingClientRect()
+      const vh = window.innerHeight || document.documentElement.clientHeight
+      const visiblePx = Math.min(rect.bottom, vh) - Math.max(rect.top, 0)
+      const visibleRatio = visiblePx / Math.max(rect.height, 1)
+  // consider hero "mostly visible" if at least 25% of its height remains in viewport
+  heroMostlyVisible = visibleRatio >= 0.25 && rect.bottom > 0
     }
 
-    // Hide header when not in first section, show dot nav
-    if (!isInFirstSection && !header.classList.contains("open")) {
-      header.classList.add("navbar-hidden")
-      if (dotNav) {
-        dotNav.classList.add("visible")
-      }
+    // Show dot nav only after hero is mostly scrolled away
+    if (!heroMostlyVisible && !header.classList.contains('open')) {
+      header.classList.add('navbar-hidden')
+      if (dotNav) dotNav.classList.add('visible')
     } else {
-      header.classList.remove("navbar-hidden")
-      if (dotNav) {
-        dotNav.classList.remove("visible")
-      }
+      header.classList.remove('navbar-hidden')
+      if (dotNav) dotNav.classList.remove('visible')
     }
-
-    // Update active nav link
-    const sections = document.querySelectorAll("section[id]")
-    sections.forEach((section) => {
-      const rect = section.getBoundingClientRect()
-      if (rect.top <= 100 && rect.bottom >= 0) {
-        const sectionId = section.getAttribute("id")
-        navLinks.forEach((link) => {
-          const href = link.getAttribute("href")
-          if (href === `#${sectionId}`) {
-            link.classList.add("active")
-          } else {
-            link.classList.remove("active")
-          }
-        })
-      }
-    })
 
     lastScrollY = currentScrollY
   }
@@ -397,96 +633,181 @@
   handleScroll()
 })()
 
-// Pop-in animation for all .pop-in elements (exclude timeline-card to avoid conflicts with sequencer)
+// Pop-in animation: allow re-trigger when fully out of view to replay; avoid jitter at threshold
 ;(() => {
-  const popSections = document.querySelectorAll(".pop-in")
+  const els = document.querySelectorAll('.pop-in')
+  if (!els.length) return
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          if (!entry.target._popInTimeout) {
-            entry.target._popInTimeout = setTimeout(() => {
-              entry.target.classList.add("in-view")
-              entry.target._popInTimeout = null
-            }, 120) // delay in ms
-          }
-        } else {
-          entry.target.classList.remove("in-view")
-          if (entry.target._popInTimeout) {
-            clearTimeout(entry.target._popInTimeout)
-            entry.target._popInTimeout = null
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const el = entry.target
+      if (entry.isIntersecting) {
+        if (el._popInRemoveTimer) { clearTimeout(el._popInRemoveTimer); el._popInRemoveTimer = null }
+        if (el._popInAddTimer) return // already scheduled
+        if (!el.classList.contains('in-view')) {
+          const seenBefore = !!el.dataset.popInSeen
+          // Delay longer if replay
+          const delay = seenBefore ? 220 : 90
+          el._popInAddTimer = setTimeout(()=>{
+            if (seenBefore) el.classList.add('pop-in-replay')
+            el.classList.add('in-view')
+            el.dataset.popInSeen = '1'
+            el._popInAddTimer = null
+          }, delay)
+        }
+      } else {
+        const rect = el.getBoundingClientRect()
+        const vh = window.innerHeight || document.documentElement.clientHeight
+        // Only remove once fully out of view (above or below) so we can replay cleanly
+        if (rect.bottom < 0 || rect.top > vh) {
+          if (el._popInAddTimer) { clearTimeout(el._popInAddTimer); el._popInAddTimer = null }
+          if (el.classList.contains('in-view')) {
+            el.classList.remove('in-view')
+            el.classList.remove('pop-in-replay')
+            void el.offsetWidth // reflow for next transition
           }
         }
-      })
-    },
-    {
-      threshold: 0.15,
-      rootMargin: "0px 0px -17% 0px", // triggers when element is lower in viewport
-    },
-  )
+      }
+    })
+  }, { threshold: [0, 0.15, 0.35], rootMargin: '0px 0px -12% 0px' })
 
-  popSections.forEach((section) => observer.observe(section))
+  els.forEach(el=>observer.observe(el))
+
+  // Reset animations when hero dominates viewport so scrolling back down replays smoothly
+  const hero = document.getElementById('hero')
+  let heroRAF = 0
+  function checkHeroReset(){
+    heroRAF = 0
+    if(!hero) return
+    const rect = hero.getBoundingClientRect()
+    const vh = window.innerHeight || document.documentElement.clientHeight
+    const visiblePx = Math.min(rect.bottom, vh) - Math.max(rect.top, 0)
+    const ratio = visiblePx / Math.max(rect.height,1)
+    // When hero mostly visible, clear in-view so elements can replay
+    if(ratio >= 0.65){
+      els.forEach(el=>{
+        if(el === hero) return
+        if(el.classList.contains('in-view')){
+          el.classList.remove('in-view','pop-in-replay')
+          void el.offsetWidth
+        }
+      })
+    }
+  }
+  window.addEventListener('scroll', ()=>{ if(!heroRAF) heroRAF = requestAnimationFrame(checkHeroReset) }, { passive:true })
 })()
 
 // --- Modal logic for feature cards and external links ---
-function showModal(cardOrLink) {
+function showModal(linkEl) {
   const modal = document.getElementById("link-modal")
-  const title = document.getElementById("link-modal-title")
-  const url = document.getElementById("link-modal-url")
-
-  if (cardOrLink.classList.contains("feature-card")) {
-    title.textContent = cardOrLink.querySelector("h3")?.textContent?.trim() || "Feature"
-    url.textContent = cardOrLink.querySelector(".learn")?.href || ""
+  const tEl = document.getElementById("link-modal-title")
+  const uEl = document.getElementById("link-modal-url")
+  if (!linkEl) return
+  // Detect if from work section
+  const card = linkEl.closest('.card')
+  const isWork = !!card && !!card.closest('#work')
+  if (isWork && card) {
+    // Manual override support: use data attributes if provided on link or card
+    const rawTag = card.querySelector('.tag')?.textContent?.trim() || 'PROJECT'
+  const domTitle = card.querySelector('h2, h3')?.textContent?.trim() || 'Project'
+    const href = linkEl.href || ''
+    const getAttr = (name) => linkEl.getAttribute(name) || card.getAttribute(name) || ''
+    const customTitle = getAttr('data-modal-title') || domTitle
+    const customDesc = getAttr('data-modal-desc') || `${rawTag} showcase.`
+    const tagsAttr = getAttr('data-modal-tags') || rawTag
+    const tags = tagsAttr.split(',').map(t=>t.trim()).filter(Boolean).slice(0,12)
+    // Images (and optional captions) defined as: src|Caption;src2|Caption2
+    const imagesAttr = getAttr('data-modal-images') || ''
+    const slides = imagesAttr.split(';').map(s=>s.trim()).filter(Boolean).map((s,i)=>{
+      const [srcPart, capPart] = s.split('|')
+      return { src: (srcPart||'').trim(), cap: (capPart||`Slide ${i+1}`).trim() }
+    })
+    // Code sample: allow inline attribute with \n for newlines
+    const codeAttr = getAttr('data-modal-code') || ''
+    // Escape helper
+    const container = modal.querySelector('.link-modal-content')
+    const esc = (s)=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    if (container) {
+      const tagsHtml = tags.map(t=>`<span class="modal-mac-tag">${esc(t)}</span>`).join('')
+      const carouselId = 'carouselProject'
+      let slidesHtml = ''
+      if (slides.length) {
+        slidesHtml = slides.map((sl,i)=> {
+          const imgTag = sl.src ? `<img src="${esc(sl.src)}" class="d-block w-100" alt="${esc(sl.cap)}"/>` : `<div class='d-block w-100' style='height:320px;background:#333;display:flex;align-items:center;justify-content:center;color:#999;font-size:28px;'>${esc(sl.cap)}</div>`
+          const captionHtml = sl.cap ? `<div class="carousel-caption d-none d-md-block"><p>${esc(sl.cap)}</p></div>` : ''
+          return `<div class="carousel-item ${i===0?'active':''}">${imgTag}${captionHtml}</div>`
+        }).join('')
+      } else {
+        // Fallback placeholder slides if none provided
+        slidesHtml = ['#666|Slide A','#777|Slide B','#555|Slide C'].map((c,i)=>{
+          const [clr,cap]=c.split('|')
+          return `<div class="carousel-item ${i===0?'active':''}"><div class='d-block w-100' style='height:320px;background:${esc(clr)};display:flex;align-items:center;justify-content:center;color:#222;font-size:32px;'>${esc(cap)}</div></div>`
+        }).join('')
+      }
+      const carouselHtml = `<div id="${carouselId}" class="carousel slide" data-bs-theme="dark"><div class="carousel-inner">${slidesHtml}</div><button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button><button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span></button></div>`
+      let codeHtml = ''
+      if (codeAttr) {
+        const decoded = codeAttr.replace(/\\n/g,'\n')
+        codeHtml = `<div class="modal-mac-code"><pre><code>${esc(decoded)}</code></pre></div>`
+      } else {
+        const defaultCode = `Title: ${customTitle}\nURL: ${href}`
+        codeHtml = `<div class="modal-mac-code"><pre><code>${esc(defaultCode)}</code></pre></div>`
+      }
+      const githubLink = getAttr('data-modal-github') || 'https://github.com/migueldgzmn'
+      container.innerHTML = `
+        <div class="modal-mac-header">
+          <span class="red" role="button" aria-label="Close modal"></span><span class="yellow"></span><span class="green"></span>
+        </div>
+        <h2 class="modal-mac-title">${esc(customTitle)}</h2>
+        <p class="modal-mac-desc">${esc(customDesc)}</p>
+        <div class="modal-mac-tags">${tagsHtml}</div>
+        <div class="modal-mac-body">${carouselHtml}</div>
+        ${codeHtml}
+        <div class="modal-mac-footer">
+          <a class="modal-mac-github" href="${esc(githubLink)}" target="_blank" rel="noopener" aria-label="GitHub Link">
+            <i class="fa-brands fa-github" aria-hidden="true"></i>
+            <span>GitHub</span>
+          </a>
+        </div>`
+      const redDot = container.querySelector('.modal-mac-header .red')
+      if (redDot) {
+        redDot.addEventListener('click', closeMainModal)
+        redDot.tabIndex = 0
+        redDot.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); closeMainModal() } })
+      }
+    }
   } else {
-    title.textContent = cardOrLink.textContent.trim() || cardOrLink.getAttribute("aria-label") || "External Link"
-    url.textContent = cardOrLink.href
+    // Fallback to legacy simple content
+    if (tEl) tEl.textContent = linkEl.textContent.trim() || linkEl.getAttribute("aria-label") || "External Link"
+    if (uEl) uEl.textContent = linkEl.href || ''
   }
-
   modal.hidden = false
   modal.focus()
+  lockScroll()
+  try { document.dispatchEvent(new CustomEvent('app:modal-open')) } catch (_) {}
 }
 
 // Track dragging state globally
 window.__featureTrackDragging = false
 
-// Feature card click handler (not while dragging)
-document.querySelectorAll(".feature-card").forEach((card) => {
-  card.addEventListener("click", (e) => {
-    if (window.__featureTrackDragging) return
-    showModal(card)
-  })
-})
-
-// Only open modal for feature cards and work/project links, NOT social icons
-
-// Remove or comment out this block:
-// document.querySelectorAll('a[target="_blank"]').forEach((link) => {
-//   link.addEventListener("click", (e) => {
-//     e.preventDefault()
-//     showModal(link)
-//   })
-// })
-
-// If you want modals for project links only, use a more specific selector:
-document.querySelectorAll('.card .learn[target="_blank"]').forEach((link) => {
-  link.addEventListener("click", (e) => {
-    e.preventDefault()
-    showModal(link)
-  })
-})
-
-// Social icons will now open in a new tab as expected.
-
 // Modal close logic
-document.querySelector(".link-modal-close").addEventListener("click", () => {
-  document.getElementById("link-modal").hidden = true
-})
+function closeMainModal() {
+  const m = document.getElementById('link-modal')
+  if (!m) return
+  if (!m.hasAttribute('hidden')) {
+    m.hidden = true
+    try { document.dispatchEvent(new CustomEvent('app:modal-close')) } catch (_) {}
+  // Clear active card shadow state
+  document.querySelectorAll('.work .card.modal-active-card').forEach(c=>c.classList.remove('modal-active-card'))
+  unlockScroll()
+  }
+}
+document.querySelector(".link-modal-close").addEventListener("click", closeMainModal)
 document.getElementById("link-modal").addEventListener("click", function (e) {
-  if (e.target === this) this.hidden = true
+  if (e.target === this) closeMainModal()
 })
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") document.getElementById("link-modal").hidden = true
+  if (e.key === "Escape") closeMainModal()
 })
 
 // Modal elements
@@ -505,53 +826,310 @@ document.addEventListener("DOMContentLoaded", () => {
       const content = this.getAttribute("data-modal-content") || ""
       modalTitle.textContent = title
       modalUrl.textContent = content
-      modal.removeAttribute("hidden")
-      modal.focus()
+      if (modal.hasAttribute('hidden')) {
+        modal.removeAttribute("hidden")
+        modal.focus()
+  lockScroll()
+      }
     })
   })
 
   // Close modal on button click
   modalClose.addEventListener("click", () => {
-    modal.setAttribute("hidden", "")
+    if (!modal.hasAttribute('hidden')) {
+      modal.setAttribute("hidden", "")
+      try { document.dispatchEvent(new CustomEvent('app:modal-close')) } catch (_) {}
+  unlockScroll()
+    }
   })
 
   // Close modal on outside click or ESC
   modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
+    if (e.target === modal && !modal.hasAttribute('hidden')) {
       modal.setAttribute("hidden", "")
+      try { document.dispatchEvent(new CustomEvent('app:modal-close')) } catch (_) {}
+      unlockScroll()
     }
   })
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
+    if (e.key === "Escape" && !modal.hasAttribute('hidden')) {
       modal.setAttribute("hidden", "")
+      try { document.dispatchEvent(new CustomEvent('app:modal-close')) } catch (_) {}
+      unlockScroll()
     }
   })
 })
 
-// --- Follow cursor highlight for links and buttons ---
-document.querySelectorAll(".highlight").forEach((el) => {
-  let label
-  el.addEventListener("mouseenter", () => {
-    label = document.createElement("span")
-    label.className = "highlight-label-follow"
-    label.textContent = "View"
+// Delegate click for explicit View Project buttons to open modal
+document.addEventListener('click', (e)=>{
+  const btn = e.target.closest && e.target.closest('#work a.view-project[data-open-modal]')
+  if(!btn) return
+  e.preventDefault()
+  const card = btn.closest('.card')
+  if(!card) return
+  document.querySelectorAll('.work .card.modal-active-card').forEach(c=>c.classList.remove('modal-active-card'))
+  card.classList.add('modal-active-card')
+  showModal(btn)
+})
+
+// Central scroll lock utilities (avoid page jump by preserving scroll and compensating scrollbar width)
+function lockScroll(){
+  const body = document.body
+  if(body.classList.contains('scroll-locked')) return
+  const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth
+  body.dataset.prevOverflow = body.style.overflow || ''
+  body.dataset.prevPaddingRight = body.style.paddingRight || ''
+  if(scrollBarWidth > 0){ body.style.paddingRight = scrollBarWidth + 'px' }
+  body.style.overflow = 'hidden'
+  body.classList.add('scroll-locked')
+}
+function unlockScroll(){
+  const body = document.body
+  if(!body.classList.contains('scroll-locked')) return
+  body.classList.remove('scroll-locked')
+  body.style.overflow = body.dataset.prevOverflow || ''
+  body.style.paddingRight = body.dataset.prevPaddingRight || ''
+  delete body.dataset.prevOverflow
+  delete body.dataset.prevPaddingRight
+}
+
+// --- Stable Work section hover label (replaces previous buggy highlight logic) ---
+;(function () {
+  const work = document.getElementById('work')
+  if (!work) return
+  const cards = Array.from(work.querySelectorAll('.card'))
+  if (!cards.length) return
+
+  let label = null
+  let activeCard = null
+  let hideTimer = null
+  let rafId = 0
+  let targetX = 0
+  let targetY = 0
+  let typeTimer = null
+  let currentText = ''
+
+  function ensureLabel() {
+    if (label) return
+    label = document.createElement('span')
+    label.className = 'highlight-label-follow'
+    label.textContent = ''
+    label.style.opacity = '0'
+    label.style.transform = 'scale(0.9)'
     document.body.appendChild(label)
-    el.classList.add("active")
-  })
-  el.addEventListener("mousemove", (e) => {
-    if (label) {
-      label.style.left = e.clientX + 16 + "px"
-      label.style.top = e.clientY - 8 + "px"
+    requestAnimationFrame(() => {
+      if (label) {
+        label.style.opacity = '1'
+        label.style.transform = 'scale(1)'
+      }
+    })
+  }
+
+  function animate() {
+    if (!label) { rafId = 0; return }
+    const cx = parseFloat(label.dataset.x || '0')
+    const cy = parseFloat(label.dataset.y || '0')
+    const nx = cx + (targetX - cx) * 0.25
+    const ny = cy + (targetY - cy) * 0.25
+    label.style.left = nx + 'px'
+    label.style.top = ny + 'px'
+    label.dataset.x = nx
+    label.dataset.y = ny
+    rafId = requestAnimationFrame(animate)
+  }
+
+  function startRAF() { if (!rafId) rafId = requestAnimationFrame(animate) }
+
+  function show(card, clientX, clientY) {
+  // Do not show while modal open
+  const openModal = document.getElementById('link-modal')
+  if (openModal && !openModal.hasAttribute('hidden')) return
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+    if (activeCard !== card) activeCard = card
+    // Determine card title (prefer h3 inside card)
+  const titleEl = card.querySelector('h2, h3')
+    const newText = (titleEl?.textContent || 'Project').trim()
+    if (newText !== currentText) {
+      currentText = newText
+      // force retype on content change
+      if (label) label.textContent = ''
     }
+    ensureLabel()
+    targetX = clientX + 18
+    targetY = clientY - 10
+    // Immediately place label at cursor (avoid starting from top-left)
+    label.style.left = targetX + 'px'
+    label.style.top = targetY + 'px'
+    label.dataset.x = targetX
+    label.dataset.y = targetY
+
+    // Restart typewriter only when label first created or card changed and text not fully shown
+  if (label.textContent !== currentText) {
+      if (typeTimer) clearTimeout(typeTimer)
+      label.textContent = ''
+      let i = 0
+      const run = () => {
+        if (!label) return
+        if (i <= currentText.length) {
+          label.textContent = currentText.slice(0, i)
+          i++
+          typeTimer = setTimeout(run, 28)
+        }
+      }
+      run()
+    }
+    startRAF()
+  }
+
+  function scheduleHide() {
+    if (hideTimer) return
+    hideTimer = setTimeout(() => {
+  // If modal opened during hide delay, just remove immediately and abort animation reuse
+  const modal = document.getElementById('link-modal')
+  if (modal && !modal.hasAttribute('hidden')) {
+    if (label) { label.remove(); label = null }
+    activeCard = null
+    if (rafId) cancelAnimationFrame(rafId)
+    rafId = 0
+    hideTimer = null
+    return
+  }
+      activeCard = null
+      if (label) {
+        label.style.opacity = '0'
+        label.style.transform = 'scale(0.9)'
+        setTimeout(() => {
+          if (label && !activeCard) {
+            label.remove()
+            label = null
+            if (rafId) cancelAnimationFrame(rafId)
+            rafId = 0
+          }
+        }, 180)
+      }
+    }, 220)
+  }
+
+  cards.forEach(card => {
+    card.addEventListener('pointerenter', (e) => {
+      const link = card.querySelector('.learn.highlight')
+      // If hovering link later, we still keep same label; no duplication.
+      show(card, e.clientX, e.clientY)
+    })
+    card.addEventListener('pointermove', (e) => {
+      if (activeCard === card) {
+        targetX = e.clientX + 18
+        targetY = e.clientY - 10
+        startRAF()
+      }
+    })
+    card.addEventListener('pointerleave', () => {
+      if (activeCard === card) scheduleHide()
+    })
+
+    // Ensure clicking the link inside the card does not blank the label
+  // Clicking the card ensures label finalizes before modal (handled above)
   })
-  el.addEventListener("mouseleave", () => {
+
+  // Keyboard focus support: when link inside card focuses, center label
+  work.addEventListener('focusin', (e) => {
+    const card = e.target.closest?.('#work .card')
+    if (!card) return
+    const openModal = document.getElementById('link-modal')
+    if (openModal && !openModal.hasAttribute('hidden')) return
+    const rect = card.getBoundingClientRect()
+    show(card, rect.left + rect.width / 2, rect.top + rect.height / 2)
+  })
+  work.addEventListener('focusout', (e) => {
+    // Defer to see where focus moved
+    setTimeout(() => {
+      const ae = document.activeElement
+      const stillInside = ae && ae.closest && ae.closest('#work .card')
+      if (!stillInside) scheduleHide()
+    }, 0)
+  })
+
+  // Remove label forcibly on modal open
+  document.addEventListener('app:modal-open', () => {
     if (label) {
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = 0
       label.remove()
       label = null
+      activeCard = null
+      if (typeTimer) { clearTimeout(typeTimer); typeTimer = null }
     }
-    el.classList.remove("active")
   })
-})
+})()
+
+// Feature card reactive tilt: flip once, then subtle pointer-based tilt while hovered
+;(function(){
+  const cards = document.querySelectorAll('.feature-card')
+  if(!cards.length) return
+  const MAX_TILT = 10 // degrees
+  const MAX_Z = 6 // rotateZ degrees
+  const DAMP = 0.12
+  cards.forEach(card => {
+    const inner = card.querySelector('.feature-card-inner')
+    if(!inner) return
+    let active = false
+    let rx=0, ry=0, rz=0
+    let trX=0, trY=0, trZ=0
+    let animId=0
+    function animate(){
+      rx += (trX - rx)*DAMP
+      ry += (trY - ry)*DAMP
+      rz += (trZ - rz)*DAMP
+      // base flip 180deg
+      inner.style.transform = `rotateY(180deg) rotateX(${rx.toFixed(2)}deg) rotateZ(${rz.toFixed(2)}deg)`
+      if (Math.abs(rx - trX) > 0.1 || Math.abs(rz - trZ) > 0.1) {
+        animId = requestAnimationFrame(animate)
+      } else {
+        animId = 0
+      }
+    }
+    function start(){
+      if(active) return
+      active = true
+      card.classList.add('flip-active')
+      inner.style.transition = 'transform .7s cubic-bezier(.33,1,.68,1)'
+      inner.style.transform = 'rotateY(180deg)'
+      setTimeout(()=>{ inner.style.transition=''; }, 720)
+    }
+    function end(){
+      active = false
+      card.classList.remove('flip-active')
+      if(animId) cancelAnimationFrame(animId)
+      animId=0
+      rx=ry=rz=trX=trY=trZ=0
+      inner.style.transition = 'transform .6s cubic-bezier(.33,1,.68,1)'
+      inner.style.transform = 'rotateY(0deg)'
+      setTimeout(()=>{ inner.style.transition=''; }, 620)
+    }
+    function pointerMove(e){
+      if(!active) return
+      const rect = card.getBoundingClientRect()
+      const cx = rect.left + rect.width/2
+      const cy = rect.top + rect.height/2
+      const dx = (e.clientX - cx) / (rect.width/2)
+      const dy = (e.clientY - cy) / (rect.height/2)
+  // Push effect: card tilts away from cursor position (invert previous mapping)
+  // When cursor is at top, rotateX slightly positive (leans back); bottom -> negative (leans forward)
+  trX = dy * MAX_TILT
+  // RotateZ so moving right pushes right side down (positive dx -> positive Z)
+  trZ = dx * MAX_Z
+  // We keep rotateY locked at 180deg; trY not used (set to 0)
+  trY = 0
+      // Only rotate around X and Z for subtle effect; Y remains 180deg flipped
+      if(!animId) animId = requestAnimationFrame(animate)
+    }
+    card.addEventListener('pointerenter', start)
+    card.addEventListener('focusin', start)
+    card.addEventListener('pointerleave', end)
+    card.addEventListener('focusout', end)
+    card.addEventListener('pointermove', pointerMove)
+  })
+})()
 
 // Smooth floating label for all hoverable elements except dot nav, with animated text
 
@@ -573,18 +1151,20 @@ function isDotNav(el) {
 }
 
 // Select hoverable elements (not in dot nav)
+// Exclude #work .highlight links here because they have their own scoped floating label above.
 const hoverables = Array.from(
-  document.querySelectorAll(`
-  a, button, input, textarea, select, label,
-  .feature-card, .card, .timeline-card, .tag
-`),
-).filter((el) => !isDotNav(el))
+  document.querySelectorAll(
+    `.card`
+  ),
+).filter((el) => !isDotNav(el) && !el.closest('#work'))
 
 let label = null
 let labelTimeout = null
 
 hoverables.forEach((el) => {
   el.addEventListener("mouseenter", (e) => {
+  const openModal = document.getElementById('link-modal')
+  if (openModal && !openModal.hasAttribute('hidden')) return
     if (label) {
       label.remove()
       label = null
@@ -643,6 +1223,15 @@ hoverables.forEach((el) => {
   })
 })
 
+// Remove generic floating label when modal opens
+document.addEventListener('app:modal-open', () => {
+  if (label) {
+    label.remove()
+    label = null
+    if (labelTimeout) { clearTimeout(labelTimeout); labelTimeout = null }
+  }
+})
+
 // Pop-in animation for hero background and content (only once)
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.getElementById("hero")
@@ -652,3 +1241,24 @@ document.addEventListener("DOMContentLoaded", () => {
   if (heroCopy) heroCopy.classList.add("hero-pop-content")
   if (socialIcons) socialIcons.classList.add("hero-pop-content")
 })
+
+// If the page loads with a hash (e.g. example.com/#about), the browser jumps instantly.
+// Replace the instant jump with a smooth scroll after load.
+document.addEventListener("DOMContentLoaded", () => {
+  try {
+    if (location.hash) {
+      const id = location.hash.slice(1)
+      const el = document.getElementById(id)
+      if (el) {
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+        window.scrollTo(0, 0)
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          try { history.replaceState(null, '', `#${id}`) } catch (e) {}
+        }, 40)
+      }
+    }
+  } catch (err) {}
+})
+
+// (Custom cursor removed – reverted per user request)
