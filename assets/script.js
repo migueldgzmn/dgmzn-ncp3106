@@ -643,6 +643,14 @@
   heroMostlyVisible = visibleRatio >= 0.25 && rect.bottom > 0
     }
 
+    // On mobile, do not auto-hide the header and do not show dot nav
+    if (!mqlDesktop.matches) {
+      header.classList.remove('navbar-hidden')
+      if (dotNav) dotNav.classList.remove('visible')
+      lastScrollY = currentScrollY
+      return
+    }
+
     // Show dot nav only after hero is mostly scrolled away
     if (!heroMostlyVisible && !header.classList.contains('open')) {
       header.classList.add('navbar-hidden')
