@@ -2027,7 +2027,17 @@ a.view-project:hover, a.view-project:focus { color: #444; }
 }
 
 /* Reactive flip + subtle tilt (pointer based) */
-.feature-card-inner { transition: transform .7s cubic-bezier(.33,1,.68,1); }
+/* Smoother flip animation (adjustable via CSS variables) */
+:root { --flip-duration: 1.05s; --flip-ease: cubic-bezier(.18,.88,.24,1); }
+.feature-card-inner { transition: transform var(--flip-duration) var(--flip-ease); transform-origin: center center; }
+/* Slight 3D perspective & initial subtle depth to soften start */
+.features .feature-card { perspective: 1400px; }
+.features .feature-card-inner { backface-visibility: hidden; }
+/* Add a tiny pre-rotation on hover start for a more progressive feel */
+@media (min-width:901px) and (hover:hover) and (pointer:fine){
+  .features .feature-card:hover .feature-card-inner,
+  .features .feature-card:focus-within .feature-card-inner { transition-timing-function: var(--flip-ease); }
+}
 .feature-card.flip-active .feature-card-inner { transform: rotateY(180deg); }
 /* While tracking pointer we inline style transform with extra rotateX/rotateZ */
 /* Shadow only when flipped */
@@ -2345,6 +2355,83 @@ a.view-project:hover, a.view-project:focus { color: #444; }
     padding: 18px 0;
   }
 }
+} /* end @media (prefers-reduced-motion: reduce) from earlier section */
+/* (Removed an extra stray closing brace that caused later CSS to be ignored; re-added correct closing brace above) */
+
+/* =============================
+   RESPONSIVE FIX OVERRIDES
+   - Consolidate feature card layout
+   - Normalize hero social icon positioning
+   - Remove 100vw body width overflow issues
+   - Reduce conflicting duplicate rules
+   ============================= */
+
+/* Avoid horizontal jump when scrollbar present */
+body { width: 100%; }
+
+/* Hero social icons: anchor bottom-left with fluid inset instead of huge fixed margins */
+#hero .social-icons {
+  position: absolute;
+  bottom: clamp(16px, 4vh, 80px);
+  left: clamp(16px, 4vw, 120px);
+  margin: 0 !important;
+  justify-content: flex-start !important;
+  width: auto !important;
+}
+@media (max-width: 900px) {
+  #hero .social-icons { left: 50%; transform: translateX(-50%); bottom: 32px; }
+}
+
+/* Unify Feature (Expertise) section into a simple responsive grid ONLY on mobile/tablet.
+   Desktop keeps original horizontal scroll / flip design. */
+@media (max-width: 900px) {
+  .features .feature-track {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 28px !important;
+    width: 100%;
+    padding: 28px clamp(16px,2vw,32px) 4px !important;
+    overflow: visible !important;
+    cursor: default !important;
+  }
+  .features .feature-card,
+  .features .feature-card-inner,
+  .features .feature-card-front,
+  .features .feature-card-back {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 360px;
+    perspective: 1000px;
+  }
+  @media (max-width: 640px) {
+    .features .feature-card,
+    .features .feature-card-inner,
+    .features .feature-card-front,
+    .features .feature-card-back { height: 320px; }
+  }
+  /* Slightly smaller icons on narrow screens */
+  .features .skill-logos i, .features .skill-logos span { font-size: clamp(36px,10vw,52px) !important; }
+}
+
+/* Timeline center safety on very wide screens */
+@media (min-width:1600px){
+  #timeline > .container { max-width: 1400px; margin: 0 auto; }
+}
+
+/* Utility: smooth out overly strong shadows when many cards wrap */
+@media (prefers-reduced-motion: reduce){
+  .features .feature-card, .features .feature-card * { transition: none !important; }
+}
+
+/* === Desktop Expertise Hover Flip Restoration === */
+@media (min-width:901px) and (hover:hover) and (pointer:fine){
+  /* Cancel generic hover translate so 3D flip isn't overridden */
+  .features .feature-card:hover,
+  .features .feature-card:focus-within { transform: none !important; }
+  /* Perform flip on inner wrapper */
+  .features .feature-card:hover .feature-card-inner,
+  .features .feature-card:focus-within .feature-card-inner { transform: rotateY(180deg); }
 }
 
 
