@@ -425,7 +425,7 @@ h3 {
   position: relative;
   padding: 0;
   margin: 0;
-  background: #1f1f1f url("./hero.png") center center / cover no-repeat;
+  background: #1f1f1f url("./assets/hero.png") center center / cover no-repeat;
   overflow: hidden;
 }
 
@@ -1630,7 +1630,7 @@ body.no-scroll {
 
 /* Example: individual backgrounds for each section */
 #hero {
-  background: #1f1f1f url("./hero.png") center center / cover no-repeat;
+  background: #1f1f1f url("./assets/hero.png") center center / cover no-repeat;
 }
 #about {
   background: #fff;
