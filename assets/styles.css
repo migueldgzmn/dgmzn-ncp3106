@@ -108,6 +108,8 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 /* Ensure scroll snapping is disabled globally and smooth scrolling enforced
@@ -258,7 +260,7 @@ h3 {
    your HTML and JS remain untouched. */
 .site-header {
   position: fixed;
-  top: 1vw; /* match vertical offset from your example */
+  top: 12px; /* fixed offset for consistent desktop spacing */
   left: 0;
   right: 0;
   display: flex;
@@ -273,12 +275,12 @@ h3 {
   background-color: white; /* semi-transparent navy */
   border-radius: 12px;
   border: 1px solid black; /* visible black border */
-  max-width: 60vw;
+  max-width: min(960px, 92vw);
   margin: 0 auto;
   padding: 10px 18px;
   font-family: "Poppins", sans-serif;
   font-weight: 600;
-  font-size: 1vw;
+  font-size: clamp(14px, 1rem, 18px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -396,6 +398,14 @@ h3 {
 }
 
 @media (max-width: 900px) {
+  /* Mobile: center hero social icons and remove large offsets */
+  #hero .social-icons {
+    margin: 16px auto 24px !important;
+    margin-right: 0 !important;
+    justify-content: center !important;
+    width: 100%;
+  }
+  #hero .social-icons .social-icon { transform: none; }
   .hero-grid {
     grid-template-columns: 1fr;
   }
@@ -1417,6 +1427,12 @@ body.no-scroll {
     padding: 0 !important;
     max-width: 100vw;
   }
+  /* Fix overflow and spacing at top */
+  body { overflow-y: auto !important; }
+  #features { background: #fff !important; }
+  #features .container { padding-left: 16px; padding-right: 16px; }
+  .feature-track { background: transparent; }
+  .feature-card { background: #fff; color: #000; }
   .nav-toggle {
     display: inline-flex;
     position: fixed;
@@ -1512,6 +1528,21 @@ body.no-scroll {
   .nav-toggle:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px rgba(0,0,0,0.12), 0 4px 14px rgba(0,0,0,0.12);
+  }
+
+  /* Improve vertical scrolling inside Expertise on mobile */
+  .feature-track {
+    touch-action: auto !important; /* allow vertical gestures */
+    -ms-touch-action: auto !important;
+    overflow-y: visible !important;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .feature-card {
+    background: #fff !important;
+    color: #000 !important;
+    border: 2px solid #000 !important;
+    box-shadow: var(--shadow) !important;
   }
 }
 
@@ -2068,6 +2099,30 @@ a.view-project:hover, a.view-project:focus { color: #444; }
   flex-wrap: wrap;
   padding: 32px 0;
 }
+
+/* Final consistency overrides: ensure Expertise cards are light and readable on all devices */
+.features .feature-card {
+  background: #fff !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  box-shadow: var(--shadow) !important;
+}
+.features .feature-card-front {
+  background: #fff !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+}
+.features .feature-card-back {
+  background: #000 !important;
+  color: #fff !important;
+}
+.features .skill-logos i,
+.features .skill-logos span {
+  font-size: 56px !important;
+}
+
+/* Allow vertical scrolling gestures over the feature track on all devices */
+.feature-track { touch-action: auto !important; }
 
 .feature-card {
   min-width: 360px;
