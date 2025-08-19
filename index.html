@@ -5,7 +5,205 @@
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Portfolio</title>
       <meta name="description" content="Apple-inspired creative agency portfolio" />
+  <base href="https://migueldgzmn.github.io/dgmzn-ncp3106/">
+  <style id="critical-css">
+    /* Minimal critical CSS: keeps layout usable if external styles fail to load */
+    html,body{width:100%;margin:0;padding:0;background:#0e1317;color:#e6e6e6;font-family:Arial,Helvetica,sans-serif}
+    .container{max-width:1120px;margin:0 auto;padding:18px}
+    .section{padding:48px 0}
+    h1,h2,h3{color:#fff;margin:0 0 .5rem}
+    .grid{display:block}
+    .card{border:1px solid #ccc;background:#fff;color:#111;padding:12px;border-radius:8px;margin-bottom:18px}
+    img{max-width:100%;height:auto;display:block}
+    header.site-header{background:rgba(255,255,255,0.95);color:#111;padding:10px;border-bottom-left-radius:12px;border-bottom-right-radius:12px}
+    a{color:#f97316}
+  </style>
   <link rel="stylesheet" href="styles.css?v=4" />
+  <script>
+    // If the page is opened via file://, show a clear banner explaining why assets may fail
+    if (location.protocol === 'file:') {
+      window.addEventListener('DOMContentLoaded', function(){
+        const b = document.createElement('div');
+        b.id = 'file-protocol-banner';
+        b.style.cssText = 'position:fixed;left:12px;top:12px;right:12px;z-index:999999;padding:12px 14px;background:#fffbeb;color:#6b3b00;border-radius:10px;border:1px solid #fbbf24;font-family:Arial,Helvetica,sans-serif;box-shadow:0 8px 22px rgba(0,0,0,.28)';
+        b.innerHTML = '<strong>Notice:</strong> You opened this page from your filesystem (file://). Some resources (images, styles) may not load on other devices. To preview correctly, serve via HTTP or deploy to GitHub Pages. <button id="open-http" style="margin-left:12px;padding:6px 8px;border-radius:6px;border:0;background:#111;color:#fff;cursor:pointer">How to fix</button> <button id="dismiss-file-banner" style="margin-left:8px;padding:6px 8px;border-radius:6px;border:0;background:#eee;color:#111;cursor:pointer">Dismiss</button>';
+        document.body.appendChild(b);
+        document.getElementById('dismiss-file-banner').addEventListener('click', ()=>b.remove());
+        document.getElementById('open-http').addEventListener('click', ()=>{
+          alert('Use a local HTTP server (run `python -m http.server` in the site folder) or push to GitHub and enable Pages in the repo settings.\nI can add a GitHub Action to deploy automatically if you want.');
+        });
+      });
+    }
+  </script>
+  <script>
+    // Enhanced runtime asset resolver: rewrite file:// links, retry failed assets from GH Pages, and inject base tag on Pages.
+    (function(){
+      const GH_BASE = 'https://migueldgzmn.github.io/dgmzn-ncp3106/';
+
+      function basename(path){
+        return path.split('/').pop().split('?')[0];
+      }
+
+      function computeRemoteHref(localHref){
+        if (!localHref) return localHref;
+        try{
+          // If already absolute HTTP(S) and not file:, leave it
+          if (/^https?:\/\//i.test(localHref)) return localHref;
+          // If it's an absolute file URL that contains the repo path, rewrite using GH_BASE
+          const idx = localHref.indexOf('/dgmzn-ncp3106/');
+          if (idx !== -1) return GH_BASE + localHref.slice(idx + '/dgmzn-ncp3106/'.length);
+          // If it's a file:// path, attempt to extract the trailing path after portfolio/ or use basename
+          if (localHref.startsWith('file://')){
+            const parts = localHref.split('/portfolio/');
+            if (parts.length>1) return GH_BASE + parts.pop();
+            return GH_BASE + basename(localHref);
+          }
+          // If it's a relative path like './assets/..' or 'assets/...', make absolute against GH_BASE
+          const cleaned = localHref.replace(/^\.\/?/, '');
+          return GH_BASE + cleaned;
+        }catch(e){ return localHref; }
+      }
+
+      function tryReplaceElement(el, attr){
+        const val = el.getAttribute(attr);
+        if (!val) return false;
+        if (val.startsWith('file://') || location.protocol === 'file:' ){
+          const remote = computeRemoteHref(val);
+          if (remote && remote !== val){
+            el.setAttribute(attr, remote);
+            return true;
+          }
+        }
+        return false;
+      }
+
+      function attachFallbacks(){
+        // Rewrite existing resources that point to file:// or failed to load
+        document.querySelectorAll('link[rel="stylesheet"]').forEach(l=>{
+          tryReplaceElement(l, 'href');
+          l.addEventListener('error', function(){
+            const remote = computeRemoteHref(l.getAttribute('href'));
+            if (remote) l.href = remote;
+          });
+        });
+
+        document.querySelectorAll('script[src]').forEach(s=>{
+          tryReplaceElement(s, 'src');
+          s.addEventListener('error', function(){
+            const remote = computeRemoteHref(s.getAttribute('src'));
+            if (remote){
+              const n = document.createElement('script'); n.src = remote; n.defer=true; n.crossOrigin='anonymous'; document.body.appendChild(n);
+            }
+          });
+        });
+
+        document.querySelectorAll('img').forEach(img=>{
+          tryReplaceElement(img, 'src');
+          img.addEventListener('error', function(){
+            const remote = computeRemoteHref(img.getAttribute('src'));
+            if (remote) img.src = remote;
+          });
+        });
+      }
+
+      function injectBaseIfPages(){
+        // If the site is being served from GitHub Pages path, inject a base tag so relative URLs resolve
+        try{
+          const isPages = location.hostname.indexOf('github.io') !== -1 || location.href.indexOf('/dgmzn-ncp3106/')!==-1;
+          if (isPages){
+            const base = document.querySelector('base');
+            const baseHref = GH_BASE;
+            if (!base){
+              const b = document.createElement('base'); b.href = baseHref; document.head.insertBefore(b, document.head.firstChild);
+            } else {
+              base.href = baseHref;
+            }
+          }
+        }catch(e){}
+      }
+
+      // Run after DOM ready
+      window.addEventListener('DOMContentLoaded', function(){
+        injectBaseIfPages();
+        attachFallbacks();
+        // also try to inject hosted styles/script if nothing matched
+        setTimeout(function(){
+          const hasStyles = Array.from(document.styleSheets).some(ss=> ss.href && ss.href.indexOf('styles.css')!==-1);
+          if (!hasStyles){
+            const l = document.createElement('link'); l.rel='stylesheet'; l.href = GH_BASE + 'styles.css?v=4'; l.crossOrigin='anonymous'; document.head.appendChild(l);
+          }
+          const hasScript = Array.from(document.scripts).some(s=> s.src && s.src.indexOf('script.js')!==-1);
+          if (!hasScript){
+            const s = document.createElement('script'); s.src = GH_BASE + 'script.js?v=4'; s.defer=true; s.crossOrigin='anonymous'; document.body.appendChild(s);
+          }
+        }, 700);
+      });
+    })();
+  </script>
+  <script>
+    (function(){
+      const missing = {images: [], styles: [], scripts: []};
+      window.addEventListener('error', function(e){
+        const t = e.target || e.srcElement;
+        if (t && t.tagName) {
+          const tag = t.tagName.toUpperCase();
+          if (tag === 'IMG') missing.images.push(t.getAttribute('src') || t.src);
+          else if (tag === 'LINK') missing.styles.push(t.getAttribute('href') || t.href);
+          else if (tag === 'SCRIPT') missing.scripts.push(t.getAttribute('src') || t.src);
+        }
+      }, true);
+
+      window.addEventListener('DOMContentLoaded', function(){
+        try{
+          document.querySelectorAll('img').forEach(img=>{
+            if (!img.complete || (img.naturalWidth===0 && img.naturalHeight===0)) {
+              missing.images.push(img.getAttribute('src') || img.src);
+            }
+          });
+
+          Array.from(document.styleSheets).forEach(ss=>{
+            try{ if (ss.href) { void ss.cssRules; } } catch(err){ if (ss.href) missing.styles.push(ss.href); }
+          });
+        }catch(e){ console.warn('Asset diagnostic internal error', e); }
+
+        const unique = arr => Array.from(new Set(arr)).filter(Boolean);
+        const imgs = unique(missing.images);
+        const styles = unique(missing.styles);
+        const scripts = unique(missing.scripts);
+
+  if (imgs.length || styles.length || scripts.length) {
+          console.group('Asset diagnostics');
+          if (imgs.length) console.warn('Missing images:', imgs);
+          if (styles.length) console.warn('Missing stylesheets:', styles);
+          if (scripts.length) console.warn('Missing scripts:', scripts);
+          console.groupEnd();
+
+          // small overlay for quick visual feedback
+          const overlay = document.createElement('div');
+          overlay.id = 'asset-diagnostic-overlay';
+          overlay.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:99999;background:rgba(0,0,0,0.82);color:#fff;padding:10px 12px;border-radius:8px;font-size:13px;max-width:70vw;box-shadow:0 6px 20px rgba(0,0,0,.6);';
+          overlay.innerHTML = `<strong>Missing assets detected</strong><div style="margin-top:8px;line-height:1.3;">Images: ${imgs.join(', ')||'none'}<br>Styles: ${styles.join(', ')||'none'}<br>Scripts: ${scripts.join(', ')||'none'}</div><div style="margin-top:8px;text-align:right"><button id="asset-diagnostic-close" style="background:#fff;color:#000;border:0;padding:6px 8px;border-radius:6px;cursor:pointer">Close</button></div>`;
+          document.body.appendChild(overlay);
+          overlay.querySelector('#asset-diagnostic-close').addEventListener('click', ()=>overlay.remove());
+        } else {
+          console.log('Asset diagnostics: no missing assets detected at DOMContentLoaded.');
+        }
+
+        // Re-check after fallbacks run (they may inject hosted assets). Update overlay/console accordingly.
+        setTimeout(function(){
+          const reImgs = unique(missing.images.filter(u=>{ try{ const el = document.querySelectorAll('img[src]'); return !Array.from(el).some(i=> (i.src||i.getAttribute('src')||'').indexOf(u)!==-1); }catch(e){return true;} }));
+          const reStyles = unique(missing.styles.filter(u=> Array.from(document.styleSheets).some(ss=> ss.href && ss.href.indexOf(basename(u))!==-1) ));
+          const stillImgs = unique(missing.images).filter(x=>!reImgs.includes(x));
+          const stillStyles = unique(missing.styles).filter(x=>!reStyles.includes(x));
+          if (overlay){
+            if (!stillImgs.length && !stillStyles.length && !scripts.length){ overlay.remove(); console.log('Asset diagnostics: missing assets recovered.'); return; }
+            overlay.innerHTML = `<strong>Missing assets detected</strong><div style="margin-top:8px;line-height:1.3;">Images: ${stillImgs.join(', ')||'none'}<br>Styles: ${stillStyles.join(', ')||'none'}<br>Scripts: ${scripts.join(', ')||'none'}</div><div style="margin-top:8px;text-align:right"><button id="asset-diagnostic-close" style="background:#fff;color:#000;border:0;padding:6px 8px;border-radius:6px;cursor:pointer">Close</button></div>`;
+            overlay.querySelector('#asset-diagnostic-close').addEventListener('click', ()=>overlay.remove());
+          }
+        }, 1400);
+      });
+    })();
+  </script>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
       <!-- Devicon (technology & tool logos) -->
       <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -243,11 +441,11 @@
         <article class="card" tabindex="0" 
           data-modal-title="10 Seconds Game &amp; Guessing Game"
           data-modal-tags="Python Tk, Canva, Collaborator: Joezer Cornita" 
-          data-modal-images="./assets/10sec.jpg;./assets/10soc.jpg;./assets/10game.jpg;./assets/10guess.jpg"
+          data-modal-images="assets/10sec.jpg;assets/10soc.jpg;assets/10game.jpg;assets/10guess.jpg"
           data-modal-github="https://github.com/migueldgzmn/10-Seconds-Game-Guessing-Game.git"
           data-modal-code="A collection of fun mini-games. Test your reflexes in the 10 Seconds Game by stopping the timer as close to 10 as possible, or challenge your logic in the Guessing Game by finding the hidden number within limited tries.">
                 <div class="card-media">
-                  <img src="./assets/10sec.jpg" alt="Minimalist Brand Identity project preview" />
+                  <img src="assets/10sec.jpg" alt="Minimalist Brand Identity project preview" />
                 </div>
                 <div class="card-body">
                   <div class="tag">Python Game</div>
@@ -262,11 +460,11 @@
           data-modal-title="BIONOTE" 
           data-modal-desc="Html webpage that introduces a person" 
           data-modal-tags="Web,Design,JAVASCRIPT,HTML,CSS" 
-          data-modal-images="./assets/bionote1.png;./assets/bionote2.png" 
+          data-modal-images="assets/bionote1.png;assets/bionote2.png" 
           data-modal-github="https://github.com/migueldgzmn/bionote"
           data-modal-code="A bionote in HTML is a short section of a webpage that introduces a person by highlighting their background, skills, and interests. It is often styled with HTML and CSS to make it visually appealing and serves as a quick personal introduction for portfolios, resumes, or academic pages.">
                 <div class="card-media">
-                  <img src="./assets/bionote1.png" alt="Sleek Web Experience project preview" />
+                  <img src="assets/bionote1.png" alt="Sleek Web Experience project preview" />
                 </div>
                 <div class="card-body">
                   <div class="tag">Html</div>
@@ -281,11 +479,11 @@
                       data-modal-title="Hi-Low Game App" 
                       data-modal-desc="A number guessing game where players guess if the hidden number is higher or lower." 
                       data-modal-tags="Kotlin, Android Studio, Hi-Low" 
-                      data-modal-images="./assets/hilow3.png;./assets/hilow2.png;./assets/hilow4.png;./assets/hilow5.png;./assets/hilow6.png" 
+                      data-modal-images="assets/hilow3.png;assets/hilow2.png;assets/hilow4.png;assets/hilow5.png;assets/hilow6.png" 
                       data-modal-github="https://github.com/migueldgzmn/hi-low-game-app"
                       data-modal-code="// Pseudo navigation flow\\nconst stack = [];\\nfunction push(screen){ stack.push(screen) }">
                 <div class="card-media">
-                  <img src="./assets/hilow3.png" alt="Intuitive Mobile App project preview" style="object-position: 20% 20%;" />
+                  <img src="assets/hilow3.png" alt="Intuitive Mobile App project preview" style="object-position: 20% 20%;" />
                 </div>
                 <div class="card-body">
                   <div class="tag">Mobile App</div>
@@ -300,11 +498,11 @@
                       data-modal-title="Get to Know Me App" 
                       data-modal-desc="Targeted social campaign with A/B creative testing." 
                       data-modal-tags="Marketing,A/B Testing,Analytics" 
-                      data-modal-images="./assets/aboutme1.png;./assets/aboutme2.png;./assets/aboutme3.png;./assets/aboutme4.png;./assets/aboutme5.png" 
+                      data-modal-images="assets/aboutme1.png;assets/aboutme2.png;assets/aboutme3.png;assets/aboutme4.png;assets/aboutme5.png" 
                       data-modal-github="https://github.com/migueldgzmn/elegant-digital-campaign" 
                       data-modal-code="// CTR comparison\\nconst variantA=0.042;\\nconst variantB=0.057;\\nconsole.log('Lift', ((variantB-variantA)/variantA*100).toFixed(1)+'%')">
                 <div class="card-media">
-                  <img src="./assets/aboutme6.png" alt="Elegant Digital Campaign project preview" />
+                  <img src="assets/aboutme6.png" alt="Elegant Digital Campaign project preview" />
                 </div>
                 <div class="card-body">
                   <div class="tag">Mobile App</div>
