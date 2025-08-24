@@ -1,671 +1,844 @@
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>Portfolio</title>
-      <meta name="description" content="Apple-inspired creative agency portfolio" />
-  <base href="https://migueldgzmn.github.io/dgmzn-ncp3106/">
-  <style id="critical-css">
-    /* Minimal critical CSS: keeps layout usable if external styles fail to load */
-    html,body{width:100%;margin:0;padding:0;background:#0e1317;color:#e6e6e6;font-family:Arial,Helvetica,sans-serif}
-    .container{max-width:1120px;margin:0 auto;padding:18px}
-    .section{padding:48px 0}
-    h1,h2,h3{color:#fff;margin:0 0 .5rem}
-    .grid{display:block}
-    .card{border:1px solid #ccc;background:#fff;color:#111;padding:12px;border-radius:8px;margin-bottom:18px}
-    img{max-width:100%;height:auto;display:block}
-    header.site-header{background:rgba(255,255,255,0.95);color:#111;padding:10px;border-bottom-left-radius:12px;border-bottom-right-radius:12px}
-    a{color:#f97316}
-  </style>
-  <link rel="stylesheet" href="styles.css?v=4" />
-  <script>
-    // If the page is opened via file://, show a clear banner explaining why assets may fail
-    if (location.protocol === 'file:') {
-      window.addEventListener('DOMContentLoaded', function(){
-        const b = document.createElement('div');
-        b.id = 'file-protocol-banner';
-        b.style.cssText = 'position:fixed;left:12px;top:12px;right:12px;z-index:999999;padding:12px 14px;background:#fffbeb;color:#6b3b00;border-radius:10px;border:1px solid #fbbf24;font-family:Arial,Helvetica,sans-serif;box-shadow:0 8px 22px rgba(0,0,0,.28)';
-        b.innerHTML = '<strong>Notice:</strong> You opened this page from your filesystem (file://). Some resources (images, styles) may not load on other devices. To preview correctly, serve via HTTP or deploy to GitHub Pages. <button id="open-http" style="margin-left:12px;padding:6px 8px;border-radius:6px;border:0;background:#111;color:#fff;cursor:pointer">How to fix</button> <button id="dismiss-file-banner" style="margin-left:8px;padding:6px 8px;border-radius:6px;border:0;background:#eee;color:#111;cursor:pointer">Dismiss</button>';
-        document.body.appendChild(b);
-        document.getElementById('dismiss-file-banner').addEventListener('click', ()=>b.remove());
-        document.getElementById('open-http').addEventListener('click', ()=>{
-          alert('Use a local HTTP server (run `python -m http.server` in the site folder) or push to GitHub and enable Pages in the repo settings.\nI can add a GitHub Action to deploy automatically if you want.');
-        });
-      });
-    }
-  </script>
-  <script>
-    // Enhanced runtime asset resolver: rewrite file:// links, retry failed assets from GH Pages, and inject base tag on Pages.
-    (function(){
-      const GH_BASE = 'https://migueldgzmn.github.io/dgmzn-ncp3106/';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John Doe - Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Added AOS library CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=League+Gothic&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="70">
+    
+        <!-- Name-only navbar: shows name and reveals navigation on hover (desktop). Mobile keeps offcanvas button. -->
+    <nav id="navbar" class="navbar navbar-custom fixed-top" role="navigation" aria-label="Main navigation">
+            <div class="container d-flex justify-content-center">
+                <!-- Desktop: name which reveals menu on hover/focus -->
+                <div class="nav-name" tabindex="0" aria-haspopup="true" aria-expanded="false">
+                    <!-- Desktop and mobile versions of the name; CSS will show/hide by breakpoint -->
+                    <span class="name-text name-text--desktop">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MIDG &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; •</span>
+                    <span class="name-text name-text--mobile">MIDG •</span>
+                    <ul class="nav-menu" role="menu" aria-label="Primary">
+                        <li role="none"><a class="nav-link" role="menuitem" href="#home"><span class="link-text">Home</span></a></li>
+                        <li role="none"><a class="nav-link" role="menuitem" href="#skills"><span class="link-text">Resume</span></a></li>
+                        <li role="none"><a class="nav-link" role="menuitem" href="#projects"><span class="link-text">Projects</span></a></li>
+                        <li role="none"><a class="nav-link" role="menuitem" href="#contact"><span class="link-text">Contact</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-      function basename(path){
-        return path.split('/').pop().split('?')[0];
-      }
+    <!-- Offcanvas removed: use click-to-toggle on the name navbar for small screens instead -->
 
-      function computeRemoteHref(localHref){
-        if (!localHref) return localHref;
-        try{
-          // If already absolute HTTP(S) and not file:, leave it
-          if (/^https?:\/\//i.test(localHref)) return localHref;
-          // If it's an absolute file URL that contains the repo path, rewrite using GH_BASE
-          const idx = localHref.indexOf('/dgmzn-ncp3106/');
-          if (idx !== -1) return GH_BASE + localHref.slice(idx + '/dgmzn-ncp3106/'.length);
-          // If it's a file:// path, attempt to extract the trailing path after portfolio/ or use basename
-          if (localHref.startsWith('file://')){
-            const parts = localHref.split('/portfolio/');
-            if (parts.length>1) return GH_BASE + parts.pop();
-            return GH_BASE + basename(localHref);
-          }
-          // If it's a relative path like './assets/..' or 'assets/...', make absolute against GH_BASE
-          const cleaned = localHref.replace(/^\.\/?/, '');
-          return GH_BASE + cleaned;
-        }catch(e){ return localHref; }
-      }
+    <!-- Header/Hero Section -->
+    <section id="home" class="hero-section d-flex align-items-center landing_section">
+        <div class="container text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-8" data-aos="fade-up">
+                                        <picture>
+                                            <!-- Desktop: use a larger artwork when viewport >= 992px -->
+                                            <source media="(min-width: 1000px)" srcset="./assets/portlogo.png">
+                                            <!-- Fallback / mobile: smaller logo -->
+                                            <img src="./assets/portlogo.png" alt="Profile Picture" class="profile-img mb-4" data-aos="fade-up" data-aos-delay="100" loading="lazy" decoding="async">
+                                        </picture>
+                    <div data-aos="fade-up" data-aos-delay="500">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-      function tryReplaceElement(el, attr){
-        const val = el.getAttribute(attr);
-        if (!val) return false;
-        if (val.startsWith('file://') || location.protocol === 'file:' ){
-          const remote = computeRemoteHref(val);
-          if (remote && remote !== val){
-            el.setAttribute(attr, remote);
-            return true;
-          }
-        }
-        return false;
-      }
-
-      function attachFallbacks(){
-        // Rewrite existing resources that point to file:// or failed to load
-        document.querySelectorAll('link[rel="stylesheet"]').forEach(l=>{
-          tryReplaceElement(l, 'href');
-          l.addEventListener('error', function(){
-            const remote = computeRemoteHref(l.getAttribute('href'));
-            if (remote) l.href = remote;
-          });
-        });
-
-        document.querySelectorAll('script[src]').forEach(s=>{
-          tryReplaceElement(s, 'src');
-          s.addEventListener('error', function(){
-            const remote = computeRemoteHref(s.getAttribute('src'));
-            if (remote){
-              const n = document.createElement('script'); n.src = remote; n.defer=true; n.crossOrigin='anonymous'; document.body.appendChild(n);
-            }
-          });
-        });
-
-        document.querySelectorAll('img').forEach(img=>{
-          tryReplaceElement(img, 'src');
-          img.addEventListener('error', function(){
-            const remote = computeRemoteHref(img.getAttribute('src'));
-            if (remote) img.src = remote;
-          });
-        });
-      }
-
-      function injectBaseIfPages(){
-        // If the site is being served from GitHub Pages path, inject a base tag so relative URLs resolve
-        try{
-          const isPages = location.hostname.indexOf('github.io') !== -1 || location.href.indexOf('/dgmzn-ncp3106/')!==-1;
-          if (isPages){
-            const base = document.querySelector('base');
-            const baseHref = GH_BASE;
-            if (!base){
-              const b = document.createElement('base'); b.href = baseHref; document.head.insertBefore(b, document.head.firstChild);
-            } else {
-              base.href = baseHref;
-            }
-          }
-        }catch(e){}
-      }
-
-      // Run after DOM ready
-      window.addEventListener('DOMContentLoaded', function(){
-        injectBaseIfPages();
-        attachFallbacks();
-        // also try to inject hosted styles/script if nothing matched
-        setTimeout(function(){
-          const hasStyles = Array.from(document.styleSheets).some(ss=> ss.href && ss.href.indexOf('styles.css')!==-1);
-          if (!hasStyles){
-            const l = document.createElement('link'); l.rel='stylesheet'; l.href = GH_BASE + 'styles.css?v=4'; l.crossOrigin='anonymous'; document.head.appendChild(l);
-          }
-          const hasScript = Array.from(document.scripts).some(s=> s.src && s.src.indexOf('script.js')!==-1);
-          if (!hasScript){
-            const s = document.createElement('script'); s.src = GH_BASE + 'script.js?v=4'; s.defer=true; s.crossOrigin='anonymous'; document.body.appendChild(s);
-          }
-        }, 700);
-      });
-    })();
-  </script>
-  <script>
-    (function(){
-      const missing = {images: [], styles: [], scripts: []};
-      window.addEventListener('error', function(e){
-        const t = e.target || e.srcElement;
-        if (t && t.tagName) {
-          const tag = t.tagName.toUpperCase();
-          if (tag === 'IMG') missing.images.push(t.getAttribute('src') || t.src);
-          else if (tag === 'LINK') missing.styles.push(t.getAttribute('href') || t.href);
-          else if (tag === 'SCRIPT') missing.scripts.push(t.getAttribute('src') || t.src);
-        }
-      }, true);
-
-      window.addEventListener('DOMContentLoaded', function(){
-        try{
-          document.querySelectorAll('img').forEach(img=>{
-            if (!img.complete || (img.naturalWidth===0 && img.naturalHeight===0)) {
-              missing.images.push(img.getAttribute('src') || img.src);
-            }
-          });
-
-          Array.from(document.styleSheets).forEach(ss=>{
-            try{ if (ss.href) { void ss.cssRules; } } catch(err){ if (ss.href) missing.styles.push(ss.href); }
-          });
-        }catch(e){ console.warn('Asset diagnostic internal error', e); }
-
-        const unique = arr => Array.from(new Set(arr)).filter(Boolean);
-        const imgs = unique(missing.images);
-        const styles = unique(missing.styles);
-        const scripts = unique(missing.scripts);
-
-  if (imgs.length || styles.length || scripts.length) {
-          console.group('Asset diagnostics');
-          if (imgs.length) console.warn('Missing images:', imgs);
-          if (styles.length) console.warn('Missing stylesheets:', styles);
-          if (scripts.length) console.warn('Missing scripts:', scripts);
-          console.groupEnd();
-
-          // small overlay for quick visual feedback
-          const overlay = document.createElement('div');
-          overlay.id = 'asset-diagnostic-overlay';
-          overlay.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:99999;background:rgba(0,0,0,0.82);color:#fff;padding:10px 12px;border-radius:8px;font-size:13px;max-width:70vw;box-shadow:0 6px 20px rgba(0,0,0,.6);';
-          overlay.innerHTML = `<strong>Missing assets detected</strong><div style="margin-top:8px;line-height:1.3;">Images: ${imgs.join(', ')||'none'}<br>Styles: ${styles.join(', ')||'none'}<br>Scripts: ${scripts.join(', ')||'none'}</div><div style="margin-top:8px;text-align:right"><button id="asset-diagnostic-close" style="background:#fff;color:#000;border:0;padding:6px 8px;border-radius:6px;cursor:pointer">Close</button></div>`;
-          document.body.appendChild(overlay);
-          overlay.querySelector('#asset-diagnostic-close').addEventListener('click', ()=>overlay.remove());
-        } else {
-          console.log('Asset diagnostics: no missing assets detected at DOMContentLoaded.');
-        }
-
-        // Re-check after fallbacks run (they may inject hosted assets). Update overlay/console accordingly.
-        setTimeout(function(){
-          const reImgs = unique(missing.images.filter(u=>{ try{ const el = document.querySelectorAll('img[src]'); return !Array.from(el).some(i=> (i.src||i.getAttribute('src')||'').indexOf(u)!==-1); }catch(e){return true;} }));
-          const reStyles = unique(missing.styles.filter(u=> Array.from(document.styleSheets).some(ss=> ss.href && ss.href.indexOf(basename(u))!==-1) ));
-          const stillImgs = unique(missing.images).filter(x=>!reImgs.includes(x));
-          const stillStyles = unique(missing.styles).filter(x=>!reStyles.includes(x));
-          if (overlay){
-            if (!stillImgs.length && !stillStyles.length && !scripts.length){ overlay.remove(); console.log('Asset diagnostics: missing assets recovered.'); return; }
-            overlay.innerHTML = `<strong>Missing assets detected</strong><div style="margin-top:8px;line-height:1.3;">Images: ${stillImgs.join(', ')||'none'}<br>Styles: ${stillStyles.join(', ')||'none'}<br>Scripts: ${scripts.join(', ')||'none'}</div><div style="margin-top:8px;text-align:right"><button id="asset-diagnostic-close" style="background:#fff;color:#000;border:0;padding:6px 8px;border-radius:6px;cursor:pointer">Close</button></div>`;
-            overlay.querySelector('#asset-diagnostic-close').addEventListener('click', ()=>overlay.remove());
-          }
-        }, 1400);
-      });
-    })();
-  </script>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-      <!-- Devicon (technology & tool logos) -->
-      <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@2.16.0/devicon.min.css" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-    </head>
-    <body>
-      <!-- Added collapsible navbar header -->
-      <header class="site-header" role="banner">
+    <!-- About Me Section -->
+    <section id="about" class="py-5" style="background-color: #403d39;">
         <div class="container">
-          <nav class="header-nav no-logo" role="navigation" aria-label="Main Navigation">
-            <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation">
-              <span class="nav-toggle-bar"></span>
-              <span class="nav-toggle-bar"></span>
-              <span class="nav-toggle-bar"></span>
-            </button>
-            <div class="header-links centered" id="primary-nav">
-              <a href="#hero" class="highlight">Home</a>
-              <a href="#about" class="highlight">About</a>
-              <a href="#features" class="highlight">Expertise</a>
-              <a href="#timeline" class="highlight">Education</a>
-              <a href="#work" class="highlight">Project</a>
-              <a href="#contact" class="highlight">Contact</a>
-            </div>
-          </nav>
-        </div>
-      </header>
-
-      <main>
-        <section id="hero" class="section hero" aria-label="Hero">
-          <div class="social-icons" style="display:flex;gap:18px;margin-bottom:24px;">
-            <a href="https://www.facebook.com/MiguelDgzmn/" target="_blank" aria-label="Facebook" class="social-icon">
-              <i class="fa-brands fa-facebook"></i>
-            </a>
-            <a href="https://www.instagram.com/m.dgzmnn/?hl=en" target="_blank" aria-label="Instagram" class="social-icon">
-              <i class="fa-brands fa-instagram"></i>
-            </a>
-
-            <a href="https://open.spotify.com/user/31x44lutu5qmh2rx7nioxkby44wy?si=5d5db7fd84874d0a" target="_blank" aria-label="Spotify" class="social-icon">
-              <i class="fa-brands fa-spotify"></i>
-            </a>
-          </div>
-        </section>
-        <section id="about" class="section about" aria-label="Wear Your Story">
-          <div class="container pop-in">
-            <div class="text-center">
-              <h1>About Me</h1>
-              <p class="sublead">
-                I’m Miguel De Guzman, a third-year Computer Engineering student at the University of the East. With a strong passion for technology, coding, and innovation, I’m continuously building my skills and exploring projects that challenge me to grow as an engineer.
-              </p>
-            </div>
-
-          </div>
-        </section>
-
-        <section id="features" class="section features" aria-label="Why Choose Us">
-          <div class="container pop-in"><h1 class="text-center" style="margin-bottom: 32px; text-decoration: bold;">My Expertise</h1></div>
-          <div class="container pop-in">
-            <div class="feature-track" role="list">
-              <div class="feature-card" tabindex="0">
-                <div class="feature-card-inner">
-                  <div class="feature-card-front">
-                    <h3>Software &amp; Mobile Development </h3>
-                    <p>Proficient in various programming languages and frameworks.</p>
-                  </div>
-                  <div class="feature-card-back">
-                    <h3>Python, Java, Kotlin, C++, SQL</h3>
-                    <div class="skill-logos" aria-label="Software & Mobile Development technologies">
-                      <i class="devicon-python-plain colored" data-brand="Python" aria-label="Python"></i>
-                      <i class="devicon-java-plain colored" data-brand="Java" aria-label="Java"></i>
-                      <i class="devicon-kotlin-plain colored" data-brand="Kotlin" aria-label="Kotlin"></i>
-                      <i class="devicon-cplusplus-plain colored" data-brand="C++" aria-label="C Plus Plus"></i>
-                      <i class="devicon-mysql-plain colored" data-brand="MySQL" aria-label="My SQL"></i>
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="section-title-about mb-5" data-aos="fade-up" style="color: white;">About Me</h2>
+                    <p class="lead mb-4" data-aos="fade-up" data-aos-delay="100" style="color: white;">
+                        I am a dedicated and passionate aspiring computer engineer with a strong foundation in programming, 
+                        problem-solving, and technology innovation. My journey in computer science has been driven by 
+                        curiosity and a desire to create meaningful solutions that impact people's lives.
+                    </p>
+                    <p class="mb-4" data-aos="fade-up" data-aos-delay="200" style="color: white;">
+                        With experience in various programming languages and frameworks, I enjoy tackling complex challenges 
+                        and continuously learning new technologies. I believe in the power of collaboration and am always 
+                        eager to contribute to projects that push the boundaries of what's possible.
+                    </p>
+                    <div class="row text-center mt-5">
+                        <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="300" style="color: white;">
+                            <i class="fas fa-code fa-3x mb-3"></i>
+                            <h5>Clean Code</h5>
+                            <p>Writing maintainable and efficient code</p>
+                        </div>
+                        <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="400" style="color: white;">
+                            <i class="fas fa-lightbulb fa-3x mb-3"></i>
+                            <h5>Innovation</h5>
+                            <p>Creative problem-solving approach</p>
+                        </div>
+                        <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="500" style="color: white;">
+                            <i class="fas fa-users fa-3x mb-3"></i>
+                            <h5>Collaboration</h5>
+                            <p>Strong teamwork and communication</p>
+                        </div>
                     </div>
-                    <div class="skill-hover-label" aria-live="polite"></div>
-                  </div>
                 </div>
-              </div>
-              <div class="feature-card" tabindex="0">
-                <div class="feature-card-inner">
-                  <div class="feature-card-front">
-                    <h3>Web Development</h3>
-                    <p>Skilled in building responsive and accessible websites.</p>
-                  </div>
-                  <div class="feature-card-back">
-                    <h3>HTML5, CSS3, JavaScript, Bootstrap</h3>
-                    <div class="skill-logos" aria-label="Web Development technologies">
-                      <i class="devicon-html5-plain colored" data-brand="HTML5" aria-label="HTML5"></i>
-                      <i class="devicon-css3-plain colored" data-brand="CSS3" aria-label="CSS3"></i>
-                      <i class="devicon-javascript-plain colored" data-brand="JavaScript" aria-label="JavaScript"></i>
-                      <i class="devicon-bootstrap-plain colored" data-brand="Bootstrap" aria-label="Bootstrap"></i>
-                    </div>
-                    <div class="skill-hover-label" aria-live="polite"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="feature-card" tabindex="0">
-                <div class="feature-card-inner">
-                  <div class="feature-card-front">
-                    <h3>Graphic Designing Tools</h3>
-                    <p>Proficient in using industry-standard design software.</p>
-                  </div>
-                  <div class="feature-card-back">
-                    <h3>Photoshop, Canva, Figma</h3>
-                    <div class="skill-logos" aria-label="Design tools">
-                      <span class="ps-custom" data-brand="Photoshop" aria-label="Adobe Photoshop"><span class="ps-letter">P</span></span>
-                      <span class="skill-badge canva" data-brand="Canva" aria-label="Canva">Canva</span>
-                      <i class="devicon-figma-plain colored" data-brand="Figma" aria-label="Figma"></i>
-                    </div>
-                    <div class="skill-hover-label" aria-live="polite"></div>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-        </section>
-
-  <section id="timeline" class="section timeline" aria-label="Our Journey">
-          <div class="container pop-in">
-            <div class="text-center">
-              <h2>Educational Background</h2>
-              <p class="sublead">The evolution of Miguel De Guzman through the years</p>
-            </div>
-
-            <div class="timeline-wrap" role="list">
-              <div class="timeline-row" role="listitem">
-                <div class="timeline-dot" aria-hidden="true"></div>
-                <div class="timeline-card" data-expand>
-                  <div class="timeline-head">
-                    <span class="year">2018</span>
-                    <h3>Started University</h3>
-                  </div>
-                  <p class="desc">
-                    My journey began with a passion for technology and innovation.
-                  </p>
-                  <div class="details">
-                    I started my studies at the University of the East, pursuing a degree in Computer Engineering.
-                  </div>
-                </div>
-              </div>
-
-              <div class="timeline-row" role="listitem">
-                <div class="timeline-dot" aria-hidden="true"></div>
-                <div class="timeline-card pop-in" data-expand>
-                  <div class="timeline-head">
-                    <span class="year">2019</span>
-                    <h3>First Project</h3>
-                  </div>
-                  <p class="desc">
-                    Completed my first major project in web design.
-                  </p>
-                  <div class="details">
-                    My project "Digital Bloom" received positive feedback for its innovative approach to web design.
-                  </div>
-                </div>
-              </div>
-
-              <div class="timeline-row" role="listitem">
-                <div class="timeline-dot" aria-hidden="true"></div>
-                <div class="timeline-card" data-expand>
-                  <div class="timeline-head">
-                    <span class="year">2020</span>
-                    <h3>Internship</h3>
-                  </div>
-                  <p class="desc">
-                    Joined an internship at a tech company.
-                  </p>
-                  <div class="details">
-                    During my internship, I gained valuable experience in software development and project management.
-                  </div>
-                </div>
-              </div>
-
-              <div class="timeline-row" role="listitem">
-                <div class="timeline-dot" aria-hidden="true"></div>
-                <div class="timeline-card" data-expand>
-                  <div class="timeline-head">
-                    <span class="year">2021</span>
-                    <h3>Collaboration with Top Brands</h3>
-                  </div>
-                  <p class="desc">
-                    Partnered with leading tech brands to create exclusive projects.
-                  </p>
-                  <div class="details">
-                    Collaborations included developing custom software solutions for notable partners.
-                  </div>
-                </div>
-              </div>
-
-              <div class="timeline-row" role="listitem">
-                <div class="timeline-dot" aria-hidden="true"></div>
-                <div class="timeline-card" data-expand>
-                  <div class="timeline-head">
-                    <span class="year">2022</span>
-                    <h3>International Recognition</h3>
-                  </div>
-                  <p class="desc">
-                    Received recognition for my innovative projects.
-                  </p>
-                  <div class="details">
-                    My project "Ethereal Echoes" won an award for its unique blend of technology and creativity.
-                  </div>
-                </div>
-              </div>
-
-              <div class="timeline-row" role="listitem">
-                <div class="timeline-dot" aria-hidden="true"></div>
-                <div class="timeline-card" data-expand>
-                  <div class="timeline-head">
-                    <span class="year">2023</span>
-                    <h3>Graduation</h3>
-                  </div>
-                  <p class="desc">
-                    Graduated from the University of the East.
-                  </p>
-                  <div class="details">
-                    I completed my degree with honors and am now actively seeking opportunities to apply my skills.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="work" class="section work" aria-label="My Work">
-          <div class="container pop-in">
-            <div class="text-center">
-              <h1 class="projects-title text-block" id="projects-title">My Projects</h1>
-              <p class="sublead">A Showcase of My Projects.</p>
-            </div>
-            <div class="grid">
-
-              <!-- GUESSING GAME -->
-        <article class="card" tabindex="0" 
-          data-modal-title="10 Seconds Game &amp; Guessing Game"
-          data-modal-tags="Python Tk, Canva, Collaborator: Joezer Cornita" 
-          data-modal-images="assets/10sec.jpg;assets/10soc.jpg;assets/10game.jpg;assets/10guess.jpg"
-          data-modal-github="https://github.com/migueldgzmn/10-Seconds-Game-Guessing-Game.git"
-          data-modal-code="A collection of fun mini-games. Test your reflexes in the 10 Seconds Game by stopping the timer as close to 10 as possible, or challenge your logic in the Guessing Game by finding the hidden number within limited tries.">
-                <div class="card-media">
-                  <img src="assets/10sec.jpg" alt="Minimalist Brand Identity project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">Python Game</div>
-                  <h2>10 Seconds Game &amp; Guessing Game</h2>
-                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
-                </div>
-              </article>
-
-              <!-- BIONOTE -->
-              
-  <article class="card" tabindex="0" 
-          data-modal-title="BIONOTE" 
-          data-modal-desc="Html webpage that introduces a person" 
-          data-modal-tags="Web,Design,JAVASCRIPT,HTML,CSS" 
-          data-modal-images="assets/bionote1.png;assets/bionote2.png" 
-          data-modal-github="https://github.com/migueldgzmn/bionote"
-          data-modal-code="A bionote in HTML is a short section of a webpage that introduces a person by highlighting their background, skills, and interests. It is often styled with HTML and CSS to make it visually appealing and serves as a quick personal introduction for portfolios, resumes, or academic pages.">
-                <div class="card-media">
-                  <img src="assets/bionote1.png" alt="Sleek Web Experience project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">Html</div>
-                  <h2>Bionote</h2>
-                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
-                </div>
-              </article>
-
-              <!-- Hi-Low -->
-
-  <article class="card" tabindex="0" data-img-pos="top"
-                      data-modal-title="Hi-Low Game App" 
-                      data-modal-desc="A number guessing game where players guess if the hidden number is higher or lower." 
-                      data-modal-tags="Kotlin, Android Studio, Hi-Low" 
-                      data-modal-images="assets/hilow3.png;assets/hilow2.png;assets/hilow4.png;assets/hilow5.png;assets/hilow6.png" 
-                      data-modal-github="https://github.com/migueldgzmn/hi-low-game-app"
-                      data-modal-code="// Pseudo navigation flow\\nconst stack = [];\\nfunction push(screen){ stack.push(screen) }">
-                <div class="card-media">
-                  <img src="assets/hilow3.png" alt="Intuitive Mobile App project preview" style="object-position: 20% 20%;" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">Mobile App</div>
-                  <h2>Hi-Low Game App</h2>
-                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
-                </div>
-              </article>
-
-              <!-- My Profile -->
-
-  <article class="card" tabindex="0" 
-                      data-modal-title="Get to Know Me App" 
-                      data-modal-desc="Targeted social campaign with A/B creative testing." 
-                      data-modal-tags="Marketing,A/B Testing,Analytics" 
-                      data-modal-images="assets/aboutme1.png;assets/aboutme2.png;assets/aboutme3.png;assets/aboutme4.png;assets/aboutme5.png" 
-                      data-modal-github="https://github.com/migueldgzmn/elegant-digital-campaign" 
-                      data-modal-code="// CTR comparison\\nconst variantA=0.042;\\nconst variantB=0.057;\\nconsole.log('Lift', ((variantB-variantA)/variantA*100).toFixed(1)+'%')">
-                <div class="card-media">
-                  <img src="assets/aboutme6.png" alt="Elegant Digital Campaign project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">Mobile App</div>
-                  <h2>Get to Know Me App</h2>
-                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
-                </div>
-              </article>
-  <article class="card" tabindex="0" data-modal-title="Refined UI/UX Design" data-modal-desc="Systematic component library and design tokens for scalability." data-modal-tags="UI,UX,System,Components" data-modal-images="https://placehold.co/800x400/118/EEE?text=Components|Components;https://placehold.co/800x400/229/EEE?text=Tokens|Design Tokens" data-modal-github="https://github.com/migueldgzmn/refined-ui-ux-design" data-modal-code=":root\\n  --brand:#111;\\n  --radius:12px;">
-                <div class="card-media">
-                  <img src="https://placehold.co/800x600?text=Refined+UI%2FUX+Design" alt="Refined UI/UX Design project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">UI/UX</div>
-                  <h2>Refined UI/UX Design</h2>
-                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
-                </div>
-              </article>
-        <!-- Project 6 -->
-  <article class="card" tabindex="0" data-modal-title="Minimalist Product Design" data-modal-desc="Physical product prototype emphasizing sustainable materials." data-modal-tags="Product,Industrial,Sustainability" data-modal-images="https://placehold.co/800x400/333/EEE?text=Render|3D Render;https://placehold.co/800x400/444/EEE?text=Exploded|Exploded View" data-modal-github="https://github.com/migueldgzmn/minimalist-product-design" data-modal-code="// Bill of materials (excerpt)\\nconst materials=['Recycled ABS','Bamboo'];">
-                <div class="card-media">
-                  <img src="https://placehold.co/800x600?text=Minimalist+Product+Design" alt="Minimalist Product Design project preview" />
-                </div>
-                <div class="card-body">
-                  <div class="tag">Product Design</div>
-                  <h2>Minimalist Product Design</h2>
-                  <a href="#" class="learn highlight view-project" data-open-modal>View Project →</a>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section id="marquee" class="section marquee" aria-label="Brand Marquee">
-          <div class="marquee-mask pop-in">
-            <div class="marquee-track">
-              <span>Miguel De Guzman</span>
-              <span>Miguel De Guzman</span>
-              <span>Miguel De Guzman</span>
-              <span>Miguel De Guzman</span>
-            </div>
-          </div>
-        </section>
-
-        <section id="contact" class="section contact" aria-label="Contact Us">
-          <div class="container narrow pop-in">
-            <h2 class="text-center">Get in Touch</h2>
-            <p class="sublead text-center">
-              We'd love to hear from you. Fill out the form below and we'll get back to you as soon as possible.
-            </p>
-            <form id="contact-form" class="form" novalidate>
-              <div class="field">
-                <label for="name">Name</label>
-                <input id="name" name="name" type="text" placeholder="John Doe" required minlength="2" />
-                <div class="error" data-error-for="name"></div>
-              </div>
-              <div class="field">
-                <label for="email">Email</label>
-                <input id="email" name="email" type="email" placeholder="john@example.com" required />
-                <div class="error" data-error-for="email"></div>
-              </div>
-              <div class="field">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" placeholder="Tell us about your project..." minlength="10" required></textarea>
-                <div class="error" data-error-for="message"></div>
-              </div>
-              <button class="btn primary highlight" type="submit">Send Message</button>
-              <p class="form-status" role="status" aria-live="polite"></p>
-            </form>
-          </div>
-        </section>
-
-        <section id="newsletter" class="section newsletter" aria-label="Newsletter">
-          <div class="container narrow pop-in">
-            <div class="newsletter-card">
-              <h2 class="text-center">Stay Inspired</h2>
-              <p class="sublead text-center">
-                Subscribe to our newsletter for the latest updates on minimal design and technology.
-              </p>
-              <form id="newsletter-form" class="newsletter-form" novalidate>
-                <input
-                  id="newsletter-email"
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  aria-label="Email"
-                  required
-                />
-                <button class="btn primary highlight" type="submit">Submit</button>
-              </form>
-              <p class="form-status" id="newsletter-status" role="status" aria-live="polite"></p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer class="site-footer" role="contentinfo">
-        <div class="container footer-content">
-          <nav class="footer-links" aria-label="Footer">
-            <a href="#about" class="highlight">About</a>
-            <a href="#work" class="highlight">Projects</a>
-            <a href="#features" class="highlight">Services</a>
-            <a href="#contact" class="highlight">Contact</a>
-            <a href="#" class="highlight" aria-disabled="true">Privacy</a>
-            <a href="#" class="highlight" aria-disabled="true">Terms</a>
-          </nav>
-          <div class="footer-links" style="margin-top:4px;">
-            <a href="https://github.com/migueldgzmn" target="_blank" rel="noopener" aria-label="GitHub Profile" class="highlight" style="display:inline-flex;align-items:center;gap:8px;">
-              <i class="fa-brands fa-github" aria-hidden="true" style="font-size:18px;"></i>
-              <span>GitHub</span>
-            </a>
-          </div>
-          <p class="copyright">
-            Designed &amp; Developed by Miguel De Guzman.
-          </p>
         </div>
-      </footer>
-      
-      <aside class="dot-nav" aria-label="Section Navigation">
-        <a href="#hero" class="dot highlight" data-label="Home" aria-label="Go to Home" data-section="hero">
-          <i class="fa-solid fa-house" aria-hidden="true"></i>
-          <span class="dot-label">Home</span>
-        </a>
-        <a href="#about" class="dot" data-label="About" aria-label="Go to About" data-section="about">
-          <i class="fa-solid fa-user" aria-hidden="true"></i>
-          <span class="dot-label">About</span>
-        </a>
-        <a href="#features" class="dot" data-label="Expertise" aria-label="Go to Expertise" data-section="features">
-          <i class="fa-solid fa-code" aria-hidden="true"></i>
-          <span class="dot-label">Expertise</span>
-        </a>
-        <a href="#timeline" class="dot" data-label="Journey" aria-label="Go to Journey" data-section="timeline">
-          <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
-          <span class="dot-label">Education</span>
-        </a>
-        <a href="#work" class="dot" data-label="Work" aria-label="Go to Work" data-section="work">
-          <i class="fa-solid fa-briefcase" aria-hidden="true"></i>
-          <span class="dot-label">Project</span>
-        </a>
-        <a href="#contact" class="dot highlight" data-label="Contact" aria-label="Go to Contact" data-section="contact">
-          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
-          <span class="dot-label">Contact</span>
-        </a>
-        <a href="#newsletter" class="dot" data-label="Newsletter" aria-label="Go to Newsletter" data-section="newsletter">
-          <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-          <span class="dot-label">News</span>
-        </a>
-      </aside>
+    </section>
 
-      <div id="link-modal" class="link-modal" aria-modal="true" role="dialog" tabindex="-1" hidden>
-        <div class="link-modal-content">
-          <button class="link-modal-close" aria-label="Close">&times;</button>
-          <h2 id="link-modal-title"></h2>
-          <p id="link-modal-url"></p>
+    <!-- Skills Section (moved) -->
+    <section id="skills" class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">Expertise</h2>
+            <div class="row justify-content-center">
+                <!-- Software & Mobile Development -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card text-center border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">Software & Mobile Dev</h4>
+                            <div class="row mb-3">
+                                <div class="col-6 mb-3">
+                                    <i class="fab fa-python fa-3x mb-2 text-primary"></i>
+                                    <h6>Python</h6>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <i class="fab fa-java fa-3x mb-2 text-danger"></i>
+                                    <h6>Java</h6>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <i class="fas fa-database fa-3x mb-2 text-success"></i>
+                                    <h6>SQL</h6>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <i class="fab fa-android fa-3x mb-2 text-success"></i>
+                                    <h6>Kotlin</h6>
+                                </div>
+                            </div>
+                            <p class="card-text">Backend development, mobile applications, and database management</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Web Development -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card text-center border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">Web Development</h4>
+                            <div class="row mb-3">
+                                <div class="col-6 mb-3">
+                                    <i class="fab fa-html5 fa-3x mb-2 text-danger"></i>
+                                    <h6>HTML5</h6>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <i class="fab fa-css3-alt fa-3x mb-2 text-primary"></i>
+                                    <h6>CSS3</h6>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <i class="fab fa-php fa-3x mb-2 text-secondary"></i>
+                                    <h6>PHP</h6>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <i class="fab fa-js-square fa-3x mb-2 text-warning"></i>
+                                    <h6>JavaScript</h6>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <i class="fab fa-bootstrap fa-3x mb-2 text-purple"></i>
+                                    <h6>Bootstrap</h6>
+                                </div>
+                            </div>
+                            <p class="card-text">Frontend and backend web technologies for modern applications</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphic Design Tools -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card text-center border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">Graphic Design Tools</h4>
+                            <div class="row mb-3">
+                                <div class="col-12 mb-3">
+                                    <i class="fas fa-paint-brush fa-3x mb-2 text-info"></i>
+                                    <h6>Photoshop</h6>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <i class="fas fa-palette fa-3x mb-2 text-success"></i>
+                                    <h6>Canva</h6>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <i class="fab fa-figma fa-3x mb-2 text-dark"></i>
+                                    <h6>Figma</h6>
+                                </div>
+                            </div>
+                            <p class="card-text">Visual design, prototyping, and creative content creation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </section>
 
-  <!-- GSAP (CDN) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-3vJgkVQ0C9ZrFpsioH6Cqi9kXAF8q7x9PH3tAFmEwP2wI1xAXcdgFpcA2PWMTIGpaG4iEk1ureALrahrcufTkg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <!-- ScrambleText Plugin (if unavailable this will fail silently and fallback logic runs) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrambleTextPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <!-- OGL (lightweight WebGL library) via CDN since npm unavailable -->
-  <!-- OGL (removed integrity to avoid SRI mismatch blocking) -->
-  <script src="https://cdn.jsdelivr.net/npm/ogl@1.0.5/dist/ogl.min.js"></script>
-  <script src="script.js?v=4" defer></script>
-    </body>
-  </html>
+    <!-- Educational Background -->
+    <section id="education" class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">Educational Background</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="timeline">
+                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="100">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="card-title mb-1">Bachelor of Science in Computer Engineering</h5>
+                                            <h6 class="card-subtitle text-muted">University of the East (Manila)</h6>
+                                        </div>
+                                        <span class="badge bg-dark">2020 - 2025</span>
+                                    </div>
+                                    <p class="card-text">
+                                        Comprehensive study of computer systems, software engineering, and digital design. 
+                                        Graduated with honors, focusing on artificial intelligence and machine learning.
+                                    </p>
+                                    <div class="mt-3">
+                                        <span class="badge bg-light text-dark me-2">Vp in Logistics (SCPES - Society of Computer Engineering Students)</span>
+                                        <span class="badge bg-light text-dark">Dean's List</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="200">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="card-title mb-1">High School Diploma</h5>
+                                            <h6 class="card-subtitle text-muted">Tech High School</h6>
+                                        </div>
+                                        <span class="badge bg-dark">2016 - 2020</span>
+                                    </div>
+                                    <p class="card-text">
+                                        Specialized in STEM subjects with focus on mathematics and computer science. 
+                                        Active member of the programming club and robotics team.
+                                    </p>
+                                    <div class="mt-3">
+                                        <span class="badge bg-light text-dark me-2">Valedictorian</span>
+                                        <span class="badge bg-light text-dark">Programming Club President</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seminars and Trainings -->
+    <section id="seminars" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">Seminars & Trainings</h2>
+            <div class="row">
+                <div class="col-lg-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-certificate fa-2x me-3 text-primary"></i>
+                                <div>
+                                    <h5 class="card-title mb-1">Advanced Machine Learning Workshop</h5>
+                                    <small class="text-muted">Tech Institute - 2023</small>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                Intensive 3-day workshop covering deep learning, neural networks, and practical 
+                                implementation of ML algorithms using Python and TensorFlow.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-cloud fa-2x me-3 text-primary"></i>
+                                <div>
+                                    <h5 class="card-title mb-1">Cloud Computing Certification</h5>
+                                    <small class="text-muted">AWS Training - 2023</small>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                Comprehensive training on cloud architecture, deployment strategies, and 
+                                serverless computing with hands-on AWS services experience.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-mobile-alt fa-2x me-3 text-primary"></i>
+                                <div>
+                                    <h5 class="card-title mb-1">Mobile App Development Bootcamp</h5>
+                                    <small class="text-muted">Code Academy - 2022</small>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                Full-stack mobile development training covering React Native, Flutter, 
+                                and native iOS/Android development principles.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-shield-alt fa-2x me-3 text-primary"></i>
+                                <div>
+                                    <h5 class="card-title mb-1">Cybersecurity Fundamentals</h5>
+                                    <small class="text-muted">Security Institute - 2022</small>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                Essential cybersecurity concepts including network security, encryption, 
+                                ethical hacking, and security best practices for developers.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-5 bg-light">
+        <div class="container">
+            <!-- Replaced entire projects section with Miguel's actual projects -->
+            <div class="text-center">
+                <h1 class="projects-title text-block mb-4" id="projects-title" data-aos="fade-up">My Projects</h1>
+                <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">A Showcase of My Projects.</p>
+            </div>
+            <div class="row">
+
+                <!-- GUESSING GAME -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card border-0 shadow-sm h-100" tabindex="0" 
+                        data-modal-title="10 Seconds Game &amp; Guessing Game"
+                        data-modal-tags="Python Tk, Canva, Collaborator: Joezer Cornita" 
+                        data-modal-images="assets/10sec.jpg;assets/10soc.jpg;assets/10game.jpg;assets/10guess.jpg"
+                        data-modal-github="https://github.com/migueldgzmn/10-Seconds-Game-Guessing-Game.git"
+                        data-modal-code="A collection of fun mini-games. Test your reflexes in the 10 Seconds Game by stopping the timer as close to 10 as possible, or challenge your logic in the Guessing Game by finding the hidden number within limited tries.">
+                        <!-- Fixed image dimensions to proper card thumbnail size -->
+                        <img src="assets/10sec.jpg" class="card-img-top" alt="10 Seconds Game & Guessing Game project preview" style="height: 300px; object-fit: cover;" />
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-primary">Python Game</span>
+                            </div>
+                            <h5 class="card-title">10 Seconds Game &amp; Guessing Game</h5>
+                            <p class="card-text flex-grow-1">A collection of fun mini-games built with Python Tkinter. Test your reflexes and logic skills.</p>
+                            <div class="mb-3">
+                                <span class="badge bg-info me-2">Python</span>
+                                <span class="badge bg-success">Tkinter</span>
+                            </div>
+                            <div>
+                                <a href="https://github.com/migueldgzmn/10-Seconds-Game-Guessing-Game.git" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fab fa-github me-1"></i>Code
+                                </a>
+                                <button class="btn btn-sm btn-primary view-project" data-bs-toggle="modal" data-bs-target="#projectModal">
+                                    <i class="fas fa-eye me-1"></i>View Project
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BIONOTE -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card border-0 shadow-sm h-100" tabindex="0" 
+                        data-modal-title="BIONOTE" 
+                        data-modal-desc="Html webpage that introduces a person" 
+                        data-modal-tags="Web,Design,JAVASCRIPT,HTML,CSS" 
+                        data-modal-images="assets/bionote1.png;assets/bionote2.png" 
+                        data-modal-github="https://github.com/migueldgzmn/bionote"
+                        data-modal-code="A bionote in HTML is a short section of a webpage that introduces a person by highlighting their background, skills, and interests. It is often styled with HTML and CSS to make it visually appealing and serves as a quick personal introduction for portfolios, resumes, or academic pages.">
+                        <!-- Fixed image dimensions to proper card thumbnail size -->
+                        <img src="assets/bionote1.png" class="card-img-top" alt="Bionote project preview" style="height: 300px; object-fit: cover;" />
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-danger">HTML</span>
+                            </div>
+                            <h5 class="card-title">Bionote</h5>
+                            <p class="card-text flex-grow-1">A personal introduction webpage built with HTML, CSS, and JavaScript featuring responsive design.</p>
+                            <div class="mb-3">
+                                <span class="badge bg-danger me-2">HTML5</span>
+                                <span class="badge bg-primary me-2">CSS3</span>
+                                <span class="badge bg-warning">JavaScript</span>
+                            </div>
+                            <div>
+                                <a href="https://github.com/migueldgzmn/bionote" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fab fa-github me-1"></i>Code
+                                </a>
+                                <button class="btn btn-sm btn-primary view-project" data-bs-toggle="modal" data-bs-target="#projectModal">
+                                    <i class="fas fa-eye me-1"></i>View Project
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hi-Low -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card border-0 shadow-sm h-100" tabindex="0"
+                        data-modal-title="Hi-Low Game App" 
+                        data-modal-desc="A number guessing game where players guess if the hidden number is higher or lower." 
+                        data-modal-tags="Kotlin, Android Studio, Hi-Low" 
+                        data-modal-images="assets/hilow3.png;assets/hilow2.png;assets/hilow4.png;assets/hilow5.png;assets/hilow6.png" 
+                        data-modal-github="https://github.com/migueldgzmn/hi-low-game-app"
+                        data-modal-code="A mobile guessing game where players try to determine if the hidden number is higher or lower than their guess. Built with Kotlin for Android with intuitive UI and game logic.">
+                        <!-- Fixed image dimensions to proper card thumbnail size -->
+                        <img src="assets/hilow1.png" class="card-img-top" alt="Hi-Low Game App project preview" style="height: 300px; object-fit: cover; object-position: 50% 100%;" />
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-success">Mobile App</span>
+                            </div>
+                            <h5 class="card-title">Hi-Low Game App</h5>
+                            <p class="card-text flex-grow-1">An Android mobile game where players guess if numbers are higher or lower, built with Kotlin.</p>
+                            <div class="mb-3">
+                                <span class="badge bg-success me-2">Kotlin</span>
+                                <span class="badge bg-info">Android Studio</span>
+                            </div>
+                            <div>
+                                <a href="https://github.com/migueldgzmn/hi-low-game-app" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fab fa-github me-1"></i>Code
+                                </a>
+                                <button class="btn btn-sm btn-primary view-project" data-bs-toggle="modal" data-bs-target="#projectModal">
+                                    <i class="fas fa-eye me-1"></i>View Project
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get to Know Me App -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="card border-0 shadow-sm h-100" tabindex="0"
+                        data-modal-title="Get to Know Me App" 
+                        data-modal-desc="A personal introduction mobile application showcasing profile and interests." 
+                        data-modal-tags="Mobile App, Personal Profile, Android" 
+                        data-modal-images="assets/aboutme1.png;assets/aboutme2.png;assets/aboutme3.png;assets/aboutme4.png;assets/aboutme5.png" 
+                        data-modal-github="https://github.com/migueldgzmn/get-to-know-me-app" 
+                        data-modal-code="A personal profile mobile application that introduces the developer through interactive screens, showcasing personal information, interests, and background in an engaging mobile interface.">
+                        <!-- Fixed image dimensions to proper card thumbnail size -->
+                        <img src="assets/aboutme6.png" class="card-img-top" alt="Get to Know Me App project preview" style="height: 300px; object-fit: cover;"/>
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-success">Mobile App</span>
+                            </div>
+                            <h5 class="card-title">Get to Know Me App</h5>
+                            <p class="card-text flex-grow-1">A personal introduction mobile app featuring interactive screens and profile information.</p>
+                            <div class="mb-3">
+                                <span class="badge bg-success me-2">Android</span>
+                                <span class="badge bg-info">Mobile UI</span>
+                            </div>
+                            <div>
+                                <a href="https://github.com/migueldgzmn/get-to-know-me-app" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fab fa-github me-1"></i>Code
+                                </a>
+                                <button class="btn btn-sm btn-primary view-project" data-bs-toggle="modal" data-bs-target="#projectModal">
+                                    <i class="fas fa-eye me-1"></i>View Project
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Website -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
+                    <div class="card border-0 shadow-sm h-100">
+                        <!-- Fixed image dimensions to proper card thumbnail size -->
+                        <img src="/placeholder.svg?height=200&width=350" class="card-img-top" alt="Portfolio Website" style="height: 300px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-dark">Web Design</span>
+                            </div>
+                            <h5 class="card-title">Portfolio Website</h5>
+                            <p class="card-text flex-grow-1">This responsive portfolio website built with modern web technologies and Bootstrap framework.</p>
+                            <div class="mb-3">
+                                <span class="badge bg-danger me-2">HTML5</span>
+                                <span class="badge bg-primary me-2">CSS3</span>
+                                <span class="badge bg-secondary">Bootstrap</span>
+                            </div>
+                            <div>
+                                <a href="#" class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fab fa-github me-1"></i>Code
+                                </a>
+                                <a href="#" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-external-link-alt me-1"></i>Live Demo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Future Project Placeholder -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
+                    <div class="card border-0 shadow-sm h-100">
+                        <!-- Fixed image dimensions to proper card thumbnail size -->
+                        <img src="/placeholder.svg?height=200&width=350" class="card-img-top" alt="Coming Soon Project" style="height: 300px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-secondary">Coming Soon</span>
+                            </div>
+                            <h5 class="card-title">More Projects Coming</h5>
+                            <p class="card-text flex-grow-1">Currently working on exciting new projects that will be showcased here soon.</p>
+                            <div class="mb-3">
+                                <span class="badge bg-info me-2">In Development</span>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                    <i class="fas fa-clock me-1"></i>Coming Soon
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Modal -->
+    <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="projectModalLabel">Project Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Added conditional layout - side-by-side only for mobile apps, stacked for others -->
+                    <div class="row" id="modalContent">
+                        <!-- Image carousel column -->
+                        <div class="col-lg-6 mb-4 mb-lg-0" id="modalImageColumn">
+                            <div id="projectCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner" id="modalCarouselInner">
+                                    <!-- Images will be dynamically inserted here -->
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#projectCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#projectCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Project details column -->
+                        <div class="col-lg-6" id="modalDetailsColumn">
+                            <div id="modalProjectDescription" class="mb-3">
+                                <!-- Project description will be inserted here -->
+                            </div>
+                            <div id="modalProjectTags" class="mb-3">
+                                <!-- Project tags will be inserted here -->
+                            </div>
+                            <div id="modalProjectCode">
+                                <!-- Project code snippet will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="modalGithubLink" href="#" target="_blank" class="btn btn-primary">
+                        <i class="fab fa-github me-2"></i>View on GitHub
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section with Accordion -->
+    <section id="faq" class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">Frequently Asked Questions</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    What programming languages are you most proficient in?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    I'm most proficient in JavaScript and Python, with strong experience in Java, C++, and SQL. 
+                                    I'm constantly learning new technologies and adapting to project requirements.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    Do you work on freelance projects?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes, I'm open to freelance opportunities, especially projects involving web development, 
+                                    mobile applications, or machine learning implementations. Feel free to reach out to discuss your project.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    What's your preferred development methodology?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    I prefer Agile development methodologies with regular sprints, continuous integration, 
+                                    and collaborative code reviews. I believe in writing clean, well-documented code and following best practices.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    Are you available for full-time positions?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes, I'm actively seeking full-time opportunities in software engineering, web development, 
+                                    or machine learning roles. I'm particularly interested in positions that offer growth and learning opportunities.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-5 bg-dark text-white">
+        <div class="container">
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">Get In Touch</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                            <div class="contact-info">
+                                <h4 class="mb-4">Contact Information</h4>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-envelope fa-lg me-3"></i>
+                                    <div>
+                                        <strong>Email</strong><br>
+                                        <a href="mailto:john.doe@email.com" class="text-light">john.doe@email.com</a>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-phone fa-lg me-3"></i>
+                                    <div>
+                                        <strong>Phone</strong><br>
+                                        <a href="tel:+1234567890" class="text-light">+1 (234) 567-8900</a>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-map-marker-alt fa-lg me-3"></i>
+                                    <div>
+                                        <strong>Location</strong><br>
+                                        San Francisco, CA
+                                    </div>
+                                </div>
+                                <div class="social-links mt-4">
+                                    <a href="#" class="text-light me-3"><i class="fab fa-linkedin fa-2x"></i></a>
+                                    <a href="#" class="text-light me-3"><i class="fab fa-github fa-2x"></i></a>
+                                    <a href="#" class="text-light me-3"><i class="fab fa-twitter fa-2x"></i></a>
+                                    <a href="#" class="text-light"><i class="fab fa-instagram fa-2x"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="subject" class="form-label">Subject</label>
+                                    <input type="text" class="form-control" id="subject" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Message</label>
+                                    <textarea class="form-control" id="message" rows="5" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-light btn-lg w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-4" data-aos="fade-up">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2024 John Doe. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">Built with <i class="fas fa-heart text-danger"></i> and Bootstrap</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contact Modal -->
+    <div class="modal fade" id="contactModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Quick Contact</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Contact Information</h6>
+                            <p><i class="fas fa-envelope me-2"></i> john.doe@email.com</p>
+                            <p><i class="fas fa-phone me-2"></i> +1 (234) 567-8900</p>
+                            <p><i class="fas fa-map-marker-alt me-2"></i> San Francisco, CA</p>
+                            <div class="social-links">
+                                <a href="#" class="text-dark me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                                <a href="#" class="text-dark me-3"><i class="fab fa-github fa-lg"></i></a>
+                                <a href="#" class="text-dark me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <form>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" placeholder="Your Name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="email" class="form-control" placeholder="Your Email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <textarea class="form-control" rows="4" placeholder="Your Message" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-dark w-100">Send Message</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Added AOS library JavaScript -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="script.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: false,
+            mirror: true
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const projectCards = document.querySelectorAll('.card[data-modal-title]');
+            const modalTitle = document.querySelector('#projectModalLabel');
+            const modalCarouselInner = document.querySelector('#modalCarouselInner');
+            const modalProjectDescription = document.querySelector('#modalProjectDescription');
+            const modalProjectTags = document.querySelector('#modalProjectTags');
+            const modalGithubLink = document.querySelector('#modalGithubLink');
+            const modalImageColumn = document.querySelector('#modalImageColumn');
+            const modalDetailsColumn = document.querySelector('#modalDetailsColumn');
+
+            projectCards.forEach(card => {
+                card.addEventListener('click', function () {
+                    modalTitle.textContent = this.dataset.modalTitle;
+                    modalGithubLink.href = this.dataset.modalGithub;
+
+                    const isMobileApp = this.dataset.modalTitle.toLowerCase().includes('app') && 
+                                       (this.dataset.modalTags.toLowerCase().includes('mobile') || 
+                                        this.dataset.modalTags.toLowerCase().includes('android') || 
+                                        this.dataset.modalTags.toLowerCase().includes('kotlin'));
+
+                    if (isMobileApp) {
+                        modalImageColumn.className = 'col-lg-6 mb-4 mb-lg-0';
+                        modalDetailsColumn.className = 'col-lg-6';
+                    } else {
+                        modalImageColumn.className = 'col-12 mb-4';
+                        modalDetailsColumn.className = 'col-12';
+                    }
+
+                    // Clear existing content
+                    modalCarouselInner.innerHTML = '';
+                    modalProjectDescription.textContent = '';
+                    modalProjectTags.innerHTML = '';
+
+                    // Add images to carousel
+                    if (this.dataset.modalImages) {
+                        const images = this.dataset.modalImages.split(';');
+                        images.forEach((image, index) => {
+                            const item = document.createElement('div');
+                            item.classList.add('carousel-item');
+                            if (index === 0) item.classList.add('active');
+
+                            const img = document.createElement('img');
+                            img.src = image;
+                            img.classList.add('d-block', 'w-100');
+                            img.style.height = '450px';
+                            img.style.objectFit = 'contain';
+                            img.style.backgroundColor = '#f8f9fa';
+                            img.alt = `Project Image ${index + 1}`;
+
+                            item.appendChild(img);
+                            modalCarouselInner.appendChild(item);
+                        });
+                    }
+
+                    // Add description
+                    if (this.dataset.modalDesc) {
+                        modalProjectDescription.textContent = this.dataset.modalDesc;
+                    } else if (this.dataset.modalCode) {
+                        modalProjectDescription.textContent = this.dataset.modalCode;
+                    }
+
+                    // Add tags
+                    if (this.dataset.modalTags) {
+                        const tags = this.dataset.modalTags.split(',');
+                        tags.forEach(tag => {
+                            const badge = document.createElement('span');
+                            badge.classList.add('badge', 'bg-secondary', 'me-1');
+                            badge.textContent = tag.trim();
+                            modalProjectTags.appendChild(badge);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,2438 +1,935 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap');
-/* Base */
+/* Custom CSS for Portfolio */
 :root {
-  --bg: #ffffff;
-  --fg: #0b1220;
-  --muted: #6b7280;
-  --border: #e5e7eb;
-  --primary: black; /* indigo-like */
-  --primary-contrast: #ffffff;
-  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  --card: #ffffff;
-  border-color: black;
-  --shadow: 0 10px 20px rgba(0, 0, 0, 0.06), 0 6px 6px rgba(0, 0, 0, 0.06);
-  --radius: 16px;
-
-  /* Dot nav timing variables (easy to tweak) */
-  --dot-transform-duration: 360ms;
-  --dot-opacity-duration: 220ms;
-  --dot-label-transform-duration: 260ms;
-  --dot-label-opacity-duration: 180ms;
-  --dot-container-hide-delay: 0.36s;
-  --dot-ease: cubic-bezier(.2,.9,.2,1);
-  /* Timeline vertical nudge (adjust to move line & dots up/down) */
-  --timeline-line-nudge: -6px; /* negative = move upward, positive = downward */
-  --timeline-line-x-nudge: 0px; /* horizontal nudge: positive moves right, negative moves left */
-  --timeline-card-gap: 20px; /* horizontal space between center line and each card */
+  --primary-color: #000000;
+  --secondary-color: #fff;
+  --accent-color: #6c757d;
+  --light-gray: #f8f9fa;
+  --dark-gray: #343a40;
 }
-
-/* --- Modal Mac-style card (container becomes the card) --- */
-#link-modal .link-modal-content { width:860px; max-width:96vw; padding:22px 26px 30px; border:1px solid #0d1117; border-radius:14px; background:linear-gradient(145deg,#020305,#0b0f15 55%,#111a23); box-shadow:0 10px 40px -8px rgba(0,0,0,.6),0 4px 10px -2px rgba(0,0,0,.4); cursor:default; position:relative; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif; color:#dcdcdc; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); overflow:hidden; animation:modalMacIn .6s cubic-bezier(.33,1,.68,1);} 
-#link-modal .link-modal-content::before {content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at 30% 20%,rgba(255,255,255,0.08),transparent 60%); mix-blend-mode:screen;}
-@keyframes modalMacIn {0%{transform:translateY(24px) scale(.94); opacity:0; filter:blur(6px);}60%{transform:translateY(-4px) scale(1.015); opacity:1; filter:blur(0);}100%{transform:translateY(0) scale(1); opacity:1;}}
-#link-modal .modal-mac-header {display:flex; align-items:center; gap:8px; margin:0 0 14px;}
-#link-modal .modal-mac-header span {width:13px; height:13px; border-radius:50%; display:inline-block; box-shadow:0 0 0 1px rgba(0,0,0,.35) inset,0 1px 2px rgba(255,255,255,.15) inset; transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;}
-#link-modal .modal-mac-header .red {background:#ff5f57; cursor:pointer;}
-#link-modal .modal-mac-header .red:hover {filter:brightness(1.1); box-shadow:0 0 0 1px rgba(0,0,0,.6) inset,0 0 0 4px rgba(255,95,87,0.35);}
-#link-modal .modal-mac-header .red:active {transform:scale(.85);}
-#link-modal .modal-mac-header .yellow {background:#ffbd2e;}
-#link-modal .modal-mac-header .green {background:#28c941;}
-#link-modal .modal-mac-title {font-size:20px; font-weight:600; margin:0 0 10px; color:#f2f5f8; letter-spacing:.35px;}
-#link-modal .modal-mac-desc {font-size:14px; line-height:1.5; margin:0 0 16px; color:#9aa4af; display:block;}
-#link-modal .modal-mac-tags {display:flex; flex-wrap:wrap; gap:6px; margin:0 0 18px;}
-#link-modal .modal-mac-tag {font-size:11px; padding:5px 10px; border-radius:6px; background:#0d1117; color:#dcdcdc; border:1px solid #1d2730; letter-spacing:.55px;}
-#link-modal .modal-mac-code {background:#0d1117; border:1px solid #28313b; border-radius:8px; padding:16px 18px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace; font-size:13px; line-height:1.5; max-height:260px; overflow:auto; position:relative;}
-#link-modal .modal-mac-code::-webkit-scrollbar {width:8px;}
-#link-modal .modal-mac-code::-webkit-scrollbar-thumb {background:#555; border-radius:4px;}
-#link-modal .modal-mac-code code {white-space:pre-wrap; display:block; color:#c9d1d9;}
-#link-modal .modal-mac-body {margin:10px 0 18px;}
-#link-modal .modal-mac-body .carousel {width:100%; border:1px solid #28313b; border-radius:10px; overflow:hidden; box-shadow:0 4px 18px -6px rgba(0,0,0,.55);} 
-#link-modal .modal-mac-body .carousel-inner {max-height:520px;}
-#link-modal .modal-mac-body .carousel-item img {display:block; width:100%; height:auto; max-height:520px; object-fit:contain; background:#0d1117;}
-@media (max-width:800px){
-  #link-modal .modal-mac-body .carousel-inner {max-height:380px;}
-  #link-modal .modal-mac-body .carousel-item img {max-height:380px;}
-}
-#link-modal .modal-mac-body .carousel-item svg {font-family:system-ui, sans-serif;}
-#link-modal .modal-mac-body .carousel-control-prev-icon, 
-#link-modal .modal-mac-body .carousel-control-next-icon, 
-#link-modal .gtkm-left .carousel-control-prev-icon,
-#link-modal .gtkm-left .carousel-control-next-icon { filter:invert(1) grayscale(1); }
-#link-modal .modal-mac-footer {margin-top:16px; display:flex; justify-content:flex-end; gap:10px;}
-#link-modal .modal-mac-btn {background:#111a23; border:1px solid #22313d; color:#d7dee3; font-size:13px; padding:8px 14px; border-radius:6px; cursor:pointer; letter-spacing:.4px; transition:background .25s, transform .25s, box-shadow .25s;}
-#link-modal .modal-mac-btn:hover {background:#182530; box-shadow:0 4px 14px -4px rgba(0,0,0,.6);}
-#link-modal .modal-mac-btn:active {transform:translateY(1px);}
-/* GitHub footer link */
-#link-modal .modal-mac-github {display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:#dcdcdc; text-decoration:none; background:#111a23; border:1px solid #22313d; padding:8px 14px; border-radius:8px; line-height:1.1; transition:background .25s, color .25s, box-shadow .25s, transform .25s;}
-#link-modal .modal-mac-github i {font-size:18px;}
-#link-modal .modal-mac-github:hover {background:#182530; color:#ffffff; box-shadow:0 6px 18px -6px rgba(0,0,0,.6);}
-#link-modal .modal-mac-github:active {transform:translateY(1px);}
-@media (max-width:600px){#link-modal .link-modal-content {width:94vw; padding:18px 18px 22px;} #link-modal .modal-mac-code {max-height:200px;}}
-#primary-nav {transition: max-height .4s ease, opacity .35s ease; overflow:hidden;}
-@media (max-width:820px){
-  header.site-header {position:sticky; top:0; z-index:60; background:rgba(14,19,23,0.88); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);}
-  .header-nav .header-links.centered {flex-direction:column; align-items:flex-start; gap:10px; padding:0 0 14px; width:100%;}
-  .header-nav .header-links.centered a {padding:8px 4px; font-size:15px;}
-  .nav-toggle {display:inline-flex; position:relative; z-index:61;}
-  .nav-toggle[aria-expanded="false"] + #primary-nav {max-height:0; opacity:0; pointer-events:none;}
-  .nav-toggle[aria-expanded="true"] + #primary-nav {max-height:420px; opacity:1;}
-}
-@media (max-width:720px){
-  .section {padding:60px 0;}
-  h1 {font-size: clamp(34px,9.5vw,52px);}
-  h2 {font-size: clamp(24px,7.2vw,36px);}
-  h3 {font-size: 18px;}
-  .sublead {font-size:14px; line-height:1.55;}
-  .feature-track {flex-direction:column; gap:26px;}
-  .feature-card {width:100%;}
-  .grid {display:grid; grid-template-columns:1fr; gap:34px;}
-  .card .card-media img {max-height:300px; object-fit:cover;}
-  .timeline-wrap {margin-left:0;}
-  .timeline-row {flex-direction:row; align-items:flex-start;}
-  .timeline-dot {left:-10px;}
-}
-@media (max-width:480px){
-  body {font-size:15px;}
-  .section {padding:50px 0;}
-  .card .tag {font-size:11px;}
-  .modal-mac-title {font-size:18px !important;}
-  .modal-mac-desc {font-size:13px !important;}
-}
-#link-modal .modal-mac-body {margin:10px 0 20px; display:block;}
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-
-/* Ensure scroll snapping is disabled globally and smooth scrolling enforced
-   This prevents browsers or nested containers from snapping to sections/pages. */
-html, body, main, section, .container, .features, .feature-track, .marquee-mask, .marquee-track {
-  scroll-behavior: smooth !important;
-  scroll-snap-type: none !important;
-  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-}
-
-/* Reset any snap alignment that might be set on children */
 * {
-  scroll-snap-align: none !important;
-  scroll-snap-stop: normal !important;
-}
-
-body {
   margin: 0;
-  /* Use Poppins first, fall back to system sans-serif stack */
-  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  color: var(--fg);
-  background-color: #0e1317; /* darker to avoid white flash */
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-#hero.section.hero { position:relative; animation:heroDropIn .85s cubic-bezier(.33,1,.55,1) both; }
-@keyframes heroDropIn {0%{opacity:0; transform:translateY(60px) scale(.985);}60%{opacity:1; transform:translateY(-6px) scale(1.005);}100%{opacity:1; transform:translateY(0) scale(1);} }
-
-/* Remove ALL default margin/padding from html and body */
-html,
-body {
-  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100%; /* use 100% to avoid scrollbar-width issues across devices */
-  overflow-x: hidden;
-}
-body.scroll-locked {
-  overflow-y: hidden !important; /* Defensive; main prevention handled via fixed positioning */
-}
-
-/* Remove padding from .section and .container in hero */
-#hero.section,
-#hero .container,
-#hero .hero-grid,
-#hero .hero-visual {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  width: 100% !important; /* avoid 100vw which can cause horizontal overflow */
-  max-width: 100% !important;
+  padding: 0;
   box-sizing: border-box;
+  scroll-behavior: smooth; /* Apply to all elements */
 }
 
-/* Remove border, box-shadow, and border-radius if present */
-#hero,
-#hero .container,
-#hero .hero-grid {
-  border: none !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
+body {
+  /* Use Outfit (loaded from Google Fonts) as the site's main UI font */
+  font-family: "Outfit", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--primary-color);
+  scroll-behavior: smooth;
 }
 
-.container {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 1.25rem;
+/* Ensure anchored sections account for the fixed navbar to avoid snapping under the header */
+section {
+  /* fall back to 70px if JS doesn't set the variable */
+  scroll-margin-top: calc(var(--navbar-height, 70px) + 12px);
 }
 
-.section {
-  padding: 80px 0;
-}
-.text-center {
-  text-align: center;
-}
-.narrow {
-  max-width: 720px;
-}
-
-/* Specific styling for the "My Projects" heading */
-.projects-title {
-  font-family: 'Montserrat', 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
-  font-weight: 800;
-  letter-spacing: .5px;
-  line-height: 1.1;
-  margin-bottom: 0.65rem;
-  background: linear-gradient(90deg, #000000, #000000);
-  background-clip: text; /* standard */
-  -webkit-background-clip: text; /* Safari */
-  color: #000000; /* fallback */
-  animation: projTitleIn .9s cubic-bezier(.33,1,.68,1);
-}
-@keyframes projTitleIn {0%{opacity:0; transform:translateY(18px) scale(.96);}60%{opacity:1; transform:translateY(-4px) scale(1.015);}100%{opacity:1; transform:translateY(0) scale(1);} }
-
-/* Flatten feature cards: remove elevation & shadow */
-.feature-card {
-  box-shadow: none !important;
-  cursor: default;
-  transform: none !important;
-}
-.feature-card:hover,
-.feature-card:focus-within,
-.feature-card:active {
-  box-shadow: none !important;
-  transform: none !important;
-  border-color: black;
-}
-h3 {
-  line-height: 1.2;
-  margin: 0 0 12px;
-}
-h1 {
-  font-size: clamp(40px, 5vw, 64px);
-  font-family: 'Montserrat', 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  line-height: 1.05;
-}
-h2 {
-  font-size: clamp(28px, 3.5vw, 40px);
-  font-family: 'Montserrat', 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.4px;
-  line-height: 1.1;
-}
-h3 {
-  font-size: 20px;
-  font-family: 'Montserrat', 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.2px;
-  line-height: 1.15;
+.hero-section {
+  min-height: 100vh;
+  background: url('./assets/bg1.png');
+  color: white;
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 0; /* Increased padding for desktop */
 }
 
-.lead {
-  font-size: 18px;
-  color: var(--muted);
-  margin: 16px 0 24px;
-}
-.sublead {
-  color: var(--muted);
-  margin: 8px 0 24px;
-}
-
-/* Header (Bootstrap-like visual style applied to existing header elements)
-   This block intentionally only changes visual rules and targets the
-   site's existing header classes (`.site-header`, `.header-nav`, etc.) so
-   your HTML and JS remain untouched. */
-.site-header {
-  position: fixed;
-  top: 12px; /* fixed offset for consistent desktop spacing */
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
   left: 0;
   right: 0;
-  display: flex;
-  justify-content: center; /* center the inner nav like Bootstrap's container */
-  pointer-events: auto;
-  z-index: 1000;
-  transition: top 0.3s ease, opacity 0.3s ease;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.1;
 }
 
-/* Visual container that looks like the pasted Bootstrap navbar */
-.site-header .header-nav {
-  background-color: white; /* semi-transparent navy */
-  border-radius: 12px;
-  border: 1px solid black; /* visible black border */
-  max-width: min(960px, 92vw);
-  margin: 0 auto;
-  padding: 10px 18px;
-  font-family: "Poppins", sans-serif;
-  font-weight: 600;
-  font-size: clamp(14px, 1rem, 18px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  transition: all 0.3s ease-out;
-}
-.site-header .header-nav.no-logo .header-links.centered { justify-content: center; width: 100%; }
-
-/* Expanded state (when your JS toggles a class like .navbar-expanded or .open)
-   make the navbar stretch to edges and flip to the light theme like in the example */
-.site-header.navbar-expanded .header-nav,
-.site-header.expand .header-nav {
-  max-width: 100vw;
-  top: 0;
-  padding: 12px 20px;
-  border-radius: 0;
-  background-color: black; /* light creme used in the example */
-}
-
-.site-header .site-logo {
-  color: black;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.02em;
-}
-
-/* Links styling to match the example */
-.site-header .header-links {
-  display: flex;
-  gap: 28px;
-  align-items: center;
-}
-
-.site-header .header-links a {
-  color: black;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  padding: 5px 14px;
+.profile-img {
+  /* Bigger responsive profile image: larger minimum and scales with viewport */
+  max-width: 100%; /* prevents overflow on very small screens */
+  height: auto;
+  width: auto;
+  object-fit: contain;
   position: relative;
-  transition: color 0.2s ease;
-}
-
-.site-header .header-links a:hover,
-.site-header .header-links a:focus {
-  color: black; /* revert: no gray on hover */
-}
-
-/* Reverted hover style: animated underline instead of color change */
-.site-header .header-links a {
-  position: relative;
-  overflow: hidden;
-}
-.site-header .header-links a::after {
-  content: "";
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 4px;
-  height: 2px;
-  background: black;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform .35s cubic-bezier(.33,1,.68,1);
-}
-.site-header .header-links a:hover::after,
-.site-header .header-links a:focus::after,
-.site-header .header-links a.active::after {
-  transform: scaleX(1);
-}
-.site-header .header-links a.active {
-  color: black;
-  font-weight: 700;
-}
-
-/* When navbar becomes the light expanded style, swap link colors to dark */
-.site-header.navbar-expanded .header-links a,
-.site-header.expand .header-links a {
-  color: #112335;
-}
-
-.site-header.navbar-expanded .site-logo,
-.site-header.expand .site-logo {
-  color: #112335;
-  font-size: 1.2vw;
-}
-
-/* Keep existing mobile toggle behavior but inherit the color theme */
-.site-header .nav-toggle {
-  background: transparent;
+  transition: transform 0.25s ease;
+  display: block; /* center with auto margins */
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 0; /* no circular crop */
   border: none;
 }
 
-.site-header.hidden {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.site-header.navbar-hidden {
-  /* Move header fully out of view and make it non-interactive */
-  transform: translateY(-120%);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  /* transition timing chosen to match show/hide feel */
-  transition: transform 0.28s ease, opacity 0.28s ease, visibility 0s linear 0.28s;
-}
-/* Hero */
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 40px;
-  align-items: center;
-}
-
-@media (max-width: 900px) {
-  /* Mobile: center hero social icons and remove large offsets */
-  #hero .social-icons {
-    margin: 16px auto 24px !important;
-    margin-right: 0 !important;
-    justify-content: center !important;
-    width: 100%;
-  }
-  #hero .social-icons .social-icon { transform: none; }
-  .hero-grid {
-    grid-template-columns: 1fr;
-  }
-  .hero-visual {
-    justify-self: center;
-  }
-}
-
-/* HERO SECTION: Full width, no left gap, background image unclickable */
-#hero {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  width: 100vw;
-  position: relative;
-  padding: 0;
-  margin: 0;
-  background: #1f1f1f url("assets/hero.png") center center / cover no-repeat;
-  overflow: hidden;
-}
-
-@media (max-width: 1200px) {
-  #hero {
-    height: 60vw;
-    max-height: 700px;
-  }
-}
-@media (max-width: 700px) {
-  #hero {
-    height: 56vw;
-    max-height: 400px;
-  }
-}
-
-#hero .container,
-#hero .hero-grid,
-#hero .hero-visual {
-  width: 100vw !important;
-  max-width: 100vw !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  box-sizing: border-box;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#hero .hero-visual {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none; /* Make background image unclickable */
-}
-
-#hero .hero-copy {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  width: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-/* Center the social icons horizontally in the hero section */
-#hero .social-icons {
-  display: flex;
-  gap: 18px;
-  margin-top: 450px;
-  margin-right: 980px;
-  justify-content: center; /* <-- Center horizontally */
-  align-items: center;
-  width: 100%;
-}
-
-/* Remove left border/gap from hero section */
-#hero,
-#hero .container,
-#hero .hero-grid,
-#hero .hero-visual {
-  width: 100vw !important;
-  max-width: 100vw !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  box-sizing: border-box;
-}
-
-/* Remove border-radius or box-shadow if present */
-#hero,
-#hero .container,
-#hero .hero-grid {
-  border: none !important;
-  box-shadow: none !important;
-}
-
-#hero .hero-visual {
-  width: 100vw;
-  height: 1080px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
-}
-
-/* Responsive: scale down for smaller screens */
-@media (max-width: 1200px) {
-  #hero,
-  #hero .container,
-  #hero .hero-grid,
-  #hero .hero-visual,
-  #hero-gif {
-    height: 60vw;
-    min-height: 300px;
-    max-height: 80vw;
-  }
-}
-
-@media (max-width: 700px) {
-  #hero,
-  #hero .container,
-  #hero .hero-grid,
-  #hero .hero-visual,
-  #hero-gif {
-    height: 56vw;
-    min-height: 200px;
-    max-height: 70vw;
-  }
-}
-
-/* Gradient text */
-.text-gradient {
-  background: linear-gradient(90deg, var(--primary), #22c55e);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 999px;
-  padding: 12px 18px;
-  text-decoration: none;
-  font-weight: 700;
-  transition: transform .15s ease, background .2s ease, color .2s ease, opacity .2s ease;
-}
-.btn.primary {
-  background-color: black;
-  color: #1f1f1f;
-  border: none;
-}
-.btn.primary:hover {
-  transform: translateY(-1px);
-  opacity: 0.95;
-}
-.btn.link,
-a.learn {
-  color: black;
-  border-bottom: 1px solid black;
-}
-.btn.link:hover {
-  color: var(--primary);
-}
-
-.actions {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-/* About */
-.about {
-  background: white;
-}
-
-/* Features (horizontal scroll, no snap, pure momentum) */
-.features {
-  background: linear-gradient(180deg, #1f1f1f 0%, #1f1f1f 100%);
-}
-
-.feature-track {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 24px 0 24px 16px;
-    scroll-snap-type: none; /* no snapping */
-    scroll-behavior: smooth; /* enable smooth scrolling */
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-x; /* immediate horizontal pan */
-  overscroll-behavior-x: contain;
-  cursor: grab;
-}
-
-.feature-track.dragging {
-  cursor: grabbing;
-  user-select: none;
-}
-
-.feature-track.dragging * {
-  pointer-events: none;
-}
-
-.feature-card {
-  min-width: 360px;
-  max-width: 420px;
-  height: 500px;
-  flex: 0 0 auto;
-  background: black;
-  color: black;
-  border: 1px solid black;
-  border-radius: var(--radius);
-  padding: 20px;
-  border-color: black;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-}
-
-.feature-card {
-  transition: all 0.3s ease-out;
-}
-
-.feature-card:hover,
-.feature-card:focus-within {
-  transform: scale(1.04);
-  transform: translateX(-4px);
-}
-
-.feature-card:hover,
-.feature-card:focus-within {
-  transform: translateX(-4px);
-  transform: translateY(-4px);
-}
-
-/* Prevent native image dragging/select jitter while dragging the track */
-.feature-card,
-.feature-card * {
-  -webkit-user-drag: none;
-  user-select: none;
-}
-
-/* Reduce tap highlight on mobile for a snappier feel */
-.feature-track {
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
-
-/* Hide scrollbar for Webkit browsers */
-.feature-track::-webkit-scrollbar {
-  display: none;
-}
-
-@media (max-width: 600px) {
-  .feature-card {
-    min-width: 80vw;
-    max-width: 90vw;
-  }
-}
-
-/* === Mobile / Small viewport responsive enhancements === */
-@media (max-width: 640px) {
-  body { font-size: 15px; }
-  h1 { font-size: clamp(28px, 9vw, 40px); }
-  h2 { font-size: clamp(22px, 7.2vw, 32px); }
-  h3 { font-size: clamp(18px, 5.6vw, 24px); }
-  .container { padding-left:18px; padding-right:18px; }
-  header.site-header .header-links a { padding: 10px 0; }
-  .feature-track { gap: 26px; }
-  .feature-card-inner { min-height: 360px; }
-  .feature-card-front p { font-size: 13px; }
-  .feature-card-back h3 { font-size: 15px; }
-  .skill-logos i, .skill-logos span { font-size: 34px !important; }
-  .timeline-wrap { gap: 32px; }
-  .timeline-card { padding:18px 18px 20px; }
-  .timeline-card .year { font-size:12px; }
-  .work .grid { gap: 26px; }
-  .card .tag { font-size: 10px; }
-  .card h2 { font-size: 18px; }
-  .newsletter-card { padding: 28px 22px; }
-  .newsletter-form { flex-direction: column; gap:12px; }
-  .newsletter-form input { width:100%; }
-  .newsletter-form button { width:100%; }
-  .dot-nav { right:10px; gap:10px; }
-  .dot-nav .dot { width:44px; height:44px; }
-  .dot-nav .dot-label { right: 150%; font-size:12px; padding:7px 14px; }
-  footer .footer-links { flex-wrap: wrap; row-gap:6px; }
-  .modal-mac-code { font-size:12px; }
-}
-
-@media (max-width:480px){
-  .feature-card-inner { min-height: 330px; }
-  .skill-logos { gap:10px; }
-  .skill-hover-label { font-size:12px; }
-  .card[data-img-stretch] .card-media { height: 200px; }
-  .dot-nav .dot { width:42px; height:42px; }
-  .dot-nav .dot.active { transform: translateX(0) scale(1.12); }
-}
-
-/* Ensure large images inside cards scale down nicely */
-.card-media img { width:100%; height:auto; display:block; object-fit:cover; }
-@media (max-width:640px){ .card-media img { border-radius:10px; } }
-
-/* Better wrapping for long modal descriptions on narrow screens */
-@media (max-width:640px){
-  #link-modal .modal-mac-desc { font-size:13px; }
-  #link-modal .modal-mac-title { font-size:18px; }
-}
-
-/* Work grid */
-.work .grid {
-  display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(3, 1fr);
-}
-@media (max-width: 900px) {
-  .work .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 640px) {
-  .work .grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Unified card border for work and other card-like components */
-/* Use a slightly translucent black so hover can darken visibly */
-.card,
-.work .card,
-.work article.card,
-.timeline-card,
-.newsletter-card,
-.feature-card {
-  border: 2px solid rgba(0,0,0,0.85);
-  box-shadow: none;
-  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
-}
-
-/* Hover / focus: darker border, subtle lift */
-.card:hover,
-.work .card:hover,
-.work article.card:hover,
-.timeline-card:hover,
-.newsletter-card:hover,
-.feature-card:hover,
-.card:focus-within,
-.timeline-card:focus-within,
-.feature-card:focus-within {
-  border-color: rgba(0,0,0,1);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  transform: translateY(-4px);
-}
-
-/* Active / pressed state: keep border dark but reduce lift */
-.card:active,
-.timeline-card:active,
-.feature-card:active {
-  border-color: rgba(0,0,0,1);
-  transform: translateY(-2px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .timeline-row {
-    transition: none !important;
-  }
-  .timeline-wrap::after {
-    transition: none !important;
-    transition: opacity 0.55s cubic-bezier(.33,1,.68,1), transform 0.55s cubic-bezier(.33,1,.68,1), visibility 0s;
-}
-.card {
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid black;
-  background: white;
-    transition: opacity 0.55s cubic-bezier(.33,1,.68,1), transform 0.55s cubic-bezier(.33,1,.68,1), visibility 0s;
-  transition: transform .2s ease, box-shadow .2s ease;
-  border-color: black;
-  border-radius: 1px;
-}
-.card:hover {
-  transform: translateY(-3px);
-  border-color: black;
-  box-shadow: 5px 10px 0 black;
-}
-/* Ensure work project cards keep the original shadow and get a stronger hover */
-.work .card,
-.work article.card {
-  box-shadow: var(--shadow);
-}
-.work .card:hover,
-.work article.card:hover {
-  box-shadow: 5px 10px 0 rgba(0,0,0,1);
-  transform: translateY(-6px);
-}
-/* Persist hover shadow for the card whose link opened the modal */
-.work .card.modal-active-card {
-  box-shadow: 5px 10px 0 rgba(0,0,0,1) !important;
-  transform: translateY(-6px) !important;
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
-}
-.card-media {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-}
-.card-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* Ensure the hero profile image is centered and scales well on larger screens. */
+.hero-section .profile-img {
   display: block;
-}
-/* Per-card image vertical focus utilities (adjust cropping without new images) */
-.card[data-img-pos] .card-media img { object-position: 50% 50%; transition: object-position .4s ease; }
-.card[data-img-pos="top"] .card-media img { object-position: 50% 12%; }
-.card[data-img-pos="center"] .card-media img { object-position: 50% 50%; }
-.card[data-img-pos="bottom"] .card-media img { object-position: 50% 88%; }
-/* Stretched thumbnail variant for selected cards */
-.card[data-img-stretch] .card-media { aspect-ratio: auto; height: 340px; }
-@media (max-width: 800px){ .card[data-img-stretch] .card-media { height: 280px; } }
-@media (max-width: 560px){ .card[data-img-stretch] .card-media { height: 220px; } }
-.card-body {
-  padding: 16px;
-  display: flex; /* only for pushing link */
-  flex-direction: column;
-}
-.card-body .tag {
-  color: black;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-.card-body h3 {
-  margin: 4px 0 10px;
-}
-.card-body .learn {
-  color: black;
-  text-decoration: none;
-  font-weight: 700;
-  margin-top: auto; /* push to bottom */
-  align-self: flex-start;
-}
-.card-body .learn:hover {
-  text-decoration: underline;
-}
-/* Keep legacy underline for other learn links but exclude animated view-project */
-a.learn:not(.view-project):hover {
-  text-decoration: underline;
-}
-.timeline-wrap {
+  margin: 0 auto; /* center horizontally */
+  transform: none;
   position: relative;
-  --progress: 0; /* 0..1, updated via JS */
+  z-index: 10;
+  /* Use a fluid width that stays within reasonable bounds on large screens */
+  /* much larger minimum and generous viewport scaling so the hero/logo is prominently large */
+  width: clamp(420px, 75vw, 1800px);
+  height: auto;
 }
-.timeline-wrap::before {
+
+@media (min-width: 992px) {
+  .hero-section .profile-img {
+    /* On desktop allow the image to occupy nearly the full viewport width (capped) */
+    width: min(95vw, 1800px);
+  }
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  margin-bottom: 3rem;
+}
+
+.section-title::after {
   content: "";
   position: absolute;
-  left: calc(50% + var(--timeline-line-x-nudge, 0px));
-  top: var(--timeline-line-nudge, 0);
-  bottom: calc(var(--timeline-line-nudge, 0) * -1);
-  width: 2px;
-  background: #e2e8f0;
+  bottom: -10px;
+  left: 50%;
   transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
 }
-/* Progress line that fills as you scroll */
-.timeline-wrap::after {
+
+.section-title-about {
+  font-size: 2.5rem;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  margin-bottom: 3rem;
+}
+
+.section-title-about::after {
   content: "";
   position: absolute;
-  left: calc(50% + var(--timeline-line-x-nudge, 0px));
-  top: var(--timeline-line-nudge, 0);
+  bottom: -10px;
+  left: 50%;
   transform: translateX(-50%);
-  width: 2px;
-  height: calc(var(--progress) * 100%);
-  background: linear-gradient(180deg, black, black);
-  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
-  will-change: height;
+  width: 200px;
+  height: 3px;
+  background: white;
 }
 
-.timeline-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: flex-start;
-  margin: 24px 0;
+/* Timeline */
+.timeline {
   position: relative;
 }
-/* Provide breathing room between cards and the center vertical line */
-.timeline-row .timeline-card { margin-right: var(--timeline-card-gap); }
-.timeline-row:nth-child(even) .timeline-card { margin-right: 0; margin-left: var(--timeline-card-gap); }
 
-/* Slightly reduce gap on medium screens */
-@media (max-width: 1100px) {
-  :root { --timeline-card-gap: 2px; }
-}
-@media (max-width: 900px) {
-  :root { --timeline-card-gap: 2px; }
-}
-/* On narrow mobile, remove extra gap so layout stays balanced */
-@media (max-width: 640px) {
-  :root { --timeline-card-gap: 18px; }
-  .timeline-row { grid-template-columns: 1fr; }
-  .timeline-row .timeline-card, .timeline-row:nth-child(even) .timeline-card { margin: 0; }
-  .timeline-dot { left: 30px; transform: translate(-50%,0); }
-  /* shift cards right a bit so dot sits left */
-  .timeline-row .timeline-card { padding-left: 12px; }
-  .timeline-wrap::before, .timeline-wrap::after { left: 30px; }
-}
-
-/* Place the card left by default, right on even rows */
-.timeline-card {
-  grid-column: 1;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-color: black;
-  border-radius: 14px;
-  padding: 16px;
-  cursor: pointer;
-  transition: transform .15s ease;
-}
-.timeline-row:nth-child(even) .timeline-card {
-  grid-column: 2;
-}
-
-/* Remove base hover (will re-add gated version below) */
-
-/* Smooth hover effect for timeline cards */
-.timeline-card {
-  transition:
-    transform 0.33s cubic-bezier(0.33, 1, 0.68, 1),
-    box-shadow 0.33s cubic-bezier(5, 1, 0.68, 1),
-    border-color 0.22s cubic-bezier(0.33, 1, 0.68, 1),
-    background 0.22s cubic-bezier(0.33, 1, 0.68, 1),
-    opacity 0.22s cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.timeline-row.in-view .timeline-card:hover,
-.timeline-row.in-view .timeline-card:focus-within {
-  transform: translateY(-4px);
-  box-shadow: 5px 10px 0 black;
-  border-color: black;
-  background: #f8f8f8;
-  opacity: 1;
-}
-
-/* Ensure timeline cards match work cards: keep base shadow and use a stronger hover */
-.timeline-card {
-  box-shadow: var(--shadow);
-  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
-}
-.timeline-row.in-view .timeline-card:hover,
-.timeline-row.in-view .timeline-card:focus-within {
-  box-shadow: 5px 10px 0 rgba(0,0,0,1);
-  transform: translateY(-6px);
-  border-color: black;
-}
-
-/* Keep the hover shadow when a timeline card is expanded/clicked */
-.timeline-card.expanded,
-.timeline-card.expanded:hover,
-.timeline-card.expanded:focus-within,
-.timeline-card:active {
-  box-shadow: 5px 10px 0 rgba(0,0,0,1) !important;
-  transform: translateY(-6px) !important;
-  border-color: black !important;
-  z-index: 5;
-}
-
-/* Dot stays centered */
-.timeline-dot {
+.timeline::before {
+  content: "";
   position: absolute;
-  left: calc(50% + var(--timeline-line-x-nudge, 0px));
-  top: calc(15px + var(--timeline-line-nudge, 0));
-  transform: translate(-50%, 0);
+  left: 30px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--primary-color);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+  padding-left: 80px;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  top: 20px;
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 2px solid black;
-  background: transparent;
-  overflow: hidden;
-  box-shadow: 0 0 0 0 rgba(0,0,0,0);
-  transition: box-shadow .4s ease;
-}
-.timeline-dot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: black;
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform .45s cubic-bezier(.33,1,.68,1);
-}
-.timeline-row.in-view .timeline-dot::after {
-  transform: scaleY(1);
-}
-.timeline-row.in-view .timeline-dot { box-shadow:0 0 0 4px rgba(0,0,0,0.12); }
-
-/* Animate the CARD (not the row) when its row is in view */
-/* Hidden until progress line reaches row */
-.timeline-card {
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(24px);
-  pointer-events: none;
-  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0s linear 0.6s;
-}
-.timeline-row.in-view .timeline-card {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  pointer-events: auto;
-  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0s;
-}
-/* Smooth fade-out when scrolling back (row gets .leaving temporarily) */
-.timeline-row.leaving .timeline-card {
-  opacity: 0;
-  visibility: visible; /* keep visible until transition ends */
-  transform: translateY(24px);
-  pointer-events: none;
-  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0s linear 0.6s;
-}
-/* Optional slight stagger purely via CSS (index-based) */
-.timeline-row:nth-child(1) .timeline-card { transition-delay: 0ms; }
-.timeline-row:nth-child(2) .timeline-card { transition-delay: 40ms; }
-.timeline-row:nth-child(3) .timeline-card { transition-delay: 80ms; }
-.timeline-row:nth-child(4) .timeline-card { transition-delay: 120ms; }
-.timeline-row:nth-child(5) .timeline-card { transition-delay: 160ms; }
-.timeline-row:nth-child(6) .timeline-card { transition-delay: 200ms; }
-
-/* Headings and details remain the same */
-.timeline-head {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-.timeline-head .year {
-  color: black;
-  font-weight: 800;
-}
-.timeline .desc {
-  color: black;
-  margin: 4px 0 8px;
-}
-.timeline .details {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height .25s ease, opacity .25s ease;
-  opacity: 0;
-}
-.timeline-card.expanded .details {
-  max-height: 300px;
-  opacity: 1;
+  background: var(--primary-color);
+  border: 3px solid white;
+  box-shadow: 0 0 0 3px var(--primary-color);
 }
 
-/* Optional: turn off transitions for motion-sensitive users */
-@media (prefers-reduced-motion: reduce) {
-  .timeline-row {
-    transition: none !important;
-  }
-  .timeline-wrap::after {
-    transition: none !important;
+/* Cards */
+.card {
+  transition: transform 0.3s ease;
+  box-shadow: 5px 5px 1px rgb(0, 0, 0) !important;
+  border: 1px solid black !important;
+  overflow: hidden !important; /* clip children (images) */
+}
+
+/* Target common thumbnail selectors used in the markup */
+.card .card-img-top,
+.card img.card-img-top,
+.card img {
+  display: block !important;
+  border: 1px solid black !important;
+  width: 100% !important;
+  height: 300px !important; /* keep project thumbnail height consistent */
+  object-fit: cover !important; /* crop to fill without distortion */
+  object-position: center center !important;
+  border-radius: inherit !important; /* match card rounding */
+}
+
+/* For smaller cards (responsive), allow height to scale down */
+@media (max-width: 576px) {
+  .card .card-img-top,
+  .card img.card-img-top,
+  .card img {
+    height: 200px !important;
   }
 }
 
-/* Marquee */
-.marquee {
-  background: #ffffff;
-  padding: 64px 0;
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 5px 5px 1px rgb(0, 0, 0) !important;
+  border: 1px solid black !important;
 }
-.marquee-mask {
+
+/* Custom Badge Colors */
+.bg-purple {
+  background-color: #6f42c1 !important;
+}
+
+.text-purple {
+  color: #6f42c1 !important;
+}
+
+/* Carousel Customization */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  border-radius: 50%;
+  padding: 20px;
+}
+
+.carousel-indicators button {
+  width: 12px;
+  height: 12px;
+}
+
+/* Contact Form */
+.form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 12px 15px;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+/* Social Links */
+.social-links a {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-links a:hover {
+  transform: translateY(-3px);
+  color: var(--accent-color) !important;
+}
+
+/* Navbar */
+.navbar-brand {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.navbar-nav .nav-link {
+  font-weight: 400; /* make default text weight normal */
+  margin: 0 10px;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: black !important;
+}
+
+/* Ripple effect for buttons (moved from runtime-injected styles) */
+.btn {
   position: relative;
   overflow: hidden;
 }
-.marquee-mask::before,
-.marquee-mask::after {
-  content: "";
+
+.ripple {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 120px;
-  z-index: 2;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(0);
+  animation: ripple-animation 0.6s linear;
+  pointer-events: none;
 }
-.marquee-mask::before {
-  left: 0;
-  background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0));
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
 }
-.marquee-mask::after {
-  right: 0;
-  background: linear-gradient(270deg, #ffffff, rgba(255, 255, 255, 0));
+
+/* Added sophisticated floating navbar styles */
+/* On smaller Canvas */
+@media (max-width: 991.98px) {
+  .navbar-custom {
+    display: none !important;
+  }
+  .offcanvas-button {
+    position: fixed;
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    margin: 2vw;
+    width: auto;
+    display: grid;
+    z-index: 1000;
+  }
+  .offcanvas-button svg {
+    fill: black;
+  }
+  .offcanvas-button:hover {
+    background-color: black;
+  }
 }
-.marquee-track {
-  display: inline-flex;
-  gap: 32px;
-  white-space: nowrap;
-  will-change: transform;
-  animation: scrollLeft 22s linear infinite;
+
+/* Extra small phones: improve readability and tighten the pill/menu */
+@media (max-width: 420px) {
+  .nav-name {
+    padding: 0.25rem 0.45rem;
+    max-width: 300px;
+    border-radius: 9px;
+  }
+
+  .nav-name .name-text {
+    font-size: 1.25rem; /* ~20px for small phones */
+    letter-spacing: 0.6px;
+  }
+
+  .nav-name .nav-menu {
+    min-width: 140px;
+    max-width: 300px;
+    padding: 0.2rem;
+    margin-top: 0.25rem;
+  }
+
+  .nav-name .nav-menu .nav-link {
+    font-size: 1.1rem;
+    padding: 0.45rem 0.7rem;
+  }
+
+  /* ensure the nav-name stays centered and doesn't stretch full width */
+  .navbar-custom .container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
 }
-.marquee-track span {
-  font-size: clamp(56px, 10vw, 120px);
+
+.offcanvas {
+  background-color: black;
+}
+.offcanvas {
+  color: white;
+  border: black;
+  padding: 8px 40px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 3vw;
+}
+.offcanvas-header .offcanvas-title {
+  font-family: "Poppins", sans-serif;
   font-weight: 900;
-  color: transparent;
-  -webkit-text-stroke: 1px #9ca3af;
-  -webkit-text-stroke: 1px #9ca3af;
+  font-style: normal;
+  font-size: 3vw;
 }
-@keyframes scrollLeft {
+.offcanvas-header {
+  border-bottom: 1px solid white;
+  margin-top: 25px;
+}
+.offcanvas .nav-link {
+  padding-bottom: 3vw;
+}
+.offcanvas .nav-link:hover {
+  color: black;
+}
+.btn-close {
+  filter: invert(50%) sepia(100%) saturate(1000%) hue-rotate(0deg);
+}
+
+/* On larger Canvas */
+@media (min-width: 992px) {
+  .offcanvas-button {
+    display: none !important;
+  }
+}
+
+.navbar-custom {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 25px;
+  box-shadow: 5px 5px 1px rgb(0, 0, 0);
+  max-width: max-content;  margin: 0 auto;
+  top: 1vw;
+  font-family: "Outfit", "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 1vw;
+  z-index: 1000;
+  position: fixed;
+  transition: all 0.3s ease-out;
+}
+
+/* Temporary section banner inside the navbar */
+.navbar-custom {
+  position: fixed; /* ensure positioning context for banner */
+}
+
+.navbar-custom .nav-banner {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -8px);
+  background: rgba(17,35,53,0.95);
+  color: white;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  font-size: 0.9rem;
+  /* smoother, slightly slower banner animation */
+  transition: transform 420ms cubic-bezier(.2,.8,.2,1), opacity 420ms ease;
+  z-index: 1200;
+}
+
+.navbar-custom .nav-banner.show {
+  transform: translate(-50%, 6px);
+  opacity: 1;
+}
+
+/* Slight nudge of the navbar when a section activates to create 'scroll down' feel */
+.navbar-custom.scrolled-section {
+  transform: translateY(6px);
+  transition: transform 420ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* Name-only hover-reveal navbar (desktop) */
+.nav-name {
+  position: relative;
+  /* wrap tightly around the name text by default */
+  width: auto;
+  padding: 0.28rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  background: transparent; 
+  /* longer, gentler transitions for a smoother reveal */
+  transition: width 420ms cubic-bezier(.2,.8,.2,1), padding 360ms cubic-bezier(.2,.8,.2,1), box-shadow 360ms cubic-bezier(.2,.8,.2,1), transform 420ms ease;
+}
+
+/* By default show mobile short name, hide desktop long name */
+.nav-name .name-text--desktop { display: none; }
+.nav-name .name-text--mobile { display: inline; }
+
+/* On larger screens show the full desktop name and preserve the desktop spacing */
+@media (min-width: 992px) {
+  .nav-name .name-text--desktop { display: inline; font-size: 1rem; font-family: "Outfit", "Poppins", sans-serif; }
+  .nav-name .name-text--mobile { display: none; }
+  /* increase the nav-name padding on desktop to keep the space you like */
+  .nav-name { padding: 0.5rem 0.9rem; }
+}
+
+.nav-name .name-text {
+  font-family: "Outfit", "Poppins", sans-serif;
+  font-weight: 700;
+  color: black;
+  letter-spacing: 0.4px;
+  z-index: 20;
+  position: relative;
+}
+
+.nav-name .nav-menu {
+  position: absolute;
+  /* place menu exactly on top of the name so it "replaces" the text */
+  top: 50%;
+  font-family: "Outfit", "Poppins", sans-serif;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
+  transform-origin: center center;
+  background: transparent;
+  list-style: none;
+  padding: 0.5rem;
+  margin: 0;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  pointer-events: none;
+  /* container fades and scales with a gentle easing to reduce pop */
+  transition: opacity 260ms ease 60ms, transform 420ms cubic-bezier(.2,.8,.2,1) 60ms;
+  /* ensure menu sits above the name so links are clickable */
+  z-index: 30;
+}
+
+.nav-name .nav-menu .nav-link {
+  /* start slightly below and invisible; will 'pop' up on reveal */
+  padding: 0.5rem 0.8rem;
+  font-family: "Outfit", "Poppins", sans-serif;
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+  transition: transform 420ms cubic-bezier(.2,.8,.2,1), opacity 360ms ease, background 200ms ease, color 200ms ease;
+  text-decoration: none;
+  will-change: transform, opacity;
+  font-weight: 400; /* normal weight by default */
+}
+
+/* ensure no delay when hiding (collapse should be quick) */
+.nav-name .nav-menu li .nav-link {
+  font-family: "Outfit", "Poppins", sans-serif;
+  transition-delay: 0ms;
+}
+
+/* Staggered reveal delays (adjust values to taste) */
+.nav-name:hover .nav-menu li:nth-child(1) .nav-link,
+.nav-name:focus-within .nav-menu li:nth-child(1) .nav-link {
+  transition-delay: 160ms;
+}
+.nav-name:hover .nav-menu li:nth-child(2) .nav-link,
+.nav-name:focus-within .nav-menu li:nth-child(2) .nav-link {
+  transition-delay: 260ms;
+}
+.nav-name:hover .nav-menu li:nth-child(3) .nav-link,
+.nav-name:focus-within .nav-menu li:nth-child(3) .nav-link {
+  transition-delay: 340ms;
+}
+.nav-name:hover .nav-menu li:nth-child(4) .nav-link,
+.nav-name:focus-within .nav-menu li:nth-child(4) .nav-link {
+  transition-delay: 420ms;
+}
+
+.nav-name .nav-menu .nav-link:hover {
+  transform: translateY(-6px);
+}
+
+
+  /* Hover underline + subtle text accent for nav links */
+  .nav-name .nav-menu .nav-link {
+    position: relative; /* container for pseudo-element underline */
+  }
+
+  .nav-name .nav-menu .nav-link::after {
+    font-family: "Outfit", "Poppins", sans-serif;
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    width: 60%;
+    height: 2px;
+    background: #112335;
+    border-radius: 2px;
+    transform: translateX(-50%) scaleX(0);
+    transform-origin: center;
+    transition: transform 420ms cubic-bezier(.2,.8,.2,1), opacity 320ms ease;
+    opacity: 0.95;
+  }
+
+  .nav-name .nav-menu .nav-link:hover::after,
+  .nav-name .nav-menu .nav-link:focus::after,
+  .nav-name .nav-menu .nav-link:focus-visible::after {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 1;
+  }
+
+  /* Keep underline visible for active links in the name-menu */
+  .nav-name .nav-menu .nav-link.active::after,
+  .nav-name .nav-menu .nav-link.active:focus::after {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 1;
+  }
+
+  /* Underline for standard navbar links when active */
+  .navbar-nav .nav-link.active {
+    position: relative;
+  }
+  .navbar-nav .nav-link.active::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    font-family: "Outfit", "Poppins", sans-serif;
+    width: 60%;
+    height: 2px;
+    background: black;
+    border-radius: 2px;
+    transform: translateX(-50%) scaleX(1);
+    opacity: 1;
+  }
+
+  .nav-name .nav-menu .nav-link:hover .link-text,
+  .nav-name .nav-menu .nav-link:focus .link-text {
+    color: black;
+    letter-spacing: 0.6px;
+  }
+/* Accessible focus outline for keyboard users */
+.nav-name .nav-menu .nav-link:focus,
+.nav-name .nav-menu .nav-link:focus-visible {
+  transform: translateY(6px);
+}
+
+/* Reveal on hover or keyboard focus */
+.nav-name:hover .nav-menu,
+.nav-name:focus-within .nav-menu {
+  /* Show immediately with smoother motion */
+  transition: opacity 260ms ease 0ms, transform 420ms cubic-bezier(.2,.8,.2,1) 0ms;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+  /* reveal container first, links will animate in one-by-one */
+}
+
+/* Temporary class used by JS to show the name-menu briefly (same visual as hover) */
+.nav-name.temporarily-open .nav-menu,
+.nav-name.temporarily-open:focus-within .nav-menu {
+  transition: opacity 260ms ease 0ms, transform 420ms cubic-bezier(.2,.8,.2,1) 0ms;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.nav-name.temporarily-open .name-text {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+}
+
+.nav-name.temporarily-open {
+  transform: scale(1.01);
+}
+
+.nav-name:hover .nav-menu .nav-link,
+.nav-name:focus-within .nav-menu .nav-link {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Animate only the link text with a slide-in (scroll) effect on hover */
+.link-text {
+  font-family: "Outfit", "Poppins", sans-serif;
+  display: inline-block;
+  transform: translateY(-8px);
+  opacity: 0.9;
+  transition: transform 420ms cubic-bezier(.2,.8,.2,1), opacity 360ms ease;
+}
+
+.nav-name:hover .nav-menu .nav-link .link-text,
+.nav-name:focus-within .nav-menu .nav-link .link-text {
+  animation: slide-in-top 360ms cubic-bezier(.2,.9,.3,1) both;
+}
+
+@keyframes slide-in-top {
   0% {
-    transform: translateX(0);
+    transform: translateY(-18px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(6px);
+    opacity: 1;
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
-/* Forms */
-.form,
-.newsletter-form {
-  display: grid;
-  gap: 14px;
-}
-.field {
-  display: grid;
-  gap: 6px;
-}
-input,
-textarea {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
-  font: inherit;
-  width: 100%;
-  background: #fff;
-  border-color: black;
-}
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-.error {
-  color: #b91c1c;
-  font-size: 14px;
-  min-height: 18px;
-}
-.form-status {
-  margin-top: 8px;
-  color: var(--muted);
-}
-.newsletter-card {
-  background: linear-gradient(135deg, rgb(255, 255, 255), rgb(255, 255, 255));
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: var(--shadow);
-}
-.newsletter-form {
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-}
-@media (max-width: 520px) {
-  .newsletter-form {
-    grid-template-columns: 1fr;
-  }
+/* Prevent the name text from blocking clicks when the menu is visible */
+.nav-name:hover .name-text,
+.nav-name:focus-within .name-text {
+  pointer-events: none;
 }
 
-/* Footer */
-.site-footer {
-  border-top: 1px solid var(--border);
-  background: #fff;
-}
-.footer-content {
-  padding: 32px 0;
-  display: grid;
-  gap: 12px;
-}
-.footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: center;
-}
-.footer-links a {
-  color: var(--muted);
-  text-decoration: none;
-}
-.footer-links a:hover {
-  color: var(--fg);
-}
-/* Footer GitHub link refinement */
-.footer-links a .fa-github { transition: transform .25s ease; }
-.footer-links a:hover .fa-github { transform: scale(1.15) rotate(-5deg); }
-copyright,
-.copyright {
-  color: var(--muted);
-  text-align: center;
+/* Expand the container on hover/focus so the menu has room */
+.nav-name:hover,
+.nav-name:focus-within {
+  height: min-content;
+  width: min(60vw, 520px);
+  padding: 0.6rem 1rem;
+  box-shadow: none; /* remove extra shadow so only intended boundary remains */
+  overflow: visible; /* allow menu to be visible when expanded */
 }
 
-/* Dot Navigation */
-/* Dot nav hidden by default */
-.dot-nav {
-  position: fixed;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 999;
+/* Fade the name out when the menu is visible so it "changes itself" */
+.nav-name .name-text {
+  /* smoother, slightly slower transition to match nav container */
+  transition: opacity 420ms cubic-bezier(.2,.8,.2,1), transform 420ms cubic-bezier(.2,.8,.2,1);
+}
 
-  /* keep container out of flow until visible */
+.nav-name:hover .name-text,
+.nav-name:focus-within .name-text {
   opacity: 0;
-  visibility: hidden;
-  /* when hiding, delay container fade until children finish their exit animations */
-  transition: opacity var(--dot-opacity-duration) ease var(--dot-container-hide-delay), visibility 0s linear var(--dot-container-hide-delay);
+  /* slide up gently instead of instantly teleporting the text away */
+  transform: translateY(-8px) scale(0.98);
 }
 
-/* When dot nav is visible we reveal the container and animate children via transitions */
-.dot-nav.visible {
-  opacity: 1;
-  visibility: visible;
+/* When the user clicks a link, briefly prevent the hover/focus reveal so the name resets cleanly */
+.nav-name.nav-name--clicked .nav-menu,
+.nav-name.nav-name--clicked:hover .nav-menu,
+.nav-name.nav-name--clicked:focus-within .nav-menu {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
-/* Dots: start slightly offset and scaled down; use transitions so both enter and exit are smooth */
-.dot-nav .dot {
-  position: relative;
-  width: 48px; /* increased from 42px for larger target */
-  height: 48px; /* increased from 42px */
-  border-radius: 16px;
-  background: #1f1f1f !important;
-  border: 2px solid #fff !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  cursor: pointer;
-  outline: none;
-  text-decoration: none;
-
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .3px;
-
-  /* base (hidden) state */
-  opacity: 0;
-  transform: translateX(28px) scale(0.9);
-
-  /* Only animate entrance/exit (no background fade) */
-  transition: transform var(--dot-transform-duration) var(--dot-ease), opacity var(--dot-opacity-duration) ease;
-}
-/* Active dot: no transition so change is instant */
-.dot-nav .dot.active { transition: none !important; }
-.dot-nav .dot i { color:#fff; font-size:18px; line-height:1; transition: none; }
-/* Reverted: no icon scale/rotation on hover */
-.dot-nav .dot:hover i, .dot-nav .dot:focus i { transform: none; }
-.dot-nav.visible .dot { transform: translateX(0) scale(1); }
-.dot-nav .dot.active { background:#ffffff !important; border-color:#000000 !important; box-shadow:0 0 6px 2px rgba(0, 0, 0, 0.35); }
-.dot-nav .dot.active { animation: dotPulse 1.8s ease-in-out infinite; }
-@keyframes dotPulse {
-  0%,100% { box-shadow:0 0 6px 2px rgba(0, 0, 0, 0.35); }
-  50% { box-shadow:0 0 10px 4px rgba(0, 0, 0, 0.2); }
-}
-.dot-nav .dot.active i { color:black; text-shadow:none; }
-.dot-nav .dot.active .dot-label { display:none; }
-/* Show labels by default; hide only for active section */
-.dot-nav .dot-label { position:absolute; right:160%; top:50%; transform:translateY(-50%) scale(.92); color:#fff !important; padding:8px 18px; background:#1f1f1f; border:2px solid #fff !important; border-radius:22px; font-size:13px; font-weight:600; white-space:nowrap; opacity:0; pointer-events:none; transition:none; letter-spacing:.02em; }
-.dot-nav .dot:hover .dot-label, .dot-nav .dot:focus .dot-label { opacity:1; transform:translateY(-50%) scale(1); }
-.dot-nav .dot.active .dot-label { opacity:0 !important; visibility:hidden; }
-
-/* Removed textual label bubble styles (icon-only nav) */
-
-/* Reverted simpler hover: no grow, just slightly stronger border/shadow */
-.dot-nav .dot:hover,
-.dot-nav .dot:focus {
-  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-  transform: translateX(0) scale(1);
-  border-color:#fff !important;
-}
-
-/* No label hover reveal needed */
-
-@media (max-width: 900px) {
-  .dot-nav {
-    right: 12px;
-    gap: 16px;
-  }
-  /* No label adjustments needed on mobile */
-}
-
-/* Utility */
-.text-center .btn {
-  margin-top: 6px;
-}
-
-/* Per-character animated title effect */
-.text-block {
-  margin: 0; /* override default margin */
-  font-family: monospace;
-  font-size: clamp(28px, 5vw, 54px);
-  line-height: 1.05;
-  letter-spacing: .5px;
-  display: inline-block;
-}
-.text-block .char {
-  will-change: transform, opacity;
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(26px) scale(.92) rotate(4deg);
-  animation: charIn .85s cubic-bezier(.33,1,.68,1) forwards;
-}
-@keyframes charIn {
-  0% { opacity:0; transform:translateY(26px) scale(.92) rotate(6deg); }
-  55% { opacity:1; transform:translateY(-6px) scale(1.04) rotate(0deg); }
-  100% { opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
-}
-
-/* Link Modal */
-.link-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.479);
-  display: flex;
-  border-radius: 1px;
-  border-color: solid black;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-.link-modal[hidden] {
+/* Decorative panel: keep a single subtle ::after panel (no colored overlay) */
+.nav-name::before {
+  /* hide the top-right decorative panel to match previous simpler look */
   display: none;
 }
-.link-modal-content {
-  border-color: solid black;
-  background: #ffffff;
-  border-radius: 18px;
-  box-shadow: transparent;
-  padding: 2.5rem 2rem 2rem 2rem;
-  min-width: 280px;
-  max-width: 90vw;
-  text-align: center;
-  position: relative;
-  animation: modalIn 0.3s cubic-bezier(0.5, 1.5, 0.5, 1) backwards;
-}
-@keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: scale(0.85);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-.link-modal-close {
+
+.nav-name::after {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 2rem;
-  color: transparent;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.link-modal-close:hover {
-  color: transparent;
-}
-#link-modal-title {
-  font-size: 1.5rem;
-  color: rgb(0, 0, 0);
-  margin: 0 0 0.5em 0;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-#link-modal-url {
-  font-size: 1rem;
-  color: #333;
-  word-break: break-all;
+  content: "";
+  width: 20%;
+  height: 20%;
+  transition: all 0.45s ease;
+  z-index: 10;
+  bottom: -6px;
+  left: -6px;
+  border-radius: 0 100% 0 15px;
 }
 
-/* Prevent body scroll when menu open on mobile */
-body.no-scroll {
-  overflow: hidden;
+.nav-name:hover::after,
+.nav-name:focus-within::after {
+  width: 110%;
+  height: 110%;
+  border-radius: 15px;
 }
 
-/* Desktop: inline links */
-@media (min-width: 901px) {
-  .header-links {
-    display: flex;
-    gap: 20px;
-    position: static;
-    visibility: visible;
-    opacity: 1;
-    max-height: none;
-    padding: 0;
-    box-shadow: none;
-    border: 0;
-  }
-  .nav-toggle {
-    display: none;
-  }
+/* Accessibility: ensure keyboard users can tab to menu items */
+.nav-name .nav-link:focus {
+  outline-offset: 2px;
 }
 
-/* Mobile: collapsed dropdown */
-@media (max-width: 900px) {
-  /* Remove white pill header background on mobile */
-  .site-header .header-nav {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    max-width: 100vw;
-  }
-  /* Fix overflow and spacing at top */
-  body { overflow-y: auto !important; }
-  #features { background: #fff !important; }
-  #features .container { padding-left: 16px; padding-right: 16px; }
-  .feature-track { background: transparent; }
-  .feature-card { background: #fff; color: #000; }
-  .nav-toggle {
-    display: inline-flex;
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    z-index: 1002;
-  }
-
-  .header-links {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    display: grid;
-    gap: 8px;
-    padding: 12px 16px;
-    background: #fff;
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-    max-height: 0;
-    overflow: hidden;
-    visibility: hidden;
-    opacity: 0;
-    transition: max-height .25s ease, opacity .2s ease, visibility 0s linear .25s;
-    z-index: 60; /* above content */
-  }
-
-  /* Open state */
-  .site-header.open .header-links {
-    visibility: visible;
-    opacity: 1;
-    max-height: 60vh;
-    transition: max-height .25s ease, opacity .2s ease, visibility 0s;
-  }
-
-  /* Mobile link spacing */
-  .header-links a {
-    padding: 10px 8px;
-    margin-left: 0;
-  }
-  /* Keep text black on mobile menu */
-  .header-links a { color: #000; }
-
-  /* Hide dot nav on mobile */
-  .dot-nav { display: none !important; }
-
-  /* Keep navbar visible on mobile even when JS adds navbar-hidden */
-  .site-header.navbar-hidden {
-    transform: none !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-  }
-  /* Ensure burger stays visible even if header gets hidden class */
-  .site-header.navbar-hidden .nav-toggle {
-    display: inline-flex !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-  }
-
-  /* Burger button visuals (mobile only) */
-  .nav-toggle {
+/* Hide desktop name-only navbar on small screens and keep offcanvas button
+   Adjusted: make the name pill smaller, center it and increase text size for readability */
+@media (max-width: 991.98px) {
+  .navbar-custom {
+    /* keep compact pill on mobile so it doesn't span the whole width */
+    display: flex !important;
     align-items: center;
     justify-content: center;
+    width: auto;
+    max-width: 380px;
+    padding: 0.3rem 0.6rem;
+  }
+  /* show desktop name navbar on mobile and hide the offcanvas button */
+  .nav-name {
+  display: inline-flex;
+  /* compact pill so it doesn't fill the whole screen */
+  padding: 0.35rem 0.55rem;
+  width: auto;
+  max-width: 360px; /* limit the box width on small screens */
+  justify-content: center;
+  margin: 0.25rem auto;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.95);
+  }
+  .offcanvas-button { display: none !important; }
+
+  /* make the name text larger and easier to read on phones */
+  .nav-name .name-text {
+  font-size: 1.15rem; /* increase for better readability */
+    line-height: 1.2;
+    font-weight: 600;
+  }
+}
+
+/* Remove hero background image on small phones only (keep on tablet) */
+@media (max-width: 767.98px) {
+  .hero-section {
+    background: none !important;
+    background-image: none !important;
+  }
+}
+
+/* Mobile-specific stacked menu for touch devices */
+@media (max-width: 991.98px) {
+  .nav-name {
+    position: relative;
+  }
+
+  .nav-name .nav-menu {
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
+    display: none; /* shown when .expanded is added */
     flex-direction: column;
-    gap: 6px;
-    width: 40px;
-    height: 34px;
-    background: #fff;
-    border: 2px solid #000;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    transition: box-shadow .25s ease, transform .2s ease, background .2s ease, border-color .2s ease;
+    gap: 0.18rem;
+    /* make the menu match the pill width and stay centered */
+    width: auto;
+    min-width: 160px;
+    max-width: 92vw;
+    margin: 0.25rem auto 0;
+    background: #ffffff;
+    padding: 0.25rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    opacity: 1; /* keep visible when displayed */
+    pointer-events: auto;
+    z-index: 40;
   }
-  .nav-toggle-bar {
+
+  /* For mobile: hide offcanvas button and use click-to-toggle on .nav-name to show inline links */
+  .offcanvas-button { display: none !important; }
+
+  /* Default mobile: keep menu hidden until user clicks/toggles */
+  .nav-name .nav-menu { display: none; }
+
+  /* When expanded (toggled via JS), place links centered inside the rounded pill
+     so they are not offset or pushed below the bar. */
+  .nav-name.expanded {
+    padding: 0.6rem 1rem; /* slightly enlarge pill when open */
+  }
+
+  .nav-name.expanded .nav-menu {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    background: transparent;
+    padding: 0;
+    border-radius: 6px;
+    box-shadow: none;
+    z-index: 60;
+  }
+
+  .nav-name .nav-menu .nav-link {
+    opacity: 1 !important;
+    font-family: "Outfit", "Poppins", sans-serif;
+    transform: none !important;
+    padding: 0.55rem 0.8rem;
     display: block;
-    width: 24px;
-    height: 2px;
-    background: #000;
-    border-radius: 2px;
-    transform-origin: center;
-    transition: transform .3s cubic-bezier(.33,1,.68,1), opacity .25s ease, background .25s ease, width .25s ease;
+    width: auto;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 1.05rem; /* slightly larger link text */
   }
-  .nav-toggle:hover {
-    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-    transform: translateY(-1px);
+
+  /* Hide the name text when expanded so links sit clearly inside the pill */
+  .nav-name.expanded .name-text {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px) scale(0.98);
   }
-  .nav-toggle:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  }
-  .nav-toggle:focus-visible {
+
+  .nav-name .nav-menu .nav-link:hover,
+  .nav-name .nav-menu .nav-link:focus {
+    transform: none;
+    background: rgba(17,35,53,0.04);
+    box-shadow: none;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.12), 0 4px 14px rgba(0,0,0,0.12);
   }
 
-  /* Improve vertical scrolling inside Expertise on mobile */
-  .feature-track {
-    touch-action: auto !important; /* allow vertical gestures */
-    -ms-touch-action: auto !important;
-    overflow-y: visible !important;
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-  .feature-card {
-    background: #fff !important;
-    color: #000 !important;
-    border: 2px solid #000 !important;
-    box-shadow: var(--shadow) !important;
+  /* make link-text not animated on mobile (simpler feel) */
+  .nav-name .nav-menu .link-text {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 }
 
-/* Animate hamburger into an "X" when open */
-.site-header.open .nav-toggle-bar:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-}
-.site-header.open .nav-toggle-bar:nth-child(2) {
-  opacity: 0;
-}
-.site-header.open .nav-toggle-bar:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
+/* Navbar.expand for new section*/
+.navbar-custom .navbar-collapse {
+  justify-content: center;
 }
 
-/* Prevent page scroll when menu is open on mobile */
-body.no-scroll {
-  overflow: hidden;
-}
-
-/* Use staggered transition delays for dots so enter/exit are smooth (no fade-only hiding) */
-.dot-nav.visible .dot:nth-child(1) { transition-delay: 0.06s; }
-.dot-nav.visible .dot:nth-child(2) { transition-delay: 0.10s; }
-.dot-nav.visible .dot:nth-child(3) { transition-delay: 0.14s; }
-.dot-nav.visible .dot:nth-child(4) { transition-delay: 0.18s; }
-.dot-nav.visible .dot:nth-child(5) { transition-delay: 0.22s; }
-.dot-nav.visible .dot:nth-child(6) { transition-delay: 0.26s; }
-.dot-nav.visible .dot:nth-child(7) { transition-delay: 0.30s; }
-.dot-nav.visible .dot:nth-child(8) { transition-delay: 0.34s; }
-
-/* When visible, move each dot to its revealed state */
-.dot-nav.visible .dot {
-  transform: translateX(0) scale(1);
-  opacity: 1;
-}
-
-/* Base (hidden) stagger delays so exit happens in reverse order when .visible is removed */
-.dot-nav .dot:nth-child(1) { transition-delay: 0.34s; }
-.dot-nav .dot:nth-child(2) { transition-delay: 0.30s; }
-.dot-nav .dot:nth-child(3) { transition-delay: 0.26s; }
-.dot-nav .dot:nth-child(4) { transition-delay: 0.22s; }
-.dot-nav .dot:nth-child(5) { transition-delay: 0.18s; }
-.dot-nav .dot:nth-child(6) { transition-delay: 0.14s; }
-.dot-nav .dot:nth-child(7) { transition-delay: 0.10s; }
-.dot-nav .dot:nth-child(8) { transition-delay: 0.06s; }
-
-/* Ensure container appears immediately when showing (no entrance delay) */
-.dot-nav.visible { transition-delay: 0s; }
-
-/* Stagger label transitions slightly after the dot appears */
-.dot-nav.visible .dot:nth-child(1) .dot-label { transition-delay: 0.10s; }
-.dot-nav.visible .dot:nth-child(2) .dot-label { transition-delay: 0.14s; }
-.dot-nav.visible .dot:nth-child(3) .dot-label { transition-delay: 0.18s; }
-.dot-nav.visible .dot:nth-child(4) .dot-label { transition-delay: 0.22s; }
-.dot-nav.visible .dot:nth-child(5) .dot-label { transition-delay: 0.26s; }
-.dot-nav.visible .dot:nth-child(6) .dot-label { transition-delay: 0.30s; }
-.dot-nav.visible .dot:nth-child(7) .dot-label { transition-delay: 0.34s; }
-.dot-nav.visible .dot:nth-child(8) .dot-label { transition-delay: 0.38s; }
-
-/* Pop-in animation for sections */
-.pop-in {
-  opacity: 0;
-  transform: translateY(40px) scale(0.98);
-  transition: opacity 0.7s cubic-bezier(0.33, 1, 0.68, 1), transform 0.7s cubic-bezier(0.33, 1, 0.68, 1);
-  will-change: opacity, transform;
-}
-.pop-in.in-view {
-  opacity: 1;
-  transform: none;
-}
-
-/* SECTION BACKGROUNDS: Stagnant, not animated, always visible */
-#hero,
-#about,
-#features,
-#work,
-#timeline,
-#marquee,
-#contact,
-#newsletter {
-  /* Set your desired backgrounds for each section */
-  /* Example backgrounds below, change as you wish */
-  position: relative;
-  z-index: 0;
-}
-
-/* Example: individual backgrounds for each section */
-#hero {
-  background: #1f1f1f url("assets/hero.png") center center / cover no-repeat;
-}
-#about {
-  background: #fff;
-}
-#features {
-  background: linear-gradient(135deg, #1f1f1f 60%, #23272f 100%);
-}
-#work {
-  background: #fff;
-}
-#timeline {
-  background: linear-gradient(180deg,#ffffff 0%, #f4f4f6 100%);
-  position: relative;
-}
-
-/* Center timeline line perfectly: remove side padding so 50% aligns with viewport center */
-#timeline > .container {
-  padding-left: 0;
-  padding-right: 0;
-}
-/* Ensure internal wrap spans full container width */
-#timeline .timeline-wrap {
-  margin: 0 auto;
-}
-/* Re-center the vertical rail & progress precisely (container now has no horizontal padding) */
-#timeline .timeline-wrap::before,
-#timeline .timeline-wrap::after,
-#timeline .timeline-dot,
-#timeline .timeline-row .timeline-dot { /* redundancy for safety */
-  left: 50%;
-}
-#marquee {
-  background: #f5f5f5;
-}
-#contact {
-  background: #fff;
-}
-#newsletter {
-  background: #fff;
-}
-
-/* Only animate the content INSIDE the section, not the section itself */
-#hero > .container,
-#hero > .hero-grid,
-#hero > .hero-copy,
-#about > .container,
-#features > .container,
-#work > .container,
-#timeline > .container,
-#marquee > .marquee-mask,
-#contact > .container,
-#newsletter > .container {
-  /* You can add animation classes like .pop-in to these elements in your HTML */
-  position: relative;
-  z-index: 1;
-}
-
-/* Remove .pop-in or animation classes from the section tags themselves in your HTML.
-   Only add .pop-in to the inner content elements you want to animate. */
-
-/* 5. Remove or override any other hardcoded background or text colors */
-.card-media,
-.timeline-dot,
-.feature-emoji {
-  background: transparent !important;
-  color: #fff !important;
-}
-
-/* 6. Optional: Add overlay for hero text readability if needed */
-#hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+.navbar-custom .navbar-brand {
   display: block;
-}
-
-/* 7. Ensure hero content is above overlay */
-#hero .container,
-#hero .hero-grid,
-#hero .hero-copy,
-#hero .hero-visual {
-  position: relative;
-  z-index: 1;
-}
-
-#about {
-  background: white;
-}
-
-#features {
-  background: white;
-}
-
-#work {
-  background: #fff;
-}
-
-#timeline {
-  background: #fff;
-}
-
-#marquee {
-  background: #f5f5f5;
-}
-
-#contact {
-  background: #fff;
-}
-
-#newsletter {
-  background: #fff;
-}
-
-/* Make the features container wider so more cards fit */
-#features .container {
-  max-width: 1350px;
-  width: 95vw;
-  margin: 0 auto;
-  padding-left: 0;
-  padding-right: 0;
-  border: 3px solid black; /* Add a blue border */
-  border-radius: 24px; /* Optional: rounded corners */
-  box-shadow: 0 4px 24px rgba(37, 99, 235, 0.08); /* Optional: subtle blue shadow */
-  background: #fff; /* Optional: white background */
-}
-
-/* Optionally, make the feature-track use all available width */
-#features .feature-track {
-  width: 100%;
-}
-
-/* Remove border from My Skills heading if present */
-#features .text-center,
-#features h1.text-center {
-  border: none !important;
-  box-shadow: none !important;
-  background: none !important;
-  padding: 0;
-}
-
-#features .container:first-child {
-  border: none !important;
-  box-shadow: none !important;
-  background: none !important;
-}
-
-.learn.highlight {
-  cursor: pointer;
-  position: relative;
-}
-
-.highlight-label-follow {
-  position: fixed;
-  left: 0;
-  top: 0;
-  pointer-events: none;
-  background: #23272f;
-  color: #fff;
-  padding: 6px 18px;
-  border-radius: 16px;
-  font-size: 1rem;
+  color: #112335;
   font-weight: 600;
-  white-space: nowrap;
-  opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 0.2s cubic-bezier(0.33, 1, 0.68, 1), transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
-  z-index: 9999;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-}
-.work .learn.highlight.active .highlight-label-follow {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Floating "View" label for hoverable elements */
-.floating-view-label {
-  position: fixed;
-  left: 0;
-  top: 0;
-  pointer-events: none;
-  background: #23272f;
-  color: #fff;
-  padding: 6px 18px;
-  border-radius: 16px;
-  font-size: 1rem;
-  font-weight: 600;
-  white-space: nowrap;
-  opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 0.2s cubic-bezier(0.33, 1, 0.68, 1), transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
-  z-index: 9999;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-}
-
-/* Floating label for hoverable elements (not dot nav) */
-.floating-hover-label {
-  position: fixed;
-  left: 0;
-  top: 0;
-  pointer-events: none;
-  background: #23272f;
-  color: #fff;
-  padding: 6px 18px;
-  border-radius: 16px;
-  font-size: 1rem;
-  font-weight: 600;
-  white-space: nowrap;
-  opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 0.22s cubic-bezier(0.33, 1, 0.68, 1), transform 0.22s cubic-bezier(0.33, 1, 0.68, 1);
-  z-index: 9999;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  letter-spacing: 0.01em;
-  user-select: none;
-  will-change: opacity, transform, left, top;
-  pointer-events: none;
-}
-
-/* Add to your styles.css for hero social icons */
-/* filepath: c:\Users\My PC\OneDrive\Documents\portfolio\assets\styles.css */
-.social-icons {
-  display: flex;
-  gap: 18px;
-  margin-bottom: 24px;
-  justify-content: flex-start;
-}
-.social-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(31, 31, 31, 0.7);
-  border: 2px solid #fff;
-  color: #fff;
-  font-size: 1.7rem;
-  transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-.social-icon:hover,
-.social-icon:focus {
-  background: #fff;
-  color: #1f1f1f;
-  transform: scale(1.15) translateY(-3px);
-  box-shadow: 0 0 16px #fff;
-  outline: none;
-}
-
-a {
-  text-decoration: none !important;
-}
-
-a.learn:hover {
-  text-decoration: underline;
-}
-.card-body .learn:not(.view-project):hover {
-  text-decoration: underline;
-}
-/* Animated underline for View Project buttons */
-a.view-project {
-  position: relative;
-  display: inline-block;
-  text-decoration: none !important;
-  font-weight: 700;
-  overflow: hidden;
-  border-bottom: none !important; /* remove inherited underline */
-}
-a.view-project::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 100%;
-  background: currentColor;
-  transform: translateX(-105%);
-  transition: transform .45s cubic-bezier(.33,1,.68,1);
-}
-a.view-project:hover::after,
-a.view-project:focus::after {
-  transform: translateX(0);
-}
-/* Subtle color fade on hover */
-a.view-project { transition: color .35s ease; }
-a.view-project:hover, a.view-project:focus { color: #444; }
-
-/* Hero pop-in animation (background and content, only once) */
-@keyframes heroPopInBg {
-  0% {
-    opacity: 0;
-    transform: scale(1.08) translateY(40px);
-    filter: blur(12px);
-  }
-  80% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-    filter: blur(0);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-}
-@keyframes heroPopInContent {
-  0% {
-    opacity: 0;
-    transform: translateY(40px) scale(0.98);
-    filter: blur(8px);
-  }
-  80% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-}
-
-/* Animate hero background */
-#hero.hero-pop-bg {
-  animation: heroPopInBg 1.1s cubic-bezier(0.33, 1, 0.68, 1) 0s 1 both;
-}
-
-/* Animate hero content */
-#hero .hero-copy.hero-pop-content,
-#hero .social-icons.hero-pop-content {
-  animation: heroPopInContent 1.2s cubic-bezier(0.33, 1, 0.68, 1) 0.1s 1 both;
-}
-
-/* Hero pop-in animation: slide up from bottom to top */
-@keyframes heroPopUp {
-  0% {
-    opacity: 0;
-    transform: translateY(80px) scale(0.98);
-    filter: blur(8px);
-  }
-  80% {
-    opacity: 1;
-    transform: translateY(0) scale(1.02);
-    filter: blur(0);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-}
-
-/* Apply the new pop-up animation to hero content */
-#hero .hero-copy.pop-in,
-#hero .social-icons.pop-in {
-  animation: heroPopUp 1.1s cubic-bezier(0.33, 1, 0.68, 1) 0s 1 both;
-}
-
-/* Flip card animation for feature cards */
-.card-inner {
-  transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.card:hover .card-inner,
-.card:focus-within .card-inner {
-  transform: rotateY(180deg);
-}
-
-.feature-card {
-  position: relative;
-  height: 500px;
-  min-width: 360px;
-  max-width: 420px;
-  perspective: 1200px;
-  margin: 0 12px 32px 12px;
-  display: inline-block;
-  vertical-align: top;
-  background: none;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-}
-
-.feature-card-inner {
-  height: 500px;
-  min-width: 360px;
-  max-width: 420px;
-  position: relative;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-/* Reactive flip + subtle tilt (pointer based) */
-/* Smoother flip animation (adjustable via CSS variables) */
-:root { --flip-duration: 1.05s; --flip-ease: cubic-bezier(.18,.88,.24,1); }
-.feature-card-inner { transition: transform var(--flip-duration) var(--flip-ease); transform-origin: center center; }
-/* Slight 3D perspective & initial subtle depth to soften start */
-.features .feature-card { perspective: 1400px; }
-.features .feature-card-inner { backface-visibility: hidden; }
-/* Add a tiny pre-rotation on hover start for a more progressive feel */
-@media (min-width:901px) and (hover:hover) and (pointer:fine){
-  .features .feature-card:hover .feature-card-inner,
-  .features .feature-card:focus-within .feature-card-inner { transition-timing-function: var(--flip-ease); }
-}
-.feature-card.flip-active .feature-card-inner { transform: rotateY(180deg); }
-/* While tracking pointer we inline style transform with extra rotateX/rotateZ */
-/* Shadow only when flipped */
-.feature-card.flip-active .feature-card-back { box-shadow: 0 24px 38px -14px rgba(0,0,0,.42); }
-
-/* Soft ground shadow under card during hover */
-.feature-card {
-  position: relative;
-}
-.feature-card::after {
-  content: '';
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  bottom: -22px;
-  height: 34px;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.08) 55%, rgba(0,0,0,0) 70%);
-  opacity: 0;
-  transform: scale(0.6) translateY(6px);
-  transition: opacity .55s ease, transform .55s ease;
-  pointer-events: none;
-  filter: blur(2px);
-}
-.feature-card.flip-active::after { opacity: 1; transform: scale(1) translateY(0); }
-
-.feature-card-front,
-.feature-card-back {
-  position: absolute;
-  height: 500px;
-  min-width: 360px;
-  max-width: 420px;
-  backface-visibility: hidden;
-  border-radius: 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
-  font-weight: 500;
-  box-sizing: border-box;
-  padding: 28px 22px;
-  text-align: center;
-}
-
-.feature-card-front {
-  background-color: white;
-  color: black;
-  border: 2px solid black;
-}
-
-.feature-card-back {
-  background-color: black;
-  color: #fff;
-  transform: rotateY(180deg);
-}
-
-/* Center the feature cards and add flip animation, no dragging */
-.features .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.feature-track {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding: 32px 0;
-}
-
-/* Final consistency overrides: ensure Expertise cards are light and readable on all devices */
-.features .feature-card {
-  background: #fff !important;
-  color: #000 !important;
-  border: 2px solid #000 !important;
-  box-shadow: var(--shadow) !important;
-}
-.features .feature-card-front {
-  background: #fff !important;
-  color: #000 !important;
-  border: 2px solid #000 !important;
-}
-.features .feature-card-back {
-  background: #000 !important;
-  color: #fff !important;
-}
-.features .skill-logos i,
-.features .skill-logos span {
-  font-size: 56px !important;
-}
-
-/* Allow vertical scrolling gestures over the feature track on all devices */
-.feature-track { touch-action: auto !important; }
-
-.feature-card {
-  min-width: 360px;
-  max-width: 420px;
-  height: 500px;
-  perspective: 1200px;
-  margin: 0 12px;
-  display: inline-block;
-  vertical-align: top;
-  background: none;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-}
-
-/* (Override earlier duplicate block with animation version above) */
-
-.feature-card-front,
-.feature-card-back {
-  position: absolute;
-  min-width: 360px;
-  max-width: 420px;
-  height: 500px;
-  backface-visibility: hidden;
-  border-radius: 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
-  font-weight: 500;
-  box-sizing: border-box;
-  padding: 28px 22px;
-  text-align: center;
-}
-
-.feature-card-front {
-  background-color: white;
-  color: black;
-  border: 2px solid black;
-}
-
-.feature-card-back {
-  background-color: black;
-  color: #fff;
-  border: 2px solid white;
-  transform: rotateY(180deg);
-}
-/* Bottom hover label for brands */
-.skill-hover-label {
-  margin-top: 18px;
-  min-height: 26px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: .6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  text-transform: uppercase;
-  opacity: 0;
-  transform: translateY(6px) scale(.98);
-  transition: opacity .35s cubic-bezier(.33,1,.68,1), transform .45s cubic-bezier(.33,1,.68,1);
-  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.18), rgba(255,255,255,0.04) 70%);
-  border-radius: 14px;
-  padding: 6px 18px;
-  box-shadow: 0 4px 18px -6px rgba(255, 255, 255, 0.6) inset, 0 2px 6px -2px rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  pointer-events: none;
-}
-.skill-hover-label.visible { opacity: 1; transform: translateY(0) scale(1); }
-@media (max-width:640px){ .skill-hover-label { font-size:12px; padding:6px 14px; letter-spacing:.4px; } }
-
-/* Skill logo rows on feature card backs */
-.skill-logos {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin-top: 6px;
-  font-size: 0; /* collapse inline gaps */
-}
-/* Base sizing & interaction container for all skill glyphs */
-.skill-logos i, .skill-logos .skill-badge {
-  font-size: 56px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: 6px;
-  transition: transform .38s cubic-bezier(.33,1,.68,1), filter .38s cubic-bezier(.33,1,.68,1), box-shadow .45s cubic-bezier(.33,1,.68,1), opacity .38s;
-  border-radius: 18px;
-}
-/* Force strict monochrome for Devicon icons (not text badges) */
-.skill-logos i {
-  filter: saturate(0) brightness(1.9) contrast(1.15);
-}
-/* Provide subtle dim state (optional) */
-.skill-logos i { opacity: .88; }
-/* Custom Photoshop logo (brighter blue + white P) */
-.ps-custom {
-  width: 72px;
-  height: 72px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  letter-spacing: .5px;
-  background: #001E36; /* base Photoshop deep blue */
-  border: 2px solid #00C8FF;
-  border-radius: 16px;
-  box-shadow: 0 2px 6px -2px rgba(0,0,0,.6) inset, 0 4px 10px -4px rgba(0,0,0,.65);
-  filter: saturate(0) brightness(1.9) contrast(1.15); /* monochrome base */
-  transition: transform .38s cubic-bezier(.33,1,.68,1), filter .38s cubic-bezier(.33,1,.68,1), box-shadow .45s cubic-bezier(.33,1,.68,1), background .45s cubic-bezier(.33,1,.68,1), border-color .45s cubic-bezier(.33,1,.68,1);
-}
-.ps-custom .ps-letter {
-  font-size: 42px;
-  color: #ffffff;
-  transform: translateY(2px);
-  text-shadow: 0 0 2px rgba(255,255,255,0.4);
-  transition: inherit;
-}
-.ps-custom:hover, .ps-custom:focus-visible {
-  filter: none; /* restore color */
-  background: linear-gradient(135deg,#002b4f,#003d6d 55%,#004d8a);
-  border-color: #00C8FF;
-  box-shadow: 0 8px 24px -10px rgba(0,200,255,0.55), 0 0 0 2px rgba(0,200,255,0.35), 0 0 28px -4px rgba(0,200,255,0.45);
-  transform: translateY(-6px) scale(1.12) rotate(-1.5deg);
-}
-.ps-custom:hover .ps-letter, .ps-custom:focus-visible .ps-letter {
-  text-shadow: 0 0 6px rgba(255,255,255,0.65), 0 2px 10px rgba(0,200,255,0.5);
-}
-/* On hover we drop filter (handled below) to restore original brand color */
-.skill-logos i:hover, .skill-logos .skill-badge:hover,
-.skill-logos i:focus-visible, .skill-logos .skill-badge:focus-visible {
-  transform: translateY(-6px) scale(1.12) rotate(-1.5deg);
-  /* Reveal original brand colors by removing grayscale */
-  filter: none;
-  box-shadow: 0 10px 26px -12px rgba(0,0,0,0.6);
-}
-/* Text badge for tools without devicon (e.g., Canva) */
-.skill-badge {
-  font-family: "Poppins", sans-serif;
-  font-weight: 600;
-  font-size: 18px !important;
-  background: rgba(255,255,255,0.08);
-  color: #ffffff !important;
-  padding: 10px 18px;
-  border-radius: 14px;
-  border: 2px solid #ffffff;
-  box-shadow: 0 4px 16px -6px rgba(255,255,255,0.25), 0 0 0 1px rgba(255,255,255,0.18) inset;
-  letter-spacing: .55px;
-  cursor: default;
-  backdrop-filter: blur(4px);
-}
-/* Hover effect for badge */
-.skill-badge:hover, .skill-badge:focus-visible {
-  background: #ffffff;
-  color: #000 !important;
-  filter: none;
-  box-shadow: 0 6px 20px -8px rgba(0,0,0,0.55);
-}
-/* Canva brand hover */
-.skill-badge.canva { background: rgba(255,255,255,0.08); }
-.skill-badge.canva:hover, .skill-badge.canva:focus-visible {
-  background: linear-gradient(135deg,#29a3e6,#6a33cc 55%,#8a2dcf);
-  color: #fff !important;
-  box-shadow: 0 10px 28px -10px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.4) inset;
-}
-@media (max-width: 640px) {
-  .skill-logos i, .skill-logos .skill-badge { font-size: 44px; }
-  .skill-badge { padding: 8px 16px; font-size: 16px !important; }
-}
-
-/* Improve hover reliability while flipped: disable front pointer events */
-.feature-card.flip-active .feature-card-front { pointer-events: none; }
-.feature-card.flip-active .feature-card-back { pointer-events: auto; }
-
-/* Enlarged invisible hit halo for each icon to reduce flicker when moving fast */
-.skill-logos i::after, .skill-logos .skill-badge::after {
-  content: '';
-  position: absolute;
-  inset: -10px;
-  border-radius: 22px;
-}
-
-.feature-emoji {
-  font-size: 2.8rem;
-  margin-bottom: 12px;
-  filter: drop-shadow(0 2px 8px #fff8);
-}
-
-.feature-card h3 {
-  font-size: 1.45rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-  letter-spacing: 0.03em;
-}
-
-.feature-card p {
   font-size: 1.05rem;
-  opacity: 0.92;
-  margin-bottom: 10px;
+  font-family: "Outfit", "Poppins", sans-serif;
 }
 
-/* Responsive for mobile */
-@media (max-width: 600px) {
-  .feature-card {
-    width: 90vw;
-    height: 220px;
+.navbar-custom .navbar-nav .nav-link {
+  color: #534f4f;
+  padding: 0.5rem 1rem;
+}
+
+.navbar-nav .nav-link.active {
+  color: #403d3d;
+  font-weight: bold;
+  text-decoration: solid;
+}
+
+.navbar-custom .navbar-nav .nav-link:hover {
+  color: #403d3d;
+}
+
+.navbar-custom .navbar-nav .nav-link:focus {
+  color: black;
+}
+
+.navbar-custom .navbar-nav .nav-item.active .nav-link {
+  font-weight: bold;
+}
+
+/* Smooth Scrolling Enhancement */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 120px; /* Increased padding for new floating navbar */
+}
+
+/* Loading Animation */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  .feature-track {
-    gap: 18px;
-    padding: 18px 0;
-  }
-}
-} /* end @media (prefers-reduced-motion: reduce) from earlier section */
-/* (Removed an extra stray closing brace that caused later CSS to be ignored; re-added correct closing brace above) */
-
-/* =============================
-   RESPONSIVE FIX OVERRIDES
-   - Consolidate feature card layout
-   - Normalize hero social icon positioning
-   - Remove 100vw body width overflow issues
-   - Reduce conflicting duplicate rules
-   ============================= */
-
-/* Avoid horizontal jump when scrollbar present */
-body { width: 100%; }
-
-/* Hero social icons: anchor bottom-left with fluid inset instead of huge fixed margins */
-#hero .social-icons {
-  position: absolute;
-  bottom: clamp(16px, 4vh, 80px);
-  left: clamp(16px, 4vw, 120px);
-  margin: 0 !important;
-  justify-content: flex-start !important;
-  width: auto !important;
-}
-@media (max-width: 900px) {
-  #hero .social-icons { left: 50%; transform: translateX(-50%); bottom: 32px; }
 }
 
-/* Unify Feature (Expertise) section into a simple responsive grid ONLY on mobile/tablet.
-   Desktop keeps original horizontal scroll / flip design. */
-@media (max-width: 900px) {
-  .features .feature-track {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 28px !important;
-    width: 100%;
-    padding: 28px clamp(16px,2vw,32px) 4px !important;
-    overflow: visible !important;
-    cursor: default !important;
-  }
-  .features .feature-card,
-  .features .feature-card-inner,
-  .features .feature-card-front,
-  .features .feature-card-back {
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    height: 360px;
-    perspective: 1000px;
-  }
-  @media (max-width: 640px) {
-    .features .feature-card,
-    .features .feature-card-inner,
-    .features .feature-card-front,
-    .features .feature-card-back { height: 320px; }
-  }
-  /* Slightly smaller icons on narrow screens */
-  .features .skill-logos i, .features .skill-logos span { font-size: clamp(36px,10vw,52px) !important; }
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* Timeline center safety on very wide screens */
-@media (min-width:1600px){
-  #timeline > .container { max-width: 1400px; margin: 0 auto; }
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
-/* Utility: smooth out overly strong shadows when many cards wrap */
-@media (prefers-reduced-motion: reduce){
-  .features .feature-card, .features .feature-card * { transition: none !important; }
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
 }
 
-/* === Desktop Expertise Hover Flip Restoration === */
-@media (min-width:901px) and (hover:hover) and (pointer:fine){
-  /* Cancel generic hover translate so 3D flip isn't overridden */
-  .features .feature-card:hover,
-  .features .feature-card:focus-within { transform: none !important; }
-  /* Perform flip on inner wrapper */
-  .features .feature-card:hover .feature-card-inner,
-  .features .feature-card:focus-within .feature-card-inner { transform: rotateY(180deg); }
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-gray);
 }
-
-
-/* (Removed timeline particle background for performance) */
